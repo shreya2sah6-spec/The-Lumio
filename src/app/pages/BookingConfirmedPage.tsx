@@ -97,7 +97,7 @@ export function BookingConfirmedPage({ onDone }: { onDone: () => void }) {
 
             {/* Confirmation message */}
             <div className="flex flex-col gap-[8px] items-center text-center w-full mb-[32px]">
-              <p className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[24px] leading-[31px] w-full text-center">
+              <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[24px] leading-[31px] w-full text-center">
                 Booking Request Sent
               </p>
               <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px] w-full text-center">

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
   Funnel,
-  BookmarkSimple,
   Star,
   Check,
   CaretDown,
@@ -14,6 +13,7 @@ import {
 import { BottomNav } from "../components/BottomNav";
 import { PageHeader } from "../components/PageHeader";
 import { SearchBar } from "../components/SearchBar";
+import { Job, LogoCell, JobCard, logoInitials } from "../components/JobCard";
 
 // ─── Images ──────────────────────────────────────────────────────────────────
 
@@ -67,21 +67,6 @@ type AppliedFilter =
   | "Company"
   | "Job Type"
   | "Work Mode";
-
-interface Job {
-  id: string;
-  title: string;
-  company: string;
-  logo?: string;
-  logoColor?: string;
-  salary?: string;
-  expTag: string;
-  typeTag: string;
-  location: string;
-  posted: string;
-  promoted?: boolean;
-  domain?: string;
-}
 
 interface ActiveFilters {
   discover: Record<DiscoverFilter, Set<string>>;
@@ -592,14 +577,6 @@ function getDetailImages(jobId: string): [string, string, string] {
   return DETAIL_IMAGE_SETS[hash];
 }
 
-function logoInitials(company: string): string {
-  return company
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("");
-}
-
 // ─── StatusBar ────────────────────────────────────────────────────────────────
 
 function StatusBar() {
@@ -655,127 +632,6 @@ function StatusBar() {
 
 // ─── Bottom nav ───────────────────────────────────────────────────────────────
 
-
-// ─── Logo cell ────────────────────────────────────────────────────────────────
-
-function LogoCell({ job, size }: { job: Job; size: number }) {
-  const cls =
-    size === 84
-      ? "relative rounded-[8px] shrink-0 size-[84px] border border-[#e2d9ef] overflow-hidden"
-      : "overflow-clip relative rounded-[8px] shrink-0 size-[54px] border border-[#e2d9ef]";
-  return (
-    <div className={cls}>
-      {job.logo ? (
-        <img
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover rounded-[8px]"
-          src={job.logo}
-        />
-      ) : (
-        <div
-          className="absolute inset-0 flex items-center justify-center rounded-[8px] text-white font-bold"
-          style={{
-            backgroundColor: job.logoColor ?? "#7D3AEA",
-            fontSize: size === 84 ? 20 : 14,
-          }}
-        >
-          {logoInitials(job.company)}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Job card ─────────────────────────────────────────────────────────────────
-
-function JobCard({
-  job,
-  applied,
-  onApply,
-  onViewDetails,
-}: {
-  job: Job;
-  applied: boolean;
-  onApply: () => void;
-  onViewDetails: () => void;
-}) {
-  return (
-    <div className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]">
-      <div className="flex flex-col gap-[4px] items-start w-full">
-        <div className="flex gap-[8px] items-start w-full">
-          <div className="flex flex-[1_0_0] gap-[12px] items-center pt-[4px] min-w-px">
-            <LogoCell job={job} size={54} />
-            <div className="flex flex-col gap-[2px] flex-1 min-w-px">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate">
-                {job.title}
-              </p>
-              <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] truncate">
-                {job.company}
-              </p>
-            </div>
-          </div>
-          <button className="p-[8px] shrink-0 cursor-pointer">
-            <BookmarkSimple size={24} color="#6B5F7A" />
-          </button>
-        </div>
-        <div className="flex gap-[16px] items-center w-full">
-          {job.salary && (
-            <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] whitespace-nowrap">
-              {job.salary}
-            </span>
-          )}
-          <div className="flex gap-[8px] items-center">
-            <span className="bg-[#f7f4fa] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] rounded-[2px] whitespace-nowrap px-[8px] py-[4px]">
-              {job.expTag}
-            </span>
-            <span className="bg-[#f4f7ff] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] rounded-[2px] whitespace-nowrap px-[8px] py-[4px]">
-              {job.typeTag}
-            </span>
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-x-[8px] items-center">
-          <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
-            {job.location}
-          </span>
-          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
-            · Posted {job.posted}
-          </span>
-          {job.promoted && (
-            <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
-              · Promoted
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="flex gap-[12px] items-center justify-end w-full">
-        <button
-          onClick={onViewDetails}
-          className="bg-[#fffeff] flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] cursor-pointer"
-        >
-          <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px] whitespace-nowrap">
-            View Details
-          </span>
-        </button>
-        <button
-          onClick={onApply}
-          disabled={applied}
-          className={`flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] w-[110px] cursor-pointer transition-colors ${
-            applied
-              ? "bg-[#D6F5DD] border border-[#208436]"
-              : "bg-white border border-[#7d3aea]"
-          }`}
-        >
-          {applied && <Check size={14} color="#208436" weight="bold" />}
-          <span
-            className={`font-['Manrope',sans-serif] font-semibold text-[14px] leading-[20px] tracking-[0.14px] whitespace-nowrap ${applied ? "text-[#208436]" : "text-[#7d3aea]"}`}
-          >
-            {applied ? "Applied" : "Apply"}
-          </span>
-        </button>
-      </div>
-    </div>
-  );
-}
 
 // ─── Out-of-scope toast (Figma exact: _fragment/toast-out-of-scope-job) ──────
 
@@ -834,7 +690,7 @@ function ApplicationStatusModal({
             </div>
           </div>
           <div className="flex flex-col gap-[8px] items-start w-full text-center">
-            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+            <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
               Your application is sent
             </p>
             <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px] w-full">
@@ -1309,7 +1165,7 @@ function ListingView({
         {activeTab === "Discover" ? (
           isFiltered ? (
             <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-              <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+              <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
                 Jobs matching your search
               </p>
               {filteredJobs.length === 0 ? (
@@ -1342,7 +1198,7 @@ function ListingView({
           ) : (
             <>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
                   Recent jobs
                 </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1367,7 +1223,7 @@ function ListingView({
                 )}
               </div>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-                <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
                   Latest job openings
                 </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1395,57 +1251,16 @@ function ListingView({
           )
         ) : (
           <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+            <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
               Under review
             </p>
             <div className="flex flex-col gap-[4px] items-start w-full">
               {appliedJobs.map((job) => (
-                <div
+                <JobCard
                   key={job.id}
-                  className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]"
-                >
-                  <div className="flex flex-col gap-[4px] items-start w-full">
-                    <div className="flex gap-[8px] items-start w-full">
-                      <div className="flex flex-[1_0_0] gap-[12px] items-center pt-[4px] min-w-px">
-                        <LogoCell job={job} size={54} />
-                        <div className="flex flex-col gap-[2px] flex-1 min-w-px">
-                          <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate">
-                            {job.title}
-                          </p>
-                          <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] truncate">
-                            {job.company}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-[16px] items-center w-full">
-                      {job.salary && (
-                        <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] whitespace-nowrap">
-                          {job.salary}
-                        </span>
-                      )}
-                      <div className="flex gap-[8px] items-center">
-                        <span className="bg-[#f7f4fa] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] px-[8px] py-[8px] rounded-[2px] whitespace-nowrap">
-                          {job.expTag}
-                        </span>
-                        <span className="bg-[#f4f7ff] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] px-[8px] py-[8px] rounded-[2px] whitespace-nowrap">
-                          {job.typeTag}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-x-[8px] items-center">
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
-                        {job.location}
-                      </span>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
-                        · Posted {job.posted}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] bg-[#f7f4fa] px-[10px] py-[4px] rounded-[4px]">
-                    Under Review
-                  </span>
-                </div>
+                  job={job}
+                  statusLabel="Under Review"
+                />
               ))}
             </div>
           </div>
@@ -1801,7 +1616,7 @@ function DetailView({
 
         {/* similar jobs */}
         <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-          <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#2d2040] text-[20px] leading-[28px] w-full">
+          <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#2d2040] text-[20px] leading-[28px] w-full">
             Similar jobs
           </p>
           <div className="flex flex-col gap-[4px] items-start w-full">

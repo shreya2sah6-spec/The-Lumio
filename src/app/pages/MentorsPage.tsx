@@ -728,7 +728,7 @@ export function MentorsPage() {
           {mainTab === "Discover" && (
             <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
               <div className="flex flex-col gap-4 items-start w-full">
-                <div className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
                   Top rated mentors
                 </div>
                 <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full">
@@ -739,7 +739,7 @@ export function MentorsPage() {
               </div>
 
               <div className="flex flex-col gap-4 items-start w-full">
-                <div className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
                   Picked for you
                 </div>
                 <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full">

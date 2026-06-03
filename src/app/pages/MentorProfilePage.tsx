@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import { BookingReviewPage } from "./BookingReviewPage";
 import {
   Star,
-  BookmarkSimple,
   ShareNetwork,
   ShareFat,
   DotsThreeVertical,
@@ -20,6 +19,7 @@ import {
 } from "@phosphor-icons/react";
 import { MentorCard, type Mentor } from "../components/MentorCard";
 import { Button } from "../components/ui/button";
+import { SaveButton } from "../components/SaveButton";
 
 import { PageHeader } from "../components/PageHeader";
 
@@ -459,16 +459,11 @@ export function MentorProfilePage() {
                     {followed ? "Followed" : "Follow"}
                   </span>
                 </Button>
-                <button
-                  onClick={() => setSaved(!saved)}
-                  className="h-[40px] w-[40px] bg-[#fffeff] border border-[#e2d9ef] rounded-[8px] flex items-center justify-center transition-all active:scale-95"
-                >
-                  <BookmarkSimple
-                    size={18}
-                    weight={saved ? "fill" : "regular"}
-                    color="#6B5F7A"
-                  />
-                </button>
+                <SaveButton
+                  saved={saved}
+                  onToggle={setSaved}
+                  className="bg-[#fffeff] border border-[#e2d9ef] rounded-[8px] transition-all active:scale-95"
+                />
                 <button className="h-[40px] w-[40px] bg-[#fffeff] border border-[#e2d9ef] rounded-[8px] flex items-center justify-center transition-all active:scale-95">
                   <DotsThreeVertical size={18} color="#6B5F7A" />
                 </button>
@@ -520,7 +515,7 @@ export function MentorProfilePage() {
                 <span className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[14px] line-through">
                   ₹600
                 </span>
-                <span className="inline-block font-['Roboto_Serif',sans-serif] font-semibold leading-[36px] font-[Manrope] text-[16px] text-[#1a1128]">
+                <span className="inline-block font-['Roboto_Serif',serif] font-semibold leading-[36px] font-[Manrope] text-[16px] text-[#1a1128]">
                   ₹300
                 </span>
                 <div className="flex items-baseline gap-1">
@@ -537,7 +532,7 @@ export function MentorProfilePage() {
 
           {/* Booking Section */}
           <div className="bg-[#fffeff] px-4 py-3">
-            <h2 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-3">
+            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-3">
               Book a 1:1 session
             </h2>
 
@@ -595,7 +590,7 @@ export function MentorProfilePage() {
 
           {/* Webinar */}
           <div className="bg-[#fffeff] px-4 py-3 mt-1">
-            <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+            <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
               Webinar
             </h3>
             <div className="rounded-[12px] overflow-hidden mb-3">
@@ -639,7 +634,7 @@ export function MentorProfilePage() {
               <>
                 {/* About Me */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-2">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-2">
                     About Me
                   </h3>
                   <img
@@ -651,7 +646,7 @@ export function MentorProfilePage() {
 
                 {/* Recent Projects */}
                 <div className="bg-[#fffeff] py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
                     Recent projects
                   </h3>
                   <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide snap-x snap-mandatory">
@@ -677,7 +672,7 @@ export function MentorProfilePage() {
                     ].map((project, i) => (
                       <div
                         key={i}
-                        className="shrink-0 w-[200px] snap-center bg-white rounded-[8px] border border-[rgba(157,148,170,0.40)] overflow-hidden"
+                        className="shrink-0 w-[200px] snap-center bg-white rounded-[8px] border border-[rgba(157,148,170,0.4)] overflow-hidden"
                       >
                         <img
                           src={project.img}
@@ -696,13 +691,13 @@ export function MentorProfilePage() {
 
                 {/* Experience */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
                     Experience
                   </h3>
                   <div className="space-y-4">
                     <div className="flex gap-3 items-center">
                       <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                        <span className="font-['Roboto_Serif',sans-serif] font-bold text-[#7d3aea] text-[16px]">
+                        <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">
                           M
                         </span>
                       </div>
@@ -721,7 +716,7 @@ export function MentorProfilePage() {
                     <div className="h-px bg-[#e2d9ef]" />
                     <div className="flex gap-3 items-center">
                       <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                        <span className="font-['Roboto_Serif',sans-serif] font-bold text-[#7d3aea] text-[16px]">
+                        <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">
                           Z
                         </span>
                       </div>
@@ -742,12 +737,12 @@ export function MentorProfilePage() {
 
                 {/* Education */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
                     Education
                   </h3>
                   <div className="flex gap-3 items-center">
                     <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                      <span className="font-['Roboto_Serif',sans-serif] font-bold text-[#7d3aea] text-[16px]">
+                      <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">
                         P
                       </span>
                     </div>
@@ -767,7 +762,7 @@ export function MentorProfilePage() {
 
                 {/* Top Skills */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
                     Top Skills
                   </h3>
                   <div className="flex flex-wrap gap-3 mb-5">
@@ -795,7 +790,7 @@ export function MentorProfilePage() {
 
                 {/* Other Highest Rated Mentors */}
                 <div className="bg-[#fffeff] py-3 mt-1 mb-2">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
                     Other highest rated mentors
                   </h3>
                   <div
@@ -890,7 +885,7 @@ export function MentorProfilePage() {
 
                 {/* Other Highest Rated Mentors */}
                 <div className="flex flex-col gap-[16px] items-start w-full border-t border-[#f0ecf7] pt-[20px]">
-                  <p className="font-['Roboto_Serif',sans-serif] font-semibold text-[#2d2040] text-[20px] leading-[28px] w-full">
+                  <p className="font-['Roboto_Serif',serif] font-semibold text-[#2d2040] text-[20px] leading-[28px] w-full">
                     Other highest rated mentors
                   </p>
                   <div
@@ -1006,7 +1001,7 @@ export function MentorProfilePage() {
 
                 {/* Other Highest Rated Mentors */}
                 <div className="mt-6 -mx-4">
-                  <h3 className="font-['Roboto_Serif',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
                     Other highest rated mentors
                   </h3>
                   <div

@@ -37,8 +37,8 @@ export function PageHeader({
         <ArrowLeft size={24} color="#1A1128" />
       </button>
 
-      {/* Title */}
-      <h1 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[24px] leading-[31px] ml-3 flex-1 min-w-0 truncate">
+      {/* Title — H1 spec: Roboto Serif · Extrabold 800 · 24/31 */}
+      <h1 className="type-h1 text-[#1a1128] ml-3 flex-1 min-w-0 truncate">
         {title}
       </h1>
 

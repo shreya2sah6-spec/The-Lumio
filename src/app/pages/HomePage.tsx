@@ -3,7 +3,6 @@ import { useNavigate } from "react-router";
 import {
   BellSimple,
   ChatCenteredDots,
-  BookmarkSimple,
   CaretLeft,
   Eye,
   Repeat,
@@ -13,6 +12,7 @@ import {
 } from "@phosphor-icons/react";
 import { BottomNav } from "../components/BottomNav";
 import { SearchBar } from "../components/SearchBar";
+import { SaveButton } from "../components/SaveButton";
 
 // Status bar SVG paths kept as Figma-exact UI chrome (immune to Figma sync deletions)
 const statusBarPaths = {
@@ -129,23 +129,6 @@ function TopBar() {
   );
 }
 
-// ─── Save button ──────────────────────────────────────────────────────────────
-
-function SaveBtn({ color = "#6B5F7A" }: { color?: string }) {
-  const [saved, setSaved] = useState(false);
-  return (
-    <button
-      className="p-2 cursor-pointer shrink-0"
-      onClick={() => setSaved((s) => !s)}
-    >
-      <BookmarkSimple
-        size={24}
-        color="#6B5F7A"
-        weight={saved ? "fill" : "regular"}
-      />
-    </button>
-  );
-}
 
 // ─── Profile completion card ──────────────────────────────────────────────────
 
@@ -295,7 +278,7 @@ function PostCard({
               )}
             </div>
           </div>
-          <SaveBtn />
+          <SaveButton />
         </div>
         <p className="font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[14px] leading-[21px]">
           {caption}
@@ -620,7 +603,7 @@ function BrandJobPost() {
               </p>
             </div>
           </div>
-          <SaveBtn />
+          <SaveButton />
         </div>
         <p className="font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[14px] leading-[21px]">
           {
