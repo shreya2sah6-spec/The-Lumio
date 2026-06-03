@@ -115,10 +115,7 @@ const buttonVariants = cva(
         ].join(" "),
 
         // ICON BUTTON
-        icon: [
-          "size-9",
-          "rounded-[var(--primary-button-small,4px)]",
-        ].join(" "),
+        icon: ["size-9", "rounded-[var(--primary-button-small,4px)]"].join(" "),
       },
     },
 
@@ -126,7 +123,7 @@ const buttonVariants = cva(
       variant: "gradient",
       size: "lg",
     },
-  },
+  }
 );
 
 function Button({

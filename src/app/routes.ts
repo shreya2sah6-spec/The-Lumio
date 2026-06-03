@@ -18,7 +18,6 @@ function homeLoader() {
   return redirect(done ? "/home/feed" : "/home/profile-completion");
 }
 
-
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -80,7 +79,8 @@ export const router = createBrowserRouter([
       {
         path: "booking-review",
         lazy: async () => {
-          const { BookingReviewPage } = await import("./pages/BookingReviewPage");
+          const { BookingReviewPage } =
+            await import("./pages/BookingReviewPage");
           return { Component: BookingReviewPage };
         },
       },

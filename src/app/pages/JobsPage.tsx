@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import {
-  MagnifyingGlass, Funnel, ArrowLeft, House, Briefcase, SuitcaseSimple, Plus, Users,
-  BookmarkSimple, Star, Check, CaretDown, CaretUp, ShareFat, X, MagicWand,
+  Funnel,
+  BookmarkSimple,
+  Star,
+  Check,
+  CaretDown,
+  CaretUp,
+  ShareFat,
+  X,
+  MagicWand,
 } from "@phosphor-icons/react";
+import { BottomNav } from "../components/BottomNav";
+import { PageHeader } from "../components/PageHeader";
+import { SearchBar } from "../components/SearchBar";
 
 // ─── Images ──────────────────────────────────────────────────────────────────
 
@@ -28,19 +38,35 @@ import imgNotFound from "@/imports/SharedNotFound/460b6c9e17511d97e9e5c7a1875505
 
 // ─── Status bar SVG paths ─────────────────────────────────────────────────────
 
-const SIGNAL_BARS = "M3.26916 9.60239C3.8002 9.60239 4.23107 10.0333 4.23107 10.5643V12.4872C4.23107 13.0182 3.8002 13.4491 3.26916 13.4491H2.30724C1.77641 13.4488 1.3463 13.018 1.3463 12.4872V10.5643C1.3463 10.0334 1.77641 9.60263 2.30724 9.60239H3.26916ZM7.75646 7.67954C8.28748 7.67956 8.71837 8.11043 8.71837 8.64145V12.4872C8.71837 13.0182 8.28748 13.449 7.75646 13.4491H6.79455C6.26365 13.4489 5.83361 13.0181 5.83361 12.4872V8.64145C5.83361 8.11052 6.26365 7.67971 6.79455 7.67954H7.75646ZM12.2438 5.43637C12.7747 5.43647 13.2046 5.86638 13.2047 6.39731V12.4872C13.2047 13.0181 12.7747 13.449 12.2438 13.4491H11.2819C10.7509 13.449 10.3209 13.0181 10.3209 12.4872V6.39731C10.321 5.86639 10.7509 5.43648 11.2819 5.43637H12.2438ZM16.7311 3.19223C17.262 3.1924 17.692 3.6232 17.692 4.15415V12.4872C17.692 13.0181 17.262 13.4489 16.7311 13.4491H15.7692C15.2381 13.449 14.8072 13.0182 14.8072 12.4872V4.15415C14.8072 3.62313 15.2381 3.19227 15.7692 3.19223H16.7311Z";
-const SIGNAL_WIFI = "M5.86291 11.2694C7.08941 10.2323 8.88553 10.2321 10.1119 11.2694C10.1736 11.3252 10.2098 11.404 10.2115 11.4872C10.2132 11.5703 10.1801 11.6506 10.1207 11.7088L8.19982 13.6473C8.14355 13.7041 8.06686 13.7362 7.98693 13.7362C7.90698 13.7361 7.83028 13.7041 7.77404 13.6473L5.85314 11.7088C5.79385 11.6505 5.76154 11.5703 5.7633 11.4872C5.76508 11.404 5.80118 11.3251 5.86291 11.2694ZM3.29943 8.68442C5.94193 6.22636 10.0349 6.22636 12.6774 8.68442C12.7367 8.74203 12.7703 8.82142 12.7711 8.90415C12.7718 8.98686 12.7395 9.06614 12.6813 9.12485L11.5709 10.2469C11.4566 10.3613 11.2723 10.364 11.1549 10.2528C10.2871 9.46701 9.15759 9.03201 7.98693 9.03208C6.81713 9.03263 5.68901 9.46758 4.82189 10.2528C4.70455 10.364 4.52022 10.3613 4.40587 10.2469L3.29552 9.12485C3.23716 9.06621 3.20403 8.98688 3.2047 8.90415C3.20548 8.82134 3.23996 8.74203 3.29943 8.68442ZM0.736929 6.10532C4.78991 2.22126 11.184 2.22118 15.2369 6.10532C15.2956 6.16301 15.3282 6.24181 15.3287 6.32407C15.3292 6.40622 15.2977 6.48544 15.2399 6.5438L14.1276 7.66587C14.0131 7.78071 13.8278 7.78193 13.7115 7.6688C12.1674 6.20072 10.1176 5.38178 7.98693 5.38169C5.85613 5.38174 3.80665 6.20067 2.26232 7.6688C2.14611 7.7823 1.95977 7.78115 1.84533 7.66587L0.733999 6.5438C0.676061 6.48537 0.643616 6.40635 0.644156 6.32407C0.644697 6.24178 0.678219 6.16298 0.736929 6.10532Z";
-const BATTERY_OUTLINE = "M3.02599 2.71124H19.0514C20.2019 2.71129 21.1344 3.64466 21.1344 4.79522V10.5638C21.1344 11.7143 20.2019 12.6477 19.0514 12.6478H3.02599C1.8754 12.6478 0.942008 11.7144 0.942008 10.5638V4.79522C0.942008 3.64463 1.8754 2.71124 3.02599 2.71124Z";
-const BATTERY_TIP = "M22.5769 5.75643V9.60258C23.3507 9.27684 23.8539 8.51906 23.8539 7.67951C23.8539 6.83996 23.3507 6.08218 22.5769 5.75643";
-const BATTERY_FILL = "M2.38462 5.4359C2.38462 4.72784 2.95861 4.15385 3.66667 4.15385H18.4103C19.1183 4.15385 19.6923 4.72784 19.6923 5.4359V9.92308C19.6923 10.6311 19.1183 11.2051 18.4103 11.2051H3.66667C2.95861 11.2051 2.38462 10.6311 2.38462 9.92308V5.4359Z";
+const SIGNAL_BARS =
+  "M3.26916 9.60239C3.8002 9.60239 4.23107 10.0333 4.23107 10.5643V12.4872C4.23107 13.0182 3.8002 13.4491 3.26916 13.4491H2.30724C1.77641 13.4488 1.3463 13.018 1.3463 12.4872V10.5643C1.3463 10.0334 1.77641 9.60263 2.30724 9.60239H3.26916ZM7.75646 7.67954C8.28748 7.67956 8.71837 8.11043 8.71837 8.64145V12.4872C8.71837 13.0182 8.28748 13.449 7.75646 13.4491H6.79455C6.26365 13.4489 5.83361 13.0181 5.83361 12.4872V8.64145C5.83361 8.11052 6.26365 7.67971 6.79455 7.67954H7.75646ZM12.2438 5.43637C12.7747 5.43647 13.2046 5.86638 13.2047 6.39731V12.4872C13.2047 13.0181 12.7747 13.449 12.2438 13.4491H11.2819C10.7509 13.449 10.3209 13.0181 10.3209 12.4872V6.39731C10.321 5.86639 10.7509 5.43648 11.2819 5.43637H12.2438ZM16.7311 3.19223C17.262 3.1924 17.692 3.6232 17.692 4.15415V12.4872C17.692 13.0181 17.262 13.4489 16.7311 13.4491H15.7692C15.2381 13.449 14.8072 13.0182 14.8072 12.4872V4.15415C14.8072 3.62313 15.2381 3.19227 15.7692 3.19223H16.7311Z";
+const SIGNAL_WIFI =
+  "M5.86291 11.2694C7.08941 10.2323 8.88553 10.2321 10.1119 11.2694C10.1736 11.3252 10.2098 11.404 10.2115 11.4872C10.2132 11.5703 10.1801 11.6506 10.1207 11.7088L8.19982 13.6473C8.14355 13.7041 8.06686 13.7362 7.98693 13.7362C7.90698 13.7361 7.83028 13.7041 7.77404 13.6473L5.85314 11.7088C5.79385 11.6505 5.76154 11.5703 5.7633 11.4872C5.76508 11.404 5.80118 11.3251 5.86291 11.2694ZM3.29943 8.68442C5.94193 6.22636 10.0349 6.22636 12.6774 8.68442C12.7367 8.74203 12.7703 8.82142 12.7711 8.90415C12.7718 8.98686 12.7395 9.06614 12.6813 9.12485L11.5709 10.2469C11.4566 10.3613 11.2723 10.364 11.1549 10.2528C10.2871 9.46701 9.15759 9.03201 7.98693 9.03208C6.81713 9.03263 5.68901 9.46758 4.82189 10.2528C4.70455 10.364 4.52022 10.3613 4.40587 10.2469L3.29552 9.12485C3.23716 9.06621 3.20403 8.98688 3.2047 8.90415C3.20548 8.82134 3.23996 8.74203 3.29943 8.68442ZM0.736929 6.10532C4.78991 2.22126 11.184 2.22118 15.2369 6.10532C15.2956 6.16301 15.3282 6.24181 15.3287 6.32407C15.3292 6.40622 15.2977 6.48544 15.2399 6.5438L14.1276 7.66587C14.0131 7.78071 13.8278 7.78193 13.7115 7.6688C12.1674 6.20072 10.1176 5.38178 7.98693 5.38169C5.85613 5.38174 3.80665 6.20067 2.26232 7.6688C2.14611 7.7823 1.95977 7.78115 1.84533 7.66587L0.733999 6.5438C0.676061 6.48537 0.643616 6.40635 0.644156 6.32407C0.644697 6.24178 0.678219 6.16298 0.736929 6.10532Z";
+const BATTERY_OUTLINE =
+  "M3.02599 2.71124H19.0514C20.2019 2.71129 21.1344 3.64466 21.1344 4.79522V10.5638C21.1344 11.7143 20.2019 12.6477 19.0514 12.6478H3.02599C1.8754 12.6478 0.942008 11.7144 0.942008 10.5638V4.79522C0.942008 3.64463 1.8754 2.71124 3.02599 2.71124Z";
+const BATTERY_TIP =
+  "M22.5769 5.75643V9.60258C23.3507 9.27684 23.8539 8.51906 23.8539 7.67951C23.8539 6.83996 23.3507 6.08218 22.5769 5.75643";
+const BATTERY_FILL =
+  "M2.38462 5.4359C2.38462 4.72784 2.95861 4.15385 3.66667 4.15385H18.4103C19.1183 4.15385 19.6923 4.72784 19.6923 5.4359V9.92308C19.6923 10.6311 19.1183 11.2051 18.4103 11.2051H3.66667C2.95861 11.2051 2.38462 10.6311 2.38462 9.92308V5.4359Z";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type JobsTab = "Discover" | "Applied";
 type DetailTab = "Description" | "Reviews";
 type Screen = "listing" | "detail";
-type DiscoverFilter = "Job Type" | "Experience" | "Salary / Stipend" | "Location" | "Company Category" | "Design Domain";
-type AppliedFilter = "Status" | "Date Applied" | "Company" | "Job Type" | "Work Mode";
+type DiscoverFilter =
+  | "Job Type"
+  | "Experience"
+  | "Salary / Stipend"
+  | "Location"
+  | "Company Category"
+  | "Design Domain";
+type AppliedFilter =
+  | "Status"
+  | "Date Applied"
+  | "Company"
+  | "Job Type"
+  | "Work Mode";
 
 interface Job {
   id: string;
@@ -65,87 +91,470 @@ interface ActiveFilters {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const recentJobs: Job[] = [
-  { id: "j0", title: "Associate Fashion Designer", company: "Papa Don't Preach", logo: imgLogo0, salary: "7-8 LPA", expTag: "0-3 Years", typeTag: "Full Time", location: "Mumbai", posted: "2 days ago", promoted: true, domain: "Fashion Design" },
-  { id: "j1", title: "Jr. Fashion Designer", company: "JJ Valya", logo: imgLogo1, expTag: "1-3 Years", typeTag: "Full Time", location: "New Delhi", posted: "3 days ago", domain: "Fashion Design" },
-  { id: "j2", title: "Jr. Fashion Designer", company: "Gaurav Gupta", logo: imgLogo2, salary: "8-10 LPA", expTag: "1-3 Years", typeTag: "Full Time", location: "Mumbai", posted: "3 days ago", domain: "Fashion Design" },
-  { id: "j12", title: "Womenswear Designer", company: "Raw Mango", logoColor: "#C35A2A", salary: "6-9 LPA", expTag: "1-3 Years", typeTag: "Full Time", location: "New Delhi", posted: "3 days ago", domain: "Fashion Design" },
-  { id: "j13", title: "Print Designer", company: "Péro", logoColor: "#4A5568", salary: "5-8 LPA", expTag: "0-2 Years", typeTag: "Full Time", location: "New Delhi", posted: "4hr ago", domain: "Surface & Print" },
-  { id: "j14", title: "Fashion Illustrator", company: "Anavila", logoColor: "#2C7A5E", salary: "4-6 LPA", expTag: "Fresher", typeTag: "Full Time", location: "Mumbai", posted: "1 day ago", domain: "Fashion Design" },
+  {
+    id: "j0",
+    title: "Associate Fashion Designer",
+    company: "Papa Don't Preach",
+    logo: imgLogo0,
+    salary: "7-8 LPA",
+    expTag: "0-3 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "2 days ago",
+    promoted: true,
+    domain: "Fashion Design",
+  },
+  {
+    id: "j1",
+    title: "Jr. Fashion Designer",
+    company: "JJ Valya",
+    logo: imgLogo1,
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "3 days ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "j2",
+    title: "Jr. Fashion Designer",
+    company: "Gaurav Gupta",
+    logo: imgLogo2,
+    salary: "8-10 LPA",
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "3 days ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "j12",
+    title: "Womenswear Designer",
+    company: "Raw Mango",
+    logoColor: "#C35A2A",
+    salary: "6-9 LPA",
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "3 days ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "j13",
+    title: "Print Designer",
+    company: "Péro",
+    logoColor: "#4A5568",
+    salary: "5-8 LPA",
+    expTag: "0-2 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "4hr ago",
+    domain: "Surface & Print",
+  },
+  {
+    id: "j14",
+    title: "Fashion Illustrator",
+    company: "Anavila",
+    logoColor: "#2C7A5E",
+    salary: "4-6 LPA",
+    expTag: "Fresher",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "1 day ago",
+    domain: "Fashion Design",
+  },
 ];
 
 const latestJobs: Job[] = [
-  { id: "j3", title: "Footwear Designer", company: "Anita Dongre", logo: imgLogo3, salary: "5-6 LPA", expTag: "1-2 Years", typeTag: "Contract", location: "Mumbai", posted: "2 days ago", promoted: true, domain: "Accessories" },
-  { id: "j4", title: "Jr. Accessories Designer", company: "Masaba", logo: imgLogo4, salary: "5-8 LPA", expTag: "1-3 Years", typeTag: "Full Time", location: "Mumbai", posted: "4hr ago", domain: "Accessories" },
-  { id: "j5", title: "Senior Fashion Designer", company: "Manish Malhotra", logo: imgLogo5, salary: "13-18 LPA", expTag: "4-8 Years", typeTag: "Full Time", location: "Mumbai", posted: "10hr ago", domain: "Fashion Design" },
-  { id: "j15", title: "Jewelry Designer", company: "Amrapali Jewels", logoColor: "#7B6000", salary: "7-10 LPA", expTag: "1-3 Years", typeTag: "Full Time", location: "Jaipur", posted: "2 days ago", domain: "Accessories" },
-  { id: "j16", title: "Costume Designer", company: "Ekaya Banaras", logoColor: "#6B21A8", salary: "6-9 LPA", expTag: "2-4 Years", typeTag: "Contract", location: "Varanasi", posted: "5 days ago", domain: "Costume Design" },
-  { id: "j17", title: "Buying Merchandiser", company: "FabIndia", logoColor: "#1E40AF", salary: "8-12 LPA", expTag: "2-4 Years", typeTag: "Full Time", location: "New Delhi", posted: "1 week ago", domain: "Buying & Merch" },
+  {
+    id: "j3",
+    title: "Footwear Designer",
+    company: "Anita Dongre",
+    logo: imgLogo3,
+    salary: "5-6 LPA",
+    expTag: "1-2 Years",
+    typeTag: "Contract",
+    location: "Mumbai",
+    posted: "2 days ago",
+    promoted: true,
+    domain: "Accessories",
+  },
+  {
+    id: "j4",
+    title: "Jr. Accessories Designer",
+    company: "Masaba",
+    logo: imgLogo4,
+    salary: "5-8 LPA",
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "4hr ago",
+    domain: "Accessories",
+  },
+  {
+    id: "j5",
+    title: "Senior Fashion Designer",
+    company: "Manish Malhotra",
+    logo: imgLogo5,
+    salary: "13-18 LPA",
+    expTag: "4-8 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "10hr ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "j15",
+    title: "Jewelry Designer",
+    company: "Amrapali Jewels",
+    logoColor: "#7B6000",
+    salary: "7-10 LPA",
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "Jaipur",
+    posted: "2 days ago",
+    domain: "Accessories",
+  },
+  {
+    id: "j16",
+    title: "Costume Designer",
+    company: "Ekaya Banaras",
+    logoColor: "#6B21A8",
+    salary: "6-9 LPA",
+    expTag: "2-4 Years",
+    typeTag: "Contract",
+    location: "Varanasi",
+    posted: "5 days ago",
+    domain: "Costume Design",
+  },
+  {
+    id: "j17",
+    title: "Buying Merchandiser",
+    company: "FabIndia",
+    logoColor: "#1E40AF",
+    salary: "8-12 LPA",
+    expTag: "2-4 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "1 week ago",
+    domain: "Buying & Merch",
+  },
 ];
 
 const filteredJobs: Job[] = [
-  { id: "jf0", title: "Jr. Fashion Designer", company: "Sabyasachi", logo: imgSabyasachiLogo, salary: "10-12 LPA", expTag: "0-3 Years", typeTag: "Full Time", location: "Kolkata", posted: "1 day ago", promoted: true, domain: "Fashion Design" },
-  { id: "s0", title: "Associate Fashion Designer", company: "Rohit Bal", logo: imgSimilar1, salary: "7-8 LPA", expTag: "0-2 Years", typeTag: "Full Time", location: "New Delhi", posted: "1 day ago", domain: "Fashion Design" },
-  { id: "jf1", title: "Jr. Fashion Designer", company: "Abu Jani Sandeep Khosla", logo: imgSimilar2, salary: "7-8 LPA", expTag: "1-2 Years", typeTag: "Full Time", location: "Mumbai", posted: "3 days ago", domain: "Fashion Design" },
-  { id: "j0", title: "Associate Fashion Designer", company: "Papa Don't Preach", logo: imgLogo0, salary: "7-8 LPA", expTag: "0-3 Years", typeTag: "Full Time", location: "Mumbai", posted: "2 days ago", promoted: true, domain: "Fashion Design" },
-  { id: "j14", title: "Fashion Illustrator", company: "Anavila", logoColor: "#2C7A5E", salary: "4-6 LPA", expTag: "Fresher", typeTag: "Full Time", location: "Mumbai", posted: "1 day ago", domain: "Fashion Design" },
-  { id: "j12", title: "Womenswear Designer", company: "Raw Mango", logoColor: "#C35A2A", salary: "6-9 LPA", expTag: "1-3 Years", typeTag: "Full Time", location: "New Delhi", posted: "3 days ago", domain: "Fashion Design" },
+  {
+    id: "jf0",
+    title: "Jr. Fashion Designer",
+    company: "Sabyasachi",
+    logo: imgSabyasachiLogo,
+    salary: "10-12 LPA",
+    expTag: "0-3 Years",
+    typeTag: "Full Time",
+    location: "Kolkata",
+    posted: "1 day ago",
+    promoted: true,
+    domain: "Fashion Design",
+  },
+  {
+    id: "s0",
+    title: "Associate Fashion Designer",
+    company: "Rohit Bal",
+    logo: imgSimilar1,
+    salary: "7-8 LPA",
+    expTag: "0-2 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "1 day ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "jf1",
+    title: "Jr. Fashion Designer",
+    company: "Abu Jani Sandeep Khosla",
+    logo: imgSimilar2,
+    salary: "7-8 LPA",
+    expTag: "1-2 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "3 days ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "j0",
+    title: "Associate Fashion Designer",
+    company: "Papa Don't Preach",
+    logo: imgLogo0,
+    salary: "7-8 LPA",
+    expTag: "0-3 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "2 days ago",
+    promoted: true,
+    domain: "Fashion Design",
+  },
+  {
+    id: "j14",
+    title: "Fashion Illustrator",
+    company: "Anavila",
+    logoColor: "#2C7A5E",
+    salary: "4-6 LPA",
+    expTag: "Fresher",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "1 day ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "j12",
+    title: "Womenswear Designer",
+    company: "Raw Mango",
+    logoColor: "#C35A2A",
+    salary: "6-9 LPA",
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "3 days ago",
+    domain: "Fashion Design",
+  },
 ];
 
 const appliedJobs: Job[] = [
-  { id: "ja0", title: "Jr. Fashion Designer", company: "Sabyasachi", logo: imgSabyasachiLogo, salary: "10-12 LPA", expTag: "0-3 Years", typeTag: "Full Time", location: "Kolkata", posted: "1 day ago", domain: "Fashion Design" },
-  { id: "ja1", title: "Womenswear Designer", company: "Raw Mango", logoColor: "#C35A2A", salary: "6-9 LPA", expTag: "1-3 Years", typeTag: "Full Time", location: "New Delhi", posted: "5 days ago", domain: "Fashion Design" },
-  { id: "ja2", title: "Print Designer", company: "Péro", logoColor: "#4A5568", salary: "5-8 LPA", expTag: "0-2 Years", typeTag: "Full Time", location: "New Delhi", posted: "1 week ago", domain: "Surface & Print" },
+  {
+    id: "ja0",
+    title: "Jr. Fashion Designer",
+    company: "Sabyasachi",
+    logo: imgSabyasachiLogo,
+    salary: "10-12 LPA",
+    expTag: "0-3 Years",
+    typeTag: "Full Time",
+    location: "Kolkata",
+    posted: "1 day ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "ja1",
+    title: "Womenswear Designer",
+    company: "Raw Mango",
+    logoColor: "#C35A2A",
+    salary: "6-9 LPA",
+    expTag: "1-3 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "5 days ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "ja2",
+    title: "Print Designer",
+    company: "Péro",
+    logoColor: "#4A5568",
+    salary: "5-8 LPA",
+    expTag: "0-2 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "1 week ago",
+    domain: "Surface & Print",
+  },
 ];
 
 const similarJobs: Job[] = [
-  { id: "s0", title: "Associate Fashion Designer", company: "Rohit Bal", logo: imgSimilar1, salary: "7-8 LPA", expTag: "0-2 Years", typeTag: "Full Time", location: "New Delhi", posted: "4hr ago", domain: "Fashion Design" },
-  { id: "s1", title: "Jr. Fashion Designer", company: "Abu Jani Sandeep Khosla", logo: imgSimilar2, salary: "7-8 LPA", expTag: "1-2 Years", typeTag: "Full Time", location: "Mumbai", posted: "4hr ago", domain: "Fashion Design" },
-  { id: "s2", title: "Footwear Designer", company: "Anita Dongre", logo: imgSimilar3, salary: "5-6 LPA", expTag: "1-2 Years", typeTag: "Contract", location: "Mumbai", posted: "4hr ago", domain: "Accessories" },
+  {
+    id: "s0",
+    title: "Associate Fashion Designer",
+    company: "Rohit Bal",
+    logo: imgSimilar1,
+    salary: "7-8 LPA",
+    expTag: "0-2 Years",
+    typeTag: "Full Time",
+    location: "New Delhi",
+    posted: "4hr ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "s1",
+    title: "Jr. Fashion Designer",
+    company: "Abu Jani Sandeep Khosla",
+    logo: imgSimilar2,
+    salary: "7-8 LPA",
+    expTag: "1-2 Years",
+    typeTag: "Full Time",
+    location: "Mumbai",
+    posted: "4hr ago",
+    domain: "Fashion Design",
+  },
+  {
+    id: "s2",
+    title: "Footwear Designer",
+    company: "Anita Dongre",
+    logo: imgSimilar3,
+    salary: "5-6 LPA",
+    expTag: "1-2 Years",
+    typeTag: "Contract",
+    location: "Mumbai",
+    posted: "4hr ago",
+    domain: "Accessories",
+  },
 ];
 
 const reviewsPool = [
-  { avatar: imgReviewer1, name: "Anaya", role: "Fashion Designer", rating: 5, title: "Supportive learning environment", text: "I had a great experience working at this company, as the team was professional and supportive. The work environment encouraged learning, growth, and collaboration. Senior designers are always willing to share knowledge and guide younger talent through the creative process." },
-  { avatar: imgReviewer2, name: "Anonymous", role: "", rating: 4, title: "Great place to grow", text: "This studio offers a unique opportunity to work with traditional Indian textiles and craftsmanship. The mentorship from senior designers is invaluable. You learn by doing, and the exposure to haute couture is unparalleled in the industry." },
-  { avatar: imgReviewer3, name: "Riya Mehta", role: "Jr. Designer", rating: 5, title: "Incredible craft exposure", text: "Working here gave me exposure to the finest Indian craftsmanship. The attention to detail is unmatched and I learned immensely from every project. The studio culture is intense but deeply rewarding for anyone passionate about Indian fashion." },
-  { avatar: imgReviewer1, name: "Priya Sharma", role: "Textile Designer", rating: 4, title: "Excellent craft traditions", text: "The brand's commitment to Indian handcraft is genuine and inspiring. Every project involves deep research into regional craft traditions. A wonderful place to develop as a designer with a respect for heritage." },
-  { avatar: imgReviewer2, name: "Aakash Verma", role: "Design Intern", rating: 5, title: "Transformative experience", text: "My internship here transformed my understanding of Indian couture. The studio's attention to detail, its relationship with artisans, and the pride everyone takes in the work makes this an extraordinary place to begin a career." },
-  { avatar: imgReviewer3, name: "Meera Nair", role: "Sr. Designer", rating: 4, title: "World-class atelier", text: "The level of craft here is world-class. Working alongside master karigars and seeing how traditional embroidery techniques are preserved and evolved is a privilege. The pace is demanding but the work is deeply fulfilling." },
+  {
+    avatar: imgReviewer1,
+    name: "Anaya",
+    role: "Fashion Designer",
+    rating: 5,
+    title: "Supportive learning environment",
+    text: "I had a great experience working at this company, as the team was professional and supportive. The work environment encouraged learning, growth, and collaboration. Senior designers are always willing to share knowledge and guide younger talent through the creative process.",
+  },
+  {
+    avatar: imgReviewer2,
+    name: "Anonymous",
+    role: "",
+    rating: 4,
+    title: "Great place to grow",
+    text: "This studio offers a unique opportunity to work with traditional Indian textiles and craftsmanship. The mentorship from senior designers is invaluable. You learn by doing, and the exposure to haute couture is unparalleled in the industry.",
+  },
+  {
+    avatar: imgReviewer3,
+    name: "Riya Mehta",
+    role: "Jr. Designer",
+    rating: 5,
+    title: "Incredible craft exposure",
+    text: "Working here gave me exposure to the finest Indian craftsmanship. The attention to detail is unmatched and I learned immensely from every project. The studio culture is intense but deeply rewarding for anyone passionate about Indian fashion.",
+  },
+  {
+    avatar: imgReviewer1,
+    name: "Priya Sharma",
+    role: "Textile Designer",
+    rating: 4,
+    title: "Excellent craft traditions",
+    text: "The brand's commitment to Indian handcraft is genuine and inspiring. Every project involves deep research into regional craft traditions. A wonderful place to develop as a designer with a respect for heritage.",
+  },
+  {
+    avatar: imgReviewer2,
+    name: "Aakash Verma",
+    role: "Design Intern",
+    rating: 5,
+    title: "Transformative experience",
+    text: "My internship here transformed my understanding of Indian couture. The studio's attention to detail, its relationship with artisans, and the pride everyone takes in the work makes this an extraordinary place to begin a career.",
+  },
+  {
+    avatar: imgReviewer3,
+    name: "Meera Nair",
+    role: "Sr. Designer",
+    rating: 4,
+    title: "World-class atelier",
+    text: "The level of craft here is world-class. Working alongside master karigars and seeing how traditional embroidery techniques are preserved and evolved is a privilege. The pace is demanding but the work is deeply fulfilling.",
+  },
 ];
 
 // ─── Filter options ───────────────────────────────────────────────────────────
 
-const DISCOVER_FILTERS: DiscoverFilter[] = ["Job Type", "Experience", "Salary / Stipend", "Location", "Company Category", "Design Domain"];
-const APPLIED_FILTERS: AppliedFilter[] = ["Status", "Date Applied", "Company", "Job Type", "Work Mode"];
+const DISCOVER_FILTERS: DiscoverFilter[] = [
+  "Job Type",
+  "Experience",
+  "Salary / Stipend",
+  "Location",
+  "Company Category",
+  "Design Domain",
+];
+const APPLIED_FILTERS: AppliedFilter[] = [
+  "Status",
+  "Date Applied",
+  "Company",
+  "Job Type",
+  "Work Mode",
+];
 
 const DISCOVER_FILTER_OPTIONS: Record<DiscoverFilter, string[]> = {
   "Job Type": ["All", "Internship", "Full-time", "Freelance", "Contract"],
-  "Experience": ["Fresher", "0–1 yr", "1–3 yrs", "3–5 yrs", "5+ yrs"],
+  Experience: ["Fresher", "0–1 yr", "1–3 yrs", "3–5 yrs", "5+ yrs"],
   "Salary / Stipend": [],
-  "Location": [],
-  "Company Category": ["Design House", "Couture Label", "Export House", "Retail Brand", "International Brand", "Textile Mill", "Accessories Brand", "D2C / Startup", "Craft NGO", "Film & Costume"],
-  "Design Domain": ["Fashion Design", "Textile Design", "Knitwear", "Accessories", "Surface & Print", "Sustainable Fashion", "Buying & Merch", "Fashion Communication", "Costume Design"],
+  Location: [],
+  "Company Category": [
+    "Design House",
+    "Couture Label",
+    "Export House",
+    "Retail Brand",
+    "International Brand",
+    "Textile Mill",
+    "Accessories Brand",
+    "D2C / Startup",
+    "Craft NGO",
+    "Film & Costume",
+  ],
+  "Design Domain": [
+    "Fashion Design",
+    "Textile Design",
+    "Knitwear",
+    "Accessories",
+    "Surface & Print",
+    "Sustainable Fashion",
+    "Buying & Merch",
+    "Fashion Communication",
+    "Costume Design",
+  ],
 };
 
 const APPLIED_FILTER_OPTIONS: Record<AppliedFilter, string[]> = {
-  "Status": ["Applied", "Interviewing", "Offered", "Rejected", "Withdrawn"],
+  Status: ["Applied", "Interviewing", "Offered", "Rejected", "Withdrawn"],
   "Date Applied": ["Today", "This Week", "This Month", "Custom Range"],
-  "Company": ["Sabyasachi", "Raw Mango", "Péro", "Anita Dongre", "Masaba", "Gaurav Gupta", "Manish Malhotra", "Papa Don't Preach", "JJ Valya", "Rohit Bal", "Anavila"],
+  Company: [
+    "Sabyasachi",
+    "Raw Mango",
+    "Péro",
+    "Anita Dongre",
+    "Masaba",
+    "Gaurav Gupta",
+    "Manish Malhotra",
+    "Papa Don't Preach",
+    "JJ Valya",
+    "Rohit Bal",
+    "Anavila",
+  ],
   "Job Type": ["Full-time", "Internship", "Contract"],
   "Work Mode": ["Remote", "Hybrid", "On-site"],
 };
 
-const INTERNSHIP_STIPENDS = ["₹5k–10k/mo", "₹10k–15k/mo", "₹15k–25k/mo", "₹25k+/mo"];
-const FULLTIME_LPA = ["0–3 LPA", "3–6 LPA", "6–10 LPA", "10–15 LPA", "15–20 LPA", "20+ LPA"];
+const INTERNSHIP_STIPENDS = [
+  "₹5k–10k/mo",
+  "₹10k–15k/mo",
+  "₹15k–25k/mo",
+  "₹25k+/mo",
+];
+const FULLTIME_LPA = [
+  "0–3 LPA",
+  "3–6 LPA",
+  "6–10 LPA",
+  "10–15 LPA",
+  "15–20 LPA",
+  "20+ LPA",
+];
 const LOCATION_MODES = ["Remote", "On-site", "Hybrid"];
-const LOCATION_CITIES = ["Mumbai", "New Delhi", "Kolkata", "Bangalore", "Chennai", "Hyderabad", "Jaipur", "Varanasi"];
+const LOCATION_CITIES = [
+  "Mumbai",
+  "New Delhi",
+  "Kolkata",
+  "Bangalore",
+  "Chennai",
+  "Hyderabad",
+  "Jaipur",
+  "Varanasi",
+];
 
 const INIT_DISCOVER: Record<DiscoverFilter, Set<string>> = {
-  "Job Type": new Set(), "Experience": new Set(), "Salary / Stipend": new Set(),
-  "Location": new Set(), "Company Category": new Set(), "Design Domain": new Set(),
+  "Job Type": new Set(),
+  Experience: new Set(),
+  "Salary / Stipend": new Set(),
+  Location: new Set(),
+  "Company Category": new Set(),
+  "Design Domain": new Set(),
 };
 const INIT_APPLIED: Record<AppliedFilter, Set<string>> = {
-  "Status": new Set(), "Date Applied": new Set(), "Company": new Set(),
-  "Job Type": new Set(), "Work Mode": new Set(),
+  Status: new Set(),
+  "Date Applied": new Set(),
+  Company: new Set(),
+  "Job Type": new Set(),
+  "Work Mode": new Set(),
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -154,13 +563,22 @@ const NON_FASHION_DOMAINS = new Set(["Buying & Merch", "Costume Design"]);
 
 function isOutOfScope(job: Job): boolean {
   const exp = job.expTag.toLowerCase();
-  const highExp = exp.includes("3-5") || exp.includes("4-8") || exp.includes("5-8") || exp.includes("5+") || exp.includes("4+");
+  const highExp =
+    exp.includes("3-5") ||
+    exp.includes("4-8") ||
+    exp.includes("5-8") ||
+    exp.includes("5+") ||
+    exp.includes("4+");
   const nonFashion = !!job.domain && NON_FASHION_DOMAINS.has(job.domain);
   return highExp || nonFashion;
 }
 
-function cloneSets<K extends string>(r: Record<K, Set<string>>): Record<K, Set<string>> {
-  return Object.fromEntries(Object.entries(r).map(([k, v]) => [k, new Set(v as Set<string>)])) as Record<K, Set<string>>;
+function cloneSets<K extends string>(
+  r: Record<K, Set<string>>
+): Record<K, Set<string>> {
+  return Object.fromEntries(
+    Object.entries(r).map(([k, v]) => [k, new Set(v as Set<string>)])
+  ) as Record<K, Set<string>>;
 }
 
 const DETAIL_IMAGE_SETS: [string, string, string][] = [
@@ -175,7 +593,11 @@ function getDetailImages(jobId: string): [string, string, string] {
 }
 
 function logoInitials(company: string): string {
-  return company.split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
+  return company
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
 }
 
 // ─── StatusBar ────────────────────────────────────────────────────────────────
@@ -183,21 +605,45 @@ function logoInitials(company: string): string {
 function StatusBar() {
   return (
     <div className="w-full bg-[#fffeff] flex h-[44px] items-center justify-between px-4 py-2 shrink-0">
-      <p className="font-['Roboto',sans-serif] font-normal text-[14.423px] leading-[20.192px] text-[#1a1128] tracking-[-0.3077px]">9:41</p>
+      <p className="font-['Roboto',sans-serif] font-normal text-[14.423px] leading-[20.192px] text-[#1a1128] tracking-[-0.3077px]">
+        9:41
+      </p>
       <div className="flex gap-[2px] items-center shrink-0">
         <div className="h-[15.385px] relative w-[19.231px]">
-          <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 19.2308 15.3846">
+          <svg
+            className="absolute block inset-0 size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 19.2308 15.3846"
+          >
             <path d={SIGNAL_BARS} fill="#1A1128" />
           </svg>
         </div>
         <div className="relative size-[15.385px]">
-          <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 15.3846 15.3846">
+          <svg
+            className="absolute block inset-0 size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 15.3846 15.3846"
+          >
             <path d={SIGNAL_WIFI} fill="#1A1128" />
           </svg>
         </div>
         <div className="h-[15.385px] relative w-[24.038px]">
-          <svg className="absolute block inset-0 size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 24.0385 15.3846">
-            <path d={BATTERY_OUTLINE} opacity="0.35" stroke="#9D94AA" strokeOpacity="0.4" strokeWidth="0.961538" fill="none" />
+          <svg
+            className="absolute block inset-0 size-full"
+            fill="none"
+            preserveAspectRatio="none"
+            viewBox="0 0 24.0385 15.3846"
+          >
+            <path
+              d={BATTERY_OUTLINE}
+              opacity="0.35"
+              stroke="#9D94AA"
+              strokeOpacity="0.4"
+              strokeWidth="0.961538"
+              fill="none"
+            />
             <path d={BATTERY_TIP} fill="#1A1128" opacity="0.4" />
             <path d={BATTERY_FILL} fill="#1A1128" />
           </svg>
@@ -209,55 +655,29 @@ function StatusBar() {
 
 // ─── Bottom nav ───────────────────────────────────────────────────────────────
 
-function BottomNav({ active }: { active: "home" | "jobs" }) {
-  const navigate = useNavigate();
-  return (
-    <div className="sticky bottom-0 z-10 bg-white shadow-[0px_-1px_2px_rgba(200,192,212,0.6)] flex flex-col items-center">
-      <div className="w-full flex items-center justify-around px-4 h-[68px]">
-        <button onClick={() => navigate("/home/feed")} className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer">
-          <House size={24} color={active === "home" ? "#1A1128" : "#6B5F7A"} weight={active === "home" ? "fill" : "regular"} />
-          <span className={`font-['Manrope',sans-serif] text-[14px] leading-[21px] ${active === "home" ? "font-medium text-[#1a1128] tracking-[0.14px]" : "font-normal text-[#6b5f7a]"}`}>Home</span>
-        </button>
-        <button className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer" onClick={() => navigate("/jobs")}>
-          <Briefcase size={24} color={active === "jobs" ? "#1A1128" : "#6B5F7A"} weight={active === "jobs" ? "fill" : "regular"} />
-          <span className={`font-['Manrope',sans-serif] text-[14px] leading-[21px] ${active === "jobs" ? "font-medium text-[#1a1128] tracking-[0.14px]" : "font-normal text-[#6b5f7a]"}`}>Jobs</span>
-        </button>
-        <button className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer">
-          <Plus size={24} color="#6B5F7A" />
-          <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Post</span>
-        </button>
-        <button onClick={() => navigate("/mentors")} className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer">
-          <Users size={24} color="#6B5F7A" />
-          <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Mentors</span>
-        </button>
-        <button className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer" onClick={() => navigate("/profile")}>
-          <div className="size-6 flex items-center justify-center">
-            <img src={imgProfileNav} alt="" className="size-[18px] rounded-full object-cover" />
-          </div>
-          <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Profile</span>
-        </button>
-      </div>
-      <div className="h-[46px] w-full bg-white flex items-end justify-center pb-[7.69px]">
-        <div className="bg-[#1a1128] h-[4.808px] rounded-[200px] w-[128.846px]" />
-      </div>
-    </div>
-  );
-}
 
 // ─── Logo cell ────────────────────────────────────────────────────────────────
 
 function LogoCell({ job, size }: { job: Job; size: number }) {
-  const cls = size === 84
-    ? "relative rounded-[8px] shrink-0 size-[84px] border border-[#e2d9ef] overflow-hidden"
-    : "overflow-clip relative rounded-[8px] shrink-0 size-[54px] border border-[#e2d9ef]";
+  const cls =
+    size === 84
+      ? "relative rounded-[8px] shrink-0 size-[84px] border border-[#e2d9ef] overflow-hidden"
+      : "overflow-clip relative rounded-[8px] shrink-0 size-[54px] border border-[#e2d9ef]";
   return (
     <div className={cls}>
       {job.logo ? (
-        <img alt="" className="absolute inset-0 w-full h-full object-cover rounded-[8px]" src={job.logo} />
+        <img
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover rounded-[8px]"
+          src={job.logo}
+        />
       ) : (
         <div
           className="absolute inset-0 flex items-center justify-center rounded-[8px] text-white font-bold"
-          style={{ backgroundColor: job.logoColor ?? "#7D3AEA", fontSize: size === 84 ? 20 : 14 }}
+          style={{
+            backgroundColor: job.logoColor ?? "#7D3AEA",
+            fontSize: size === 84 ? 20 : 14,
+          }}
         >
           {logoInitials(job.company)}
         </div>
@@ -268,8 +688,16 @@ function LogoCell({ job, size }: { job: Job; size: number }) {
 
 // ─── Job card ─────────────────────────────────────────────────────────────────
 
-function JobCard({ job, applied, onApply, onViewDetails }: {
-  job: Job; applied: boolean; onApply: () => void; onViewDetails: () => void;
+function JobCard({
+  job,
+  applied,
+  onApply,
+  onViewDetails,
+}: {
+  job: Job;
+  applied: boolean;
+  onApply: () => void;
+  onViewDetails: () => void;
 }) {
   return (
     <div className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]">
@@ -278,8 +706,12 @@ function JobCard({ job, applied, onApply, onViewDetails }: {
           <div className="flex flex-[1_0_0] gap-[12px] items-center pt-[4px] min-w-px">
             <LogoCell job={job} size={54} />
             <div className="flex flex-col gap-[2px] flex-1 min-w-px">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate">{job.title}</p>
-              <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] truncate">{job.company}</p>
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate">
+                {job.title}
+              </p>
+              <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+                {job.company}
+              </p>
             </div>
           </div>
           <button className="p-[8px] shrink-0 cursor-pointer">
@@ -288,32 +720,55 @@ function JobCard({ job, applied, onApply, onViewDetails }: {
         </div>
         <div className="flex gap-[16px] items-center w-full">
           {job.salary && (
-            <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] whitespace-nowrap">{job.salary}</span>
+            <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] whitespace-nowrap">
+              {job.salary}
+            </span>
           )}
           <div className="flex gap-[8px] items-center">
-            <span className="bg-[#f7f4fa] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] rounded-[2px] whitespace-nowrap px-[8px] py-[4px]">{job.expTag}</span>
-            <span className="bg-[#f4f7ff] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] rounded-[2px] whitespace-nowrap px-[8px] py-[4px]">{job.typeTag}</span>
+            <span className="bg-[#f7f4fa] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] rounded-[2px] whitespace-nowrap px-[8px] py-[4px]">
+              {job.expTag}
+            </span>
+            <span className="bg-[#f4f7ff] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] rounded-[2px] whitespace-nowrap px-[8px] py-[4px]">
+              {job.typeTag}
+            </span>
           </div>
         </div>
         <div className="flex flex-wrap gap-x-[8px] items-center">
-          <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">{job.location}</span>
-          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">· Posted {job.posted}</span>
-          {job.promoted && <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">· Promoted</span>}
+          <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
+            {job.location}
+          </span>
+          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+            · Posted {job.posted}
+          </span>
+          {job.promoted && (
+            <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+              · Promoted
+            </span>
+          )}
         </div>
       </div>
       <div className="flex gap-[12px] items-center justify-end w-full">
-        <button onClick={onViewDetails} className="bg-[#fffeff] flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] cursor-pointer">
-          <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px] whitespace-nowrap">View Details</span>
+        <button
+          onClick={onViewDetails}
+          className="bg-[#fffeff] flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] cursor-pointer"
+        >
+          <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px] whitespace-nowrap">
+            View Details
+          </span>
         </button>
         <button
           onClick={onApply}
           disabled={applied}
           className={`flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] w-[110px] cursor-pointer transition-colors ${
-            applied ? "bg-[#D6F5DD] border border-[#208436]" : "bg-white border border-[#7d3aea]"
+            applied
+              ? "bg-[#D6F5DD] border border-[#208436]"
+              : "bg-white border border-[#7d3aea]"
           }`}
         >
           {applied && <Check size={14} color="#208436" weight="bold" />}
-          <span className={`font-['Manrope',sans-serif] font-semibold text-[14px] leading-[20px] tracking-[0.14px] whitespace-nowrap ${applied ? "text-[#208436]" : "text-[#7d3aea]"}`}>
+          <span
+            className={`font-['Manrope',sans-serif] font-semibold text-[14px] leading-[20px] tracking-[0.14px] whitespace-nowrap ${applied ? "text-[#208436]" : "text-[#7d3aea]"}`}
+          >
             {applied ? "Applied" : "Apply"}
           </span>
         </button>
@@ -324,7 +779,13 @@ function JobCard({ job, applied, onApply, onViewDetails }: {
 
 // ─── Out-of-scope toast (Figma exact: _fragment/toast-out-of-scope-job) ──────
 
-function OutOfScopeToast({ onDismiss, onContinue }: { onDismiss: () => void; onContinue: () => void }) {
+function OutOfScopeToast({
+  onDismiss,
+  onContinue,
+}: {
+  onDismiss: () => void;
+  onContinue: () => void;
+}) {
   return (
     <div className="fixed bottom-[90px] left-1/2 -translate-x-1/2 z-[60] w-[calc(100%-32px)] max-w-[440px]">
       <div className="bg-[#fef0d2] drop-shadow-[0px_1px_2px_rgba(26,26,26,0.6)] relative rounded-[8px] w-full border border-[#a26807]">
@@ -335,11 +796,16 @@ function OutOfScopeToast({ onDismiss, onContinue }: { onDismiss: () => void; onC
             </p>
             <div className="flex items-end py-[12px] w-full">
               <button onClick={onContinue} className="cursor-pointer">
-                <span className="font-['Manrope',sans-serif] font-semibold text-[#a26807] text-[14px] leading-[20px] tracking-[0.14px]">Continue to Apply</span>
+                <span className="font-['Manrope',sans-serif] font-semibold text-[#a26807] text-[14px] leading-[20px] tracking-[0.14px]">
+                  Continue to Apply
+                </span>
               </button>
             </div>
           </div>
-          <button onClick={onDismiss} className="cursor-pointer flex items-center p-[8px] shrink-0">
+          <button
+            onClick={onDismiss}
+            className="cursor-pointer flex items-center p-[8px] shrink-0"
+          >
             <X size={24} color="#A26807" />
           </button>
         </div>
@@ -350,7 +816,13 @@ function OutOfScopeToast({ onDismiss, onContinue }: { onDismiss: () => void; onC
 
 // ─── Application status modal (_component/application-status-modal) ──────────
 
-function ApplicationStatusModal({ onClose, onContinueApplying }: { onClose: () => void; onContinueApplying: () => void }) {
+function ApplicationStatusModal({
+  onClose,
+  onContinueApplying,
+}: {
+  onClose: () => void;
+  onContinueApplying: () => void;
+}) {
   return (
     <div className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)] flex items-center justify-center px-[16px]">
       <div className="bg-white drop-shadow-[0px_4px_2px_rgba(200,192,212,0.6)] flex flex-col gap-[36px] items-center justify-center px-[16px] py-[24px] rounded-[8px] w-full max-w-[358px] border border-[rgba(157,148,170,0.4)]">
@@ -362,31 +834,45 @@ function ApplicationStatusModal({ onClose, onContinueApplying }: { onClose: () =
             </div>
           </div>
           <div className="flex flex-col gap-[8px] items-start w-full text-center">
-            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">Your application is sent</p>
-            <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px] w-full">We'll notify you of any updates.</p>
+            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+              Your application is sent
+            </p>
+            <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px] w-full">
+              We'll notify you of any updates.
+            </p>
           </div>
         </div>
 
         {/* application progress */}
         <div className="bg-[#f7f4fa] rounded-[4px] w-full">
           <div className="flex flex-col gap-[24px] items-center justify-center px-[16px] py-[12px]">
-            <p className="font-['Manrope',sans-serif] font-semibold text-[#433059] text-[18px] leading-[28px] text-center w-full">Application status</p>
+            <p className="font-['Manrope',sans-serif] font-semibold text-[#433059] text-[18px] leading-[28px] text-center w-full">
+              Application status
+            </p>
             <div className="flex gap-[16px] items-start w-full">
               <div className="flex flex-col gap-[12px] items-center shrink-0 w-[49px]">
                 <div className="size-[12px] rounded-full bg-[#5E28B5]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center w-full">Applied</p>
+                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center w-full">
+                  Applied
+                </p>
               </div>
               <div className="flex flex-col gap-[12px] items-center shrink-0">
                 <div className="size-[12px] rounded-full bg-[#6B5F7A]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">In review</p>
+                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">
+                  In review
+                </p>
               </div>
               <div className="flex flex-col gap-[12px] items-center shrink-0">
                 <div className="size-[12px] rounded-full bg-[#6B5F7A]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">Shortlisted</p>
+                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">
+                  Shortlisted
+                </p>
               </div>
               <div className="flex flex-col gap-[12px] items-center shrink-0">
                 <div className="size-[12px] rounded-full bg-[#6B5F7A]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">Decision</p>
+                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">
+                  Decision
+                </p>
               </div>
             </div>
           </div>
@@ -398,13 +884,17 @@ function ApplicationStatusModal({ onClose, onContinueApplying }: { onClose: () =
             onClick={onClose}
             className="bg-white flex h-[48px] items-center justify-center px-[16px] py-[12px] rounded-[8px] w-[112px] shrink-0 cursor-pointer border border-[#7d3aea]"
           >
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">Close</span>
+            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
+              Close
+            </span>
           </button>
           <button
             onClick={onContinueApplying}
             className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] flex flex-1 h-[48px] items-center justify-center px-[16px] py-[12px] rounded-[8px] cursor-pointer min-w-px"
           >
-            <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">Continue Applying</span>
+            <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
+              Continue Applying
+            </span>
           </button>
         </div>
       </div>
@@ -418,16 +908,30 @@ function NoResultsState() {
   return (
     <div className="flex flex-col gap-[64px] items-center px-[16px] py-[28px] w-full">
       <div className="aspect-[277/266] mix-blend-darken relative w-full">
-        <img alt="" className="absolute inset-0 max-w-none object-bottom size-full pointer-events-none" src={imgNotFound} />
+        <img
+          alt=""
+          className="absolute inset-0 max-w-none object-bottom size-full pointer-events-none"
+          src={imgNotFound}
+        />
       </div>
-      <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] text-center w-full">No matches this time</p>
+      <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] text-center w-full">
+        No matches this time
+      </p>
     </div>
   );
 }
 
 // ─── Filter chip ──────────────────────────────────────────────────────────────
 
-function FilterChip({ label, selected, onClick }: { label: string; selected: boolean; onClick: () => void }) {
+function FilterChip({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
@@ -436,7 +940,9 @@ function FilterChip({ label, selected, onClick }: { label: string; selected: boo
       }`}
     >
       {selected && <Check size={14} color="#7D3AEA" weight="bold" />}
-      <span className={`font-['Manrope',sans-serif] text-[16px] leading-[25px] tracking-[0.16px] ${selected ? "font-medium text-[#1a1128]" : "font-normal text-[#6b5f7a]"}`}>
+      <span
+        className={`font-['Manrope',sans-serif] text-[16px] leading-[25px] tracking-[0.16px] ${selected ? "font-medium text-[#1a1128]" : "font-normal text-[#6b5f7a]"}`}
+      >
         {label}
       </span>
     </button>
@@ -445,29 +951,40 @@ function FilterChip({ label, selected, onClick }: { label: string; selected: boo
 
 // ─── Filter bottom sheet ──────────────────────────────────────────────────────
 
-function FilterSheet({ jobsTab, onClose, onShowResults }: {
+function FilterSheet({
+  jobsTab,
+  onClose,
+  onShowResults,
+}: {
   jobsTab: JobsTab;
   onClose: () => void;
   onShowResults: (filters: ActiveFilters) => void;
 }) {
   const isDiscover = jobsTab === "Discover";
-  const [discoverFilter, setDiscoverFilter] = useState<DiscoverFilter>("Job Type");
+  const [discoverFilter, setDiscoverFilter] =
+    useState<DiscoverFilter>("Job Type");
   const [appliedFilter, setAppliedFilter] = useState<AppliedFilter>("Status");
   const [companySearch, setCompanySearch] = useState("");
-  const [discoverSel, setDiscoverSel] = useState<Record<DiscoverFilter, Set<string>>>(cloneSets(INIT_DISCOVER));
-  const [appliedSel, setAppliedSel] = useState<Record<AppliedFilter, Set<string>>>(cloneSets(INIT_APPLIED));
+  const [discoverSel, setDiscoverSel] = useState<
+    Record<DiscoverFilter, Set<string>>
+  >(cloneSets(INIT_DISCOVER));
+  const [appliedSel, setAppliedSel] = useState<
+    Record<AppliedFilter, Set<string>>
+  >(cloneSets(INIT_APPLIED));
 
   function toggleDiscover(opt: string) {
     setDiscoverSel((prev) => {
       const next = new Set(prev[discoverFilter]);
-      if (next.has(opt)) next.delete(opt); else next.add(opt);
+      if (next.has(opt)) next.delete(opt);
+      else next.add(opt);
       return { ...prev, [discoverFilter]: next };
     });
   }
   function toggleApplied(opt: string) {
     setAppliedSel((prev) => {
       const next = new Set(prev[appliedFilter]);
-      if (next.has(opt)) next.delete(opt); else next.add(opt);
+      if (next.has(opt)) next.delete(opt);
+      else next.add(opt);
       return { ...prev, [appliedFilter]: next };
     });
   }
@@ -487,15 +1004,33 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
         return (
           <div className="flex flex-col gap-[20px] px-[16px] pt-[20px] pb-[20px] w-full">
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">Internship Stipend</p>
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+                Internship Stipend
+              </p>
               <div className="flex flex-wrap gap-[12px]">
-                {INTERNSHIP_STIPENDS.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleDiscover(opt)} />)}
+                {INTERNSHIP_STIPENDS.map((opt) => (
+                  <FilterChip
+                    key={opt}
+                    label={opt}
+                    selected={sel.has(opt)}
+                    onClick={() => toggleDiscover(opt)}
+                  />
+                ))}
               </div>
             </div>
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">Full-time (LPA)</p>
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+                Full-time (LPA)
+              </p>
               <div className="flex flex-wrap gap-[12px]">
-                {FULLTIME_LPA.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleDiscover(opt)} />)}
+                {FULLTIME_LPA.map((opt) => (
+                  <FilterChip
+                    key={opt}
+                    label={opt}
+                    selected={sel.has(opt)}
+                    onClick={() => toggleDiscover(opt)}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -506,15 +1041,33 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
         return (
           <div className="flex flex-col gap-[20px] px-[16px] pt-[20px] pb-[20px] w-full">
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">Work Mode</p>
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+                Work Mode
+              </p>
               <div className="flex flex-wrap gap-[12px]">
-                {LOCATION_MODES.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleDiscover(opt)} />)}
+                {LOCATION_MODES.map((opt) => (
+                  <FilterChip
+                    key={opt}
+                    label={opt}
+                    selected={sel.has(opt)}
+                    onClick={() => toggleDiscover(opt)}
+                  />
+                ))}
               </div>
             </div>
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">City</p>
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+                City
+              </p>
               <div className="flex flex-wrap gap-[12px]">
-                {LOCATION_CITIES.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleDiscover(opt)} />)}
+                {LOCATION_CITIES.map((opt) => (
+                  <FilterChip
+                    key={opt}
+                    label={opt}
+                    selected={sel.has(opt)}
+                    onClick={() => toggleDiscover(opt)}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -524,21 +1077,38 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
       const sel = discoverSel[discoverFilter];
       return (
         <div className="flex flex-wrap gap-[12px] px-[16px] pt-[20px] pb-[20px] w-full">
-          {opts.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleDiscover(opt)} />)}
+          {opts.map((opt) => (
+            <FilterChip
+              key={opt}
+              label={opt}
+              selected={sel.has(opt)}
+              onClick={() => toggleDiscover(opt)}
+            />
+          ))}
         </div>
       );
     } else {
       if (appliedFilter === "Company") {
         const sel = appliedSel["Company"];
-        const companies = APPLIED_FILTER_OPTIONS["Company"].filter((c) => c.toLowerCase().includes(companySearch.toLowerCase()));
+        const companies = APPLIED_FILTER_OPTIONS["Company"].filter((c) =>
+          c.toLowerCase().includes(companySearch.toLowerCase())
+        );
         return (
           <div className="flex flex-col gap-[12px] px-[16px] pt-[20px] pb-[20px] w-full">
-            <div className="bg-white rounded-[4px] border border-[rgba(157,148,170,0.4)] flex items-center gap-[8px] px-[12px] h-[40px]">
-              <MagnifyingGlass size={16} color="#6B5F7A" />
-              <input value={companySearch} onChange={(e) => setCompanySearch(e.target.value)} placeholder="Search company" className="flex-1 font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[14px] leading-[21px] outline-none bg-transparent placeholder:text-[#9d94aa]" />
-            </div>
+            <SearchBar
+              placeholder="Search company"
+              value={companySearch}
+              onChange={setCompanySearch}
+            />
             <div className="flex flex-wrap gap-[12px]">
-              {companies.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleApplied(opt)} />)}
+              {companies.map((opt) => (
+                <FilterChip
+                  key={opt}
+                  label={opt}
+                  selected={sel.has(opt)}
+                  onClick={() => toggleApplied(opt)}
+                />
+              ))}
             </div>
           </div>
         );
@@ -547,7 +1117,14 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
       const sel = appliedSel[appliedFilter];
       return (
         <div className="flex flex-wrap gap-[12px] px-[16px] pt-[20px] pb-[20px] w-full">
-          {opts.map((opt) => <FilterChip key={opt} label={opt} selected={sel.has(opt)} onClick={() => toggleApplied(opt)} />)}
+          {opts.map((opt) => (
+            <FilterChip
+              key={opt}
+              label={opt}
+              selected={sel.has(opt)}
+              onClick={() => toggleApplied(opt)}
+            />
+          ))}
         </div>
       );
     }
@@ -555,25 +1132,43 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
 
   return (
     <>
-      <div className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]" onClick={onClose} />
+      <div
+        className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
+        onClick={onClose}
+      />
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
         </div>
         <div className="flex items-center px-[16px] pb-[12px] w-full">
-          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">Filter</p>
+          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">
+            Filter
+          </p>
         </div>
         <div className="w-full border-b border-[#e2d9ef]">
-          <div className="flex gap-[8px] items-center px-[16px] pb-[12px] overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          <div
+            className="flex gap-[8px] items-center px-[16px] pb-[12px] overflow-x-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
             {(isDiscover ? DISCOVER_FILTERS : APPLIED_FILTERS).map((f) => {
-              const isActive = isDiscover ? f === discoverFilter : f === appliedFilter;
+              const isActive = isDiscover
+                ? f === discoverFilter
+                : f === appliedFilter;
               return (
                 <button
                   key={f}
-                  onClick={() => isDiscover ? setDiscoverFilter(f as DiscoverFilter) : setAppliedFilter(f as AppliedFilter)}
+                  onClick={() =>
+                    isDiscover
+                      ? setDiscoverFilter(f as DiscoverFilter)
+                      : setAppliedFilter(f as AppliedFilter)
+                  }
                   className={`flex h-[40px] items-center justify-center px-[16px] py-[10px] rounded-[12px] shrink-0 cursor-pointer border whitespace-nowrap ${isActive ? "bg-[#b090ef] border-[#7d3aea]" : "bg-white border-[#e2d9ef]"}`}
                 >
-                  <span className={`font-['Manrope',sans-serif] text-[15px] leading-[22px] tracking-[0.15px] ${isActive ? "font-medium text-[#2d2040]" : "font-normal text-[#433059]"}`}>{f}</span>
+                  <span
+                    className={`font-['Manrope',sans-serif] text-[15px] leading-[22px] tracking-[0.15px] ${isActive ? "font-medium text-[#2d2040]" : "font-normal text-[#433059]"}`}
+                  >
+                    {f}
+                  </span>
                 </button>
               );
             })}
@@ -583,11 +1178,21 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
           {renderSecondaryContent()}
         </div>
         <div className="flex gap-[16px] items-center pt-[12px] pb-[24px] px-[16px] w-full border-t border-[#f0ecf7]">
-          <button onClick={clearAll} className="bg-[#fffeff] flex h-[48px] items-center justify-center px-[16px] rounded-[8px] shrink-0 cursor-pointer">
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">Clear All</span>
+          <button
+            onClick={clearAll}
+            className="bg-[#fffeff] flex h-[48px] items-center justify-center px-[16px] rounded-[8px] shrink-0 cursor-pointer"
+          >
+            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
+              Clear All
+            </span>
           </button>
-          <button onClick={handleShowResults} className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] flex h-[48px] flex-1 items-center justify-center px-[16px] rounded-[8px] cursor-pointer">
-            <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">Show Results</span>
+          <button
+            onClick={handleShowResults}
+            className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] flex h-[48px] flex-1 items-center justify-center px-[16px] rounded-[8px] cursor-pointer"
+          >
+            <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
+              Show Results
+            </span>
           </button>
         </div>
         <div className="bg-white h-[46px] w-full flex items-end justify-center pb-[7.69px]">
@@ -600,15 +1205,33 @@ function FilterSheet({ jobsTab, onClose, onShowResults }: {
 
 // ─── Tab bar ──────────────────────────────────────────────────────────────────
 
-function TabBar<T extends string>({ tabs, active, onChange }: { tabs: T[]; active: T; onChange: (t: T) => void }) {
+function TabBar<T extends string>({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: T[];
+  active: T;
+  onChange: (t: T) => void;
+}) {
   return (
     <div className="flex items-end border-b border-[#e2d9ef] bg-[#fffeff]">
       {tabs.map((tab) => {
         const isActive = tab === active;
         return (
-          <button key={tab} onClick={() => onChange(tab)} className="flex flex-1 flex-col items-center justify-end h-[44px] px-[20px] cursor-pointer gap-0">
-            <span className={`font-['Manrope',sans-serif] text-[16px] pb-[8px] leading-[25px] ${isActive ? "font-semibold text-[#1a1128]" : "font-normal text-[#6b5f7a]"}`}>{tab}</span>
-            {isActive && <div className="h-[2px] w-full bg-[#7d3aea] rounded-t-[2px]" />}
+          <button
+            key={tab}
+            onClick={() => onChange(tab)}
+            className="flex flex-1 flex-col items-center justify-end h-[44px] px-[20px] cursor-pointer gap-0"
+          >
+            <span
+              className={`font-['Manrope',sans-serif] text-[16px] pb-[8px] leading-[25px] ${isActive ? "font-semibold text-[#1a1128]" : "font-normal text-[#6b5f7a]"}`}
+            >
+              {tab}
+            </span>
+            {isActive && (
+              <div className="h-[2px] w-full bg-[#7d3aea] rounded-t-[2px]" />
+            )}
           </button>
         );
       })}
@@ -620,8 +1243,13 @@ function TabBar<T extends string>({ tabs, active, onChange }: { tabs: T[]; activ
 
 function ViewMoreBtn({ onClick }: { onClick: () => void }) {
   return (
-    <button onClick={onClick} className="h-[48px] rounded-[8px] w-full flex gap-[8px] items-center justify-center cursor-pointer">
-      <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">View More</span>
+    <button
+      onClick={onClick}
+      className="h-[48px] rounded-[8px] w-full flex gap-[8px] items-center justify-center cursor-pointer"
+    >
+      <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
+        View More
+      </span>
       <CaretDown size={24} color="#7D3AEA" />
     </button>
   );
@@ -631,47 +1259,82 @@ function ViewMoreBtn({ onClick }: { onClick: () => void }) {
 
 const PAGE_SIZE = 3;
 
-function ListingView({ activeTab, onTabChange, appliedIds, onApply, onViewDetails, onFilter, isFiltered }: {
-  activeTab: JobsTab; onTabChange: (t: JobsTab) => void;
-  appliedIds: Set<string>; onApply: (job: Job) => void; onViewDetails: (job: Job) => void;
-  onFilter: () => void; isFiltered: boolean;
+function ListingView({
+  activeTab,
+  onTabChange,
+  appliedIds,
+  onApply,
+  onViewDetails,
+  onFilter,
+  isFiltered,
+}: {
+  activeTab: JobsTab;
+  onTabChange: (t: JobsTab) => void;
+  appliedIds: Set<string>;
+  onApply: (job: Job) => void;
+  onViewDetails: (job: Job) => void;
+  onFilter: () => void;
+  isFiltered: boolean;
 }) {
   const [visibleRecent, setVisibleRecent] = useState(PAGE_SIZE);
   const [visibleLatest, setVisibleLatest] = useState(PAGE_SIZE);
   const [visibleFiltered, setVisibleFiltered] = useState(PAGE_SIZE);
 
-  const searchPlaceholder = activeTab === "Discover" ? "Search job, brand, domain" : "Search job, brand";
+  const searchPlaceholder =
+    activeTab === "Discover"
+      ? "Search job, brand, domain"
+      : "Search job, brand";
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden h-full">
       <div className="shrink-0 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
         <StatusBar />
         <div className="flex gap-[12px] items-center px-[16px] py-[12px]">
-          <div className="flex-1 bg-white rounded-[4px] border border-[rgba(157,148,170,0.4)] flex items-center gap-[8px] px-[16px] py-[4px] h-[40px]">
-            <MagnifyingGlass size={16} color="#6B5F7A" />
-            <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">{searchPlaceholder}</span>
-          </div>
-          <button onClick={onFilter} className="p-[8px] cursor-pointer shrink-0">
+          <SearchBar placeholder={searchPlaceholder} className="flex-1" />
+          <button
+            onClick={onFilter}
+            className="p-[8px] cursor-pointer shrink-0"
+          >
             <Funnel size={24} color="#6B5F7A" />
           </button>
         </div>
-        <TabBar tabs={["Discover", "Applied"] as JobsTab[]} active={activeTab} onChange={onTabChange} />
+        <TabBar
+          tabs={["Discover", "Applied"] as JobsTab[]}
+          active={activeTab}
+          onChange={onTabChange}
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto">
         {activeTab === "Discover" ? (
           isFiltered ? (
             <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-              <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">Jobs matching your search</p>
-              {filteredJobs.length === 0 ? <NoResultsState /> : (
+              <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                Jobs matching your search
+              </p>
+              {filteredJobs.length === 0 ? (
+                <NoResultsState />
+              ) : (
                 <>
                   <div className="flex flex-col gap-[4px] items-start w-full">
                     {filteredJobs.slice(0, visibleFiltered).map((job) => (
-                      <JobCard key={job.id} job={job} applied={appliedIds.has(job.id)} onApply={() => onApply(job)} onViewDetails={() => onViewDetails(job)} />
+                      <JobCard
+                        key={job.id}
+                        job={job}
+                        applied={appliedIds.has(job.id)}
+                        onApply={() => onApply(job)}
+                        onViewDetails={() => onViewDetails(job)}
+                      />
                     ))}
                   </div>
                   {visibleFiltered < filteredJobs.length && (
-                    <ViewMoreBtn onClick={() => setVisibleFiltered((v) => Math.min(v + PAGE_SIZE, filteredJobs.length))} />
+                    <ViewMoreBtn
+                      onClick={() =>
+                        setVisibleFiltered((v) =>
+                          Math.min(v + PAGE_SIZE, filteredJobs.length)
+                        )
+                      }
+                    />
                   )}
                 </>
               )}
@@ -679,58 +1342,109 @@ function ListingView({ activeTab, onTabChange, appliedIds, onApply, onViewDetail
           ) : (
             <>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">Recent jobs</p>
+                <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                  Recent jobs
+                </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
                   {recentJobs.slice(0, visibleRecent).map((job) => (
-                    <JobCard key={job.id} job={job} applied={appliedIds.has(job.id)} onApply={() => onApply(job)} onViewDetails={() => onViewDetails(job)} />
+                    <JobCard
+                      key={job.id}
+                      job={job}
+                      applied={appliedIds.has(job.id)}
+                      onApply={() => onApply(job)}
+                      onViewDetails={() => onViewDetails(job)}
+                    />
                   ))}
                 </div>
                 {visibleRecent < recentJobs.length && (
-                  <ViewMoreBtn onClick={() => setVisibleRecent((v) => Math.min(v + PAGE_SIZE, recentJobs.length))} />
+                  <ViewMoreBtn
+                    onClick={() =>
+                      setVisibleRecent((v) =>
+                        Math.min(v + PAGE_SIZE, recentJobs.length)
+                      )
+                    }
+                  />
                 )}
               </div>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-                <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">Latest job openings</p>
+                <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                  Latest job openings
+                </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
                   {latestJobs.slice(0, visibleLatest).map((job) => (
-                    <JobCard key={job.id} job={job} applied={appliedIds.has(job.id)} onApply={() => onApply(job)} onViewDetails={() => onViewDetails(job)} />
+                    <JobCard
+                      key={job.id}
+                      job={job}
+                      applied={appliedIds.has(job.id)}
+                      onApply={() => onApply(job)}
+                      onViewDetails={() => onViewDetails(job)}
+                    />
                   ))}
                 </div>
                 {visibleLatest < latestJobs.length && (
-                  <ViewMoreBtn onClick={() => setVisibleLatest((v) => Math.min(v + PAGE_SIZE, latestJobs.length))} />
+                  <ViewMoreBtn
+                    onClick={() =>
+                      setVisibleLatest((v) =>
+                        Math.min(v + PAGE_SIZE, latestJobs.length)
+                      )
+                    }
+                  />
                 )}
               </div>
             </>
           )
         ) : (
           <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">Under review</p>
+            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+              Under review
+            </p>
             <div className="flex flex-col gap-[4px] items-start w-full">
               {appliedJobs.map((job) => (
-                <div key={job.id} className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]">
+                <div
+                  key={job.id}
+                  className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]"
+                >
                   <div className="flex flex-col gap-[4px] items-start w-full">
                     <div className="flex gap-[8px] items-start w-full">
                       <div className="flex flex-[1_0_0] gap-[12px] items-center pt-[4px] min-w-px">
                         <LogoCell job={job} size={54} />
                         <div className="flex flex-col gap-[2px] flex-1 min-w-px">
-                          <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate">{job.title}</p>
-                          <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] truncate">{job.company}</p>
+                          <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate">
+                            {job.title}
+                          </p>
+                          <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+                            {job.company}
+                          </p>
                         </div>
                       </div>
                     </div>
                     <div className="flex gap-[16px] items-center w-full">
-                      {job.salary && <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] whitespace-nowrap">{job.salary}</span>}
+                      {job.salary && (
+                        <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[16px] leading-[25px] tracking-[0.16px] whitespace-nowrap">
+                          {job.salary}
+                        </span>
+                      )}
                       <div className="flex gap-[8px] items-center">
-                        <span className="bg-[#f7f4fa] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] px-[8px] py-[8px] rounded-[2px] whitespace-nowrap">{job.expTag}</span>
-                        <span className="bg-[#f4f7ff] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] px-[8px] py-[8px] rounded-[2px] whitespace-nowrap">{job.typeTag}</span>
+                        <span className="bg-[#f7f4fa] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] px-[8px] py-[8px] rounded-[2px] whitespace-nowrap">
+                          {job.expTag}
+                        </span>
+                        <span className="bg-[#f4f7ff] font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px] px-[8px] py-[8px] rounded-[2px] whitespace-nowrap">
+                          {job.typeTag}
+                        </span>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-x-[8px] items-center">
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">{job.location}</span>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">· Posted {job.posted}</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
+                        {job.location}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+                        · Posted {job.posted}
+                      </span>
                     </div>
                   </div>
-                  <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] bg-[#f7f4fa] px-[10px] py-[4px] rounded-[4px]">Under Review</span>
+                  <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] bg-[#f7f4fa] px-[10px] py-[4px] rounded-[4px]">
+                    Under Review
+                  </span>
                 </div>
               ))}
             </div>
@@ -743,8 +1457,20 @@ function ListingView({ activeTab, onTabChange, appliedIds, onApply, onViewDetail
 
 // ─── Review card ──────────────────────────────────────────────────────────────
 
-function ReviewCard({ avatar, name, role, rating, title, text }: {
-  avatar: string; name: string; role: string; rating: number; title: string; text: string;
+function ReviewCard({
+  avatar,
+  name,
+  role,
+  rating,
+  title,
+  text,
+}: {
+  avatar: string;
+  name: string;
+  role: string;
+  rating: number;
+  title: string;
+  text: string;
 }) {
   const [expanded, setExpanded] = useState(false);
   const preview = text.slice(0, 110);
@@ -753,27 +1479,50 @@ function ReviewCard({ avatar, name, role, rating, title, text }: {
     <div className="flex flex-col gap-[8px] items-start w-full border-b border-[#e2d9ef] pb-[16px]">
       <div className="flex gap-[12px] items-center w-full">
         <div className="relative shrink-0 size-[54px] rounded-full overflow-hidden border border-[#e2d9ef]">
-          <img alt="" className="absolute inset-0 w-full h-full object-cover" src={avatar} />
+          <img
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover"
+            src={avatar}
+          />
         </div>
         <div className="flex flex-col flex-1 min-w-px">
-          <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate">{name}</p>
-          {role && <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] truncate">{role}</p>}
+          <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+            {name}
+          </p>
+          {role && (
+            <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] truncate">
+              {role}
+            </p>
+          )}
         </div>
       </div>
       <div className="flex gap-[8px] items-center w-full">
-        <p className="flex-1 font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate min-w-px">{title}</p>
+        <p className="flex-1 font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate min-w-px">
+          {title}
+        </p>
         <div className="flex gap-[4px] items-center shrink-0">
           <Star size={12} color="#1A1128" weight="fill" />
-          <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">{rating}</span>
+          <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">
+            {rating}
+          </span>
         </div>
       </div>
       <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
         {expanded ? text : hasMore ? `${preview}…` : text}
       </p>
       {hasMore && (
-        <button onClick={() => setExpanded((v) => !v)} className="flex gap-[6px] items-center cursor-pointer">
-          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">{expanded ? "Read less" : "Read more"}</span>
-          {expanded ? <CaretUp size={14} color="#6B5F7A" /> : <CaretDown size={14} color="#6B5F7A" />}
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="flex gap-[6px] items-center cursor-pointer"
+        >
+          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+            {expanded ? "Read less" : "Read more"}
+          </span>
+          {expanded ? (
+            <CaretUp size={14} color="#6B5F7A" />
+          ) : (
+            <CaretDown size={14} color="#6B5F7A" />
+          )}
         </button>
       )}
     </div>
@@ -782,10 +1531,26 @@ function ReviewCard({ avatar, name, role, rating, title, text }: {
 
 // ─── Detail view ──────────────────────────────────────────────────────────────
 
-function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack, appliedIds, onApplyJob, onViewDetailsJob }: {
-  job: Job; detailTab: DetailTab; onTabChange: (t: DetailTab) => void;
-  applied: boolean; onQuickApply: () => void; onBack: () => void;
-  appliedIds: Set<string>; onApplyJob: (job: Job) => void; onViewDetailsJob: (job: Job) => void;
+function DetailView({
+  job,
+  detailTab,
+  onTabChange,
+  applied,
+  onQuickApply,
+  onBack,
+  appliedIds,
+  onApplyJob,
+  onViewDetailsJob,
+}: {
+  job: Job;
+  detailTab: DetailTab;
+  onTabChange: (t: DetailTab) => void;
+  applied: boolean;
+  onQuickApply: () => void;
+  onBack: () => void;
+  appliedIds: Set<string>;
+  onApplyJob: (job: Job) => void;
+  onViewDetailsJob: (job: Job) => void;
 }) {
   const [descExpanded, setDescExpanded] = useState(false);
   const [visibleReviews, setVisibleReviews] = useState(3);
@@ -798,17 +1563,15 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
     <div className="flex flex-col flex-1 overflow-hidden h-full">
       <div className="shrink-0 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
         <StatusBar />
-        <div className="flex items-center justify-between px-[16px] py-[12px]">
-          <div className="flex gap-[12px] items-center">
-            <button onClick={onBack} className="p-[8px] cursor-pointer shrink-0">
-              <ArrowLeft size={24} color="#1A1128" />
+        <PageHeader
+          title="Job Details"
+          onBack={onBack}
+          rightAction={
+            <button className="p-2 cursor-pointer">
+              <ShareFat size={24} color="#6B5F7A" />
             </button>
-            <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#1a1128] text-[24px] leading-[31px]">Job Details</p>
-          </div>
-          <button className="p-[8px] cursor-pointer shrink-0">
-            <ShareFat size={24} color="#6B5F7A" />
-          </button>
-        </div>
+          }
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -817,47 +1580,88 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
           <LogoCell job={job} size={84} />
           <div className="flex flex-col flex-1 min-w-px">
             <div className="flex gap-[4px] items-center w-full">
-              <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate min-w-px">{job.title}</p>
+              <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] truncate min-w-px">
+                {job.title}
+              </p>
               <div className="flex gap-[4px] h-[18px] items-center shrink-0">
                 <Star size={12} color="#1A1128" weight="fill" />
-                <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">4.2</span>
-                <span className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[12px] leading-[18px] tracking-[0.24px]">(60)</span>
+                <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">
+                  4.2
+                </span>
+                <span className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[12px] leading-[18px] tracking-[0.24px]">
+                  (60)
+                </span>
               </div>
             </div>
-            <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px] truncate">{job.company}</p>
+            <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+              {job.company}
+            </p>
             <div className="flex gap-[4px] items-center mt-[2px]">
-              <span className="font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[14px] leading-[21px]">{job.location}</span>
-              <span className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px]">· Posted {job.posted}</span>
+              <span className="font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[14px] leading-[21px]">
+                {job.location}
+              </span>
+              <span className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px]">
+                · Posted {job.posted}
+              </span>
             </div>
           </div>
         </div>
 
-        <TabBar tabs={["Description", "Reviews"] as DetailTab[]} active={detailTab} onChange={onTabChange} />
+        <TabBar
+          tabs={["Description", "Reviews"] as DetailTab[]}
+          active={detailTab}
+          onChange={onTabChange}
+        />
 
         {detailTab === "Description" ? (
           <div className="flex flex-col gap-[24px] items-center pb-[20px] pt-[16px] px-[16px]">
             {/* AI role snapshot with MagicWand fill icon */}
             <div className="drop-shadow-[0px_1px_2px_rgba(132,111,132,0.12)] flex flex-col items-start w-full">
-              <div className="mb-[-16px] relative rounded-tl-[12px] rounded-tr-[12px] w-full pb-[32px] pt-[16px] px-[16px]" style={{ backgroundImage: "linear-gradient(264.845deg, rgb(247, 244, 250) 5.872%, rgb(239, 233, 252) 88.229%)" }}>
+              <div
+                className="mb-[-16px] relative rounded-tl-[12px] rounded-tr-[12px] w-full pb-[32px] pt-[16px] px-[16px]"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(264.845deg, rgb(247, 244, 250) 5.872%, rgb(239, 233, 252) 88.229%)",
+                }}
+              >
                 <div className="flex gap-[12px] items-center">
                   <MagicWand size={20} color="#1A1128" weight="fill" />
-                  <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px]">Role snapshot</p>
+                  <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px]">
+                    Role snapshot
+                  </p>
                 </div>
               </div>
               <div className="bg-white relative rounded-[12px] w-full border border-[#e2d9ef]">
                 <div className="flex flex-col items-start px-[16px] py-[12px]">
                   <ul className="list-disc pl-[20px] flex flex-col gap-[2px]">
                     <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">Key Work: </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Assist in collections, sketches, textiles, embroidery, fittings, and coordination with artisans & production teams.</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                        Key Work:{" "}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                        Assist in collections, sketches, textiles, embroidery,
+                        fittings, and coordination with artisans & production
+                        teams.
+                      </span>
                     </li>
                     <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">Ideal Candidate: </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Strong appreciation for Indian craftsmanship, detail-oriented, curious, collaborative, and eager to learn.</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                        Ideal Candidate:{" "}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                        Strong appreciation for Indian craftsmanship,
+                        detail-oriented, curious, collaborative, and eager to
+                        learn.
+                      </span>
                     </li>
                     <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">Skills Required: </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Knowledge of textiles & couture, software (Illustrator, Photoshop) & communication skills.</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                        Skills Required:{" "}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                        Knowledge of textiles & couture, software (Illustrator,
+                        Photoshop) & communication skills.
+                      </span>
                     </li>
                   </ul>
                 </div>
@@ -868,14 +1672,26 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
             <div className="flex gap-[8px] items-center w-full">
               <div className="flex flex-col gap-[8px]">
                 <div className="h-[99px] w-[124px] rounded-[4px] overflow-hidden shrink-0 relative">
-                  <img alt="" className="absolute inset-0 w-full h-full object-cover" src={imgs[0]} />
+                  <img
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover"
+                    src={imgs[0]}
+                  />
                 </div>
                 <div className="h-[74px] w-[124px] rounded-[4px] overflow-hidden shrink-0 relative">
-                  <img alt="" className="absolute inset-0 w-full h-full object-cover" src={imgs[1]} />
+                  <img
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover"
+                    src={imgs[1]}
+                  />
                 </div>
               </div>
               <div className="h-[181px] flex-1 rounded-[4px] overflow-hidden relative">
-                <img alt="" className="absolute inset-0 w-full h-full object-cover" src={imgs[2]} />
+                <img
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={imgs[2]}
+                />
               </div>
             </div>
 
@@ -883,14 +1699,30 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
             <div className="flex flex-col gap-[4px] items-start w-full">
               {descExpanded ? (
                 descFull.split("\n\n").map((para, i) => (
-                  <p key={i} className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px] mt-[4px] first:mt-0">{para}</p>
+                  <p
+                    key={i}
+                    className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px] mt-[4px] first:mt-0"
+                  >
+                    {para}
+                  </p>
                 ))
               ) : (
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">{descPreview}…</p>
+                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
+                  {descPreview}…
+                </p>
               )}
-              <button onClick={() => setDescExpanded((v) => !v)} className="flex gap-[6px] items-center mt-[4px] cursor-pointer">
-                <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">{descExpanded ? "Read less" : "Read more"}</span>
-                {descExpanded ? <CaretUp size={14} color="#6B5F7A" /> : <CaretDown size={14} color="#6B5F7A" />}
+              <button
+                onClick={() => setDescExpanded((v) => !v)}
+                className="flex gap-[6px] items-center mt-[4px] cursor-pointer"
+              >
+                <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+                  {descExpanded ? "Read less" : "Read more"}
+                </span>
+                {descExpanded ? (
+                  <CaretUp size={14} color="#6B5F7A" />
+                ) : (
+                  <CaretDown size={14} color="#6B5F7A" />
+                )}
               </button>
             </div>
           </div>
@@ -898,40 +1730,69 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
           <div className="flex flex-col gap-[24px] items-center pb-[20px] pt-[16px] px-[16px]">
             {/* workplace insights with MagicWand fill */}
             <div className="drop-shadow-[0px_1px_2px_rgba(132,111,132,0.12)] flex flex-col items-start w-full">
-              <div className="mb-[-16px] relative rounded-tl-[12px] rounded-tr-[12px] w-full pb-[32px] pt-[16px] px-[16px]" style={{ backgroundImage: "linear-gradient(264.845deg, rgb(254, 240, 210) 5.872%, rgb(254, 250, 225) 88.229%)" }}>
+              <div
+                className="mb-[-16px] relative rounded-tl-[12px] rounded-tr-[12px] w-full pb-[32px] pt-[16px] px-[16px]"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(264.845deg, rgb(254, 240, 210) 5.872%, rgb(254, 250, 225) 88.229%)",
+                }}
+              >
                 <div className="flex gap-[12px] items-center">
                   <MagicWand size={20} color="#1A1128" weight="fill" />
-                  <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px]">Workplace insights</p>
+                  <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px]">
+                    Workplace insights
+                  </p>
                 </div>
               </div>
               <div className="bg-white relative rounded-[12px] w-full border border-[#e2d9ef]">
                 <div className="flex flex-col items-start px-[16px] py-[12px]">
                   <ul className="list-disc pl-[20px] flex flex-col gap-[2px]">
                     <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">Strong mentorship: </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Culture with opportunities to learn and grow from senior designers.</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                        Strong mentorship:{" "}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                        Culture with opportunities to learn and grow from senior
+                        designers.
+                      </span>
                     </li>
                     <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">Fast-paced work: </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Demanding environment that sharpens craft instincts quickly.</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                        Fast-paced work:{" "}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                        Demanding environment that sharpens craft instincts
+                        quickly.
+                      </span>
                     </li>
                     <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">Supportive workplace: </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">Focused on innovation, work–life balance, and employee empowerment.</span>
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                        Supportive workplace:{" "}
+                      </span>
+                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                        Focused on innovation, work–life balance, and employee
+                        empowerment.
+                      </span>
                     </li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {reviewsPool.slice(0, visibleReviews).map((review, i) => <ReviewCard key={i} {...review} />)}
+            {reviewsPool.slice(0, visibleReviews).map((review, i) => (
+              <ReviewCard key={i} {...review} />
+            ))}
 
             {visibleReviews < reviewsPool.length && (
               <button
-                onClick={() => setVisibleReviews((v) => Math.min(v + 3, reviewsPool.length))}
+                onClick={() =>
+                  setVisibleReviews((v) => Math.min(v + 3, reviewsPool.length))
+                }
                 className="h-[48px] rounded-[8px] w-full flex gap-[8px] items-center justify-center cursor-pointer"
               >
-                <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">View More</span>
+                <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
+                  View More
+                </span>
                 <CaretDown size={20} color="#7D3AEA" weight="bold" />
               </button>
             )}
@@ -940,7 +1801,9 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
 
         {/* similar jobs */}
         <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-          <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#2d2040] text-[20px] leading-[28px] w-full">Similar jobs</p>
+          <p className="font-['Roboto_Serif',sans-serif] font-semibold not-italic text-[#2d2040] text-[20px] leading-[28px] w-full">
+            Similar jobs
+          </p>
           <div className="flex flex-col gap-[4px] items-start w-full">
             {similarJobs.map((sj) => (
               <JobCard
@@ -960,17 +1823,23 @@ function DetailView({ job, detailTab, onTabChange, applied, onQuickApply, onBack
       <div className="bg-white shrink-0 shadow-[0px_-1px_2px_rgba(200,192,212,0.6)]">
         <div className="flex gap-[16px] items-start pb-[24px] pt-[12px] px-[16px]">
           <button className="bg-white flex gap-[8px] h-[48px] items-center justify-center px-[16px] py-[12px] rounded-[8px] w-[140px] cursor-pointer border border-[#7d3aea] shrink-0">
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">Save</span>
+            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
+              Save
+            </span>
           </button>
           <button
             onClick={applied ? undefined : onQuickApply}
             disabled={applied}
             className={`flex gap-[8px] h-[48px] flex-1 items-center justify-center px-[16px] py-[12px] rounded-[8px] cursor-pointer transition-colors ${
-              applied ? "bg-[#D6F5DD] border border-[#208436]" : "bg-gradient-to-r from-[#7d3aea] to-[#5e28b5]"
+              applied
+                ? "bg-[#D6F5DD] border border-[#208436]"
+                : "bg-gradient-to-r from-[#7d3aea] to-[#5e28b5]"
             }`}
           >
             {applied && <Check size={18} color="#208436" weight="bold" />}
-            <span className={`font-['Manrope',sans-serif] font-semibold text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap ${applied ? "text-[#208436]" : "text-white"}`}>
+            <span
+              className={`font-['Manrope',sans-serif] font-semibold text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap ${applied ? "text-[#208436]" : "text-white"}`}
+            >
               {applied ? "Applied" : "Quick Apply"}
             </span>
           </button>
@@ -1024,7 +1893,7 @@ export function JobsPage() {
     setDetailTab("Description");
     setScreen("detail");
     // Scroll to top smoothly when viewing a new job
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function handleModalClose() {
@@ -1048,14 +1917,17 @@ export function JobsPage() {
           <>
             <ListingView
               activeTab={activeTab}
-              onTabChange={(t) => { setActiveTab(t); if (t === "Applied") setIsFiltered(false); }}
+              onTabChange={(t) => {
+                setActiveTab(t);
+                if (t === "Applied") setIsFiltered(false);
+              }}
               appliedIds={appliedIds}
               onApply={requestApply}
               onViewDetails={handleViewDetails}
               onFilter={() => setShowFilter(true)}
               isFiltered={isFiltered}
             />
-            <BottomNav active="jobs" />
+            <BottomNav active="jobs" profileNavImg={imgProfileNav} />
           </>
         ) : selectedJob ? (
           <DetailView
@@ -1073,15 +1945,25 @@ export function JobsPage() {
       </div>
 
       {showFilter && (
-        <FilterSheet jobsTab={activeTab} onClose={() => setShowFilter(false)} onShowResults={handleShowResults} />
+        <FilterSheet
+          jobsTab={activeTab}
+          onClose={() => setShowFilter(false)}
+          onShowResults={handleShowResults}
+        />
       )}
 
       {toastJob && (
-        <OutOfScopeToast onDismiss={() => setToastJob(null)} onContinue={handleToastContinue} />
+        <OutOfScopeToast
+          onDismiss={() => setToastJob(null)}
+          onContinue={handleToastContinue}
+        />
       )}
 
       {showModal && (
-        <ApplicationStatusModal onClose={handleModalClose} onContinueApplying={handleModalContinueApplying} />
+        <ApplicationStatusModal
+          onClose={handleModalClose}
+          onContinueApplying={handleModalContinueApplying}
+        />
       )}
     </div>
   );
