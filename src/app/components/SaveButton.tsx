@@ -58,7 +58,7 @@ export function SaveButton({
       <BookmarkSimple
         size={24}
         weight={saved ? "fill" : "regular"}
-        color={saved ? "#7D3AEA" : "#6B5F7A"}
+        color="#6B5F7A"
       />
     </button>
   );
