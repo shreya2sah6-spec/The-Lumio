@@ -361,6 +361,7 @@ function OtpVerifyScreen({
   onBack: () => void;
 }) {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(""));
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [seconds, setSeconds] = useState(OTP_INITIAL_SECONDS);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -375,15 +376,28 @@ function OtpVerifyScreen({
     const next = [...digits];
     next[index] = digit;
     setDigits(next);
-    if (digit && index < OTP_LENGTH - 1) inputRefs.current[index + 1]?.focus();
-  };
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !digits[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
+    // Move to next field if digit entered
+    if (digit && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === "Backspace") {
+      if (!digits[index] && index > 0) {
+        // If current field is empty, move to previous and clear it
+        inputRefs.current[index - 1]?.focus();
+      } else if (digits[index]) {
+        // If current field has a digit, just clear it (let default behavior happen)
+        const next = [...digits];
+        next[index] = "";
+        setDigits(next);
+        e.preventDefault();
+      }
+    }
+  };
+
+  const isOtpComplete = digits.every((d) => d !== "");
   const timerLabel = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 
   return (
@@ -417,26 +431,52 @@ function OtpVerifyScreen({
       <div className="flex flex-col gap-5 w-full">
         <FieldLabel>4 digit OTP</FieldLabel>
         <div className="flex gap-2 items-center">
-          {digits.map((digit, i) => (
-            <div key={i} className="relative w-[42px]">
-              <div className="absolute border border-[rgba(157,148,170,0.4)] inset-0 pointer-events-none rounded-[4px]" />
-              <input
-                ref={(el) => {
-                  inputRefs.current[i] = el;
-                }}
-                className="bg-white w-full rounded-[4px] px-1 py-2 font-['Manrope',sans-serif] font-semibold text-[#9d90ad] text-[18px] leading-[28px] text-center outline-none"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleDigit(i, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(i, e)}
-              />
-            </div>
-          ))}
+          {digits.map((digit, i) => {
+            const isFocused = focusedIndex === i;
+            const isFilled = digit !== "";
+
+            // Border color based on state (Figma spec)
+            const borderColor = isFocused ? "#1a1128" : "#c8bbda";
+            // Text color based on whether filled
+            const textColor = isFilled ? "#1a1128" : "#9d90ad";
+
+            return (
+              <div key={i} className="relative w-[42px]">
+                <div
+                  className="absolute border inset-0 pointer-events-none rounded-[4px] transition-colors"
+                  style={{ borderColor }}
+                />
+                <input
+                  ref={(el) => {
+                    inputRefs.current[i] = el;
+                  }}
+                  className="bg-white w-full rounded-[4px] px-1 py-2 font-['Manrope',sans-serif] font-semibold text-[18px] leading-[28px] text-center outline-none transition-colors"
+                  style={{ color: textColor }}
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleDigit(i, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(i, e)}
+                  onFocus={() => setFocusedIndex(i)}
+                  onBlur={() => setFocusedIndex(null)}
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      <PrimaryButton label="Verify & continue" onClick={onNext} />
+      {/* Verify button — disabled until all 4 digits filled */}
+      <Button
+        variant="gradient"
+        size="lg"
+        className="w-full"
+        onClick={onNext}
+        disabled={!isOtpComplete}
+      >
+        Verify & continue
+        <ArrowRight className="size-6" />
+      </Button>
 
       <div className="flex gap-1 items-center justify-center w-full">
         <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] whitespace-nowrap">
