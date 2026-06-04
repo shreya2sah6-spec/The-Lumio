@@ -695,19 +695,17 @@ function ExperienceScreen({
           This helps us personalize mentors and opportunities.
         </ScreenSubtitle>
       </div>
-      <div className="flex flex-col gap-[120px] w-full">
-        <div className="flex flex-wrap gap-4 w-full">
-          {EXPERIENCE_OPTIONS.map((e) => (
-            <Chip
-              key={e}
-              label={e}
-              selected={selected === e}
-              onClick={() => setSelected(e)}
-            />
-          ))}
-        </div>
-        <PrimaryButton label="Start the journey" onClick={onNext} />
+      <div className="flex flex-wrap gap-4 w-full">
+        {EXPERIENCE_OPTIONS.map((e) => (
+          <Chip
+            key={e}
+            label={e}
+            selected={selected === e}
+            onClick={() => setSelected(e)}
+          />
+        ))}
       </div>
+      <PrimaryButton label="Start the journey" onClick={onNext} />
     </div>
   );
 }
