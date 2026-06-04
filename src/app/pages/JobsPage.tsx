@@ -787,16 +787,16 @@ function ApplicationStatusModal({
 
 function NoResultsState() {
   return (
-    <div className="flex flex-col gap-[64px] items-center px-[16px] py-[28px] w-full">
-      <div className="aspect-[277/266] mix-blend-darken relative w-full">
+    <div className="flex flex-col gap-[12px] items-center px-[16px] py-[12px] w-full">
+      <div className="h-[319px] mix-blend-darken relative w-full shrink-0">
         <img
           alt=""
           className="absolute inset-0 max-w-none object-bottom size-full pointer-events-none"
           src={imgNotFound}
         />
       </div>
-      <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] text-center w-full">
-        No jobs found
+      <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] text-center w-full">
+        No matches this time
       </p>
     </div>
   );
@@ -1180,8 +1180,8 @@ function ListingView({
               // ── Empty filter state — matches Figma shared/not-found layout ──
               <>
                 <NoResultsState />
-                <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-                  <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <div className="flex flex-col gap-[16px] items-start p-[16px]">
+                  <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
                     Similar jobs
                   </p>
                   <div className="flex flex-col gap-[4px] items-start w-full">
