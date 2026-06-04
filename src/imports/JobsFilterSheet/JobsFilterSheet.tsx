@@ -283,7 +283,7 @@ function Footer() {
           data-name="primary-button"
         >
           <div className="[text-box-edge:cap_alphabetic] [text-box-trim:trim-both] [word-break:break-word] flex flex-col font-['Manrope:SemiBold',sans-serif] font-semibold justify-center leading-[0] relative shrink-0 text-[#7d3aea] text-[16px] text-center tracking-[0.48px] whitespace-nowrap">
-            <p className="leading-[20px]">Clear All</p>
+            <p className="leading-[20px] text-[#7d3aea]">Clear All</p>
           </div>
         </div>
         <div
