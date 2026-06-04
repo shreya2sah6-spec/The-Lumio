@@ -1146,6 +1146,7 @@ function ListingView({
   onViewDetails,
   onFilter,
   isFiltered,
+  isAppliedFiltered,
   activeFilters,
 }: {
   activeTab: JobsTab;
