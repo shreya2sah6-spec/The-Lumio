@@ -35,6 +35,19 @@ import imgProject3 from "@/imports/MentorsListing-1/a21445b6a5efdaefec15a6540ac5
 import imgRelated1 from "@/imports/MentorsListing-1/4a29d0654aaab6716cd873400f7020bd2faded80.png";
 import imgRelated2 from "@/imports/MentorsListing-1/44f0132e097541fab04aec7d33348dc2876131fb.png";
 
+// ─── Review avatar URLs (face-cropped, Indian-presenting, 20–40, professional) ─
+
+const ANON_AVATAR =
+  "https://tse1.explicit.bing.net/th/id/OIP.0CZd1ESLnyWIHdO38nyJDAHaGF?r=0&cb=thfvnextfalcon&rs=1&pid=ImgDetMain&o=7&rm=3";
+const PF1 = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF2 = "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF3 = "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF4 = "https://images.unsplash.com/photo-1530785602389-07594beb8b73?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM1 = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM2 = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM3 = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM4 = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face&auto=format";
+
 // ─── Types & Data ─────────────────────────────────────────────────────────────
 
 type Tab = "Overview" | "Reviews" | "Mentee FAQ";
@@ -82,54 +95,15 @@ const otherHighestRatedMentors: Mentor[] = [
 ];
 
 const mentorReviews = [
-  {
-    avatar: imgRelated1,
-    name: "Ananya Sharma",
-    role: "Fashion Design Student",
-    rating: 5,
-    title: "Transformative mentorship experience",
-    text: "Shruti's mentorship completely transformed my approach to fashion design. Her insights on pattern making and fabric selection were invaluable. She takes time to understand your goals and provides actionable feedback that accelerates your growth.",
-  },
-  {
-    avatar: imgRelated2,
-    name: "Rahul Verma",
-    role: "Jr. Designer",
-    rating: 5,
-    title: "Incredibly supportive mentor",
-    text: "I had an amazing experience with Shruti. Her guidance on portfolio building and industry navigation helped me land my first job. She's patient, encouraging, and genuinely invested in her mentees' success.",
-  },
-  {
-    avatar: imgAbout,
-    name: "Priya Nair",
-    role: "Design Intern",
-    rating: 4,
-    title: "Practical industry knowledge",
-    text: "Shruti brings real-world experience to every session. Her advice on garment construction techniques and dealing with production challenges has been eye-opening. Highly recommend for anyone serious about fashion design.",
-  },
-  {
-    avatar: imgRelated1,
-    name: "Anonymous",
-    role: "",
-    rating: 5,
-    title: "Best investment in my career",
-    text: "The mentorship sessions with Shruti were the best investment I made in my design career. She helped me refine my aesthetic, build confidence, and understand the business side of fashion. Her network and industry connections are also invaluable.",
-  },
-  {
-    avatar: imgRelated2,
-    name: "Kavya Reddy",
-    role: "Fashion Student",
-    rating: 4,
-    title: "Excellent technical guidance",
-    text: "Shruti's technical knowledge is exceptional. She taught me advanced draping techniques and how to work with difficult fabrics. Her feedback is always constructive and helps you improve quickly.",
-  },
-  {
-    avatar: imgAbout,
-    name: "Arjun Malhotra",
-    role: "Design Graduate",
-    rating: 5,
-    title: "Career-changing mentorship",
-    text: "Working with Shruti changed the trajectory of my career. Her mentorship helped me transition from student work to professional-level designs. She's generous with her time and genuinely cares about seeing her mentees succeed.",
-  },
+  { avatar: PF1, name: "Ananya Mehta", role: "Fashion Design Student", rating: 5, title: "Transformative mentorship", text: "Shruti's mentorship completely transformed my approach to fashion design. Her insights on pattern making and fabric selection were invaluable. She takes time to understand your goals and provides actionable feedback that accelerates your growth." },
+  { avatar: PM1, name: "Arjun Kapoor", role: "Jr. Fashion Designer", rating: 5, title: "Career-defining sessions", text: "Every session with Shruti gave me concrete tools I could apply immediately. Her industry knowledge is exceptional and she has a rare ability to see exactly where you are in your journey and what you need next." },
+  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Genuinely invested in your success", text: "The mentorship sessions with Shruti were the best investment I made in my design career. She helped me refine my aesthetic, build confidence, and understand the business side of fashion. Her industry connections are also invaluable." },
+  { avatar: PF2, name: "Priya Singh", role: "Design Intern", rating: 4, title: "Practical real-world insights", text: "Shruti brings authentic real-world experience to every session. Her advice on garment construction and navigating production challenges was eye-opening. She never gives generic advice — everything is grounded in her actual industry experience." },
+  { avatar: PM2, name: "Rajan Nair", role: "Fashion Graduate", rating: 5, title: "Best investment in my career", text: "I came to Shruti at a pivotal moment in my career and she helped me see opportunities I had completely missed. Her guidance on portfolio positioning and building industry relationships directly led to my first design role." },
+  { avatar: PF3, name: "Kavya Reddy", role: "Textile Design Student", rating: 5, title: "Excellent technical guidance", text: "Shruti's technical knowledge is exceptional. She taught me advanced draping techniques and how to approach difficult fabrics with confidence. Her feedback is always constructive and immediately actionable." },
+  { avatar: PM3, name: "Vikram Pillai", role: "Associate Designer", rating: 4, title: "Helped me land my first role", text: "Shruti worked with me intensively on my portfolio and interview preparation. The way she coached me to articulate my design thinking made a real difference. I landed my first design role within two months of our sessions." },
+  { avatar: PF4, name: "Shreya Joshi", role: "Design Intern", rating: 5, title: "Exceptional portfolio coaching", text: "Shruti has a sharp eye for what makes a portfolio stand out and she articulates it clearly. She helped me restructure and rethink how I was presenting my work, and the response from studios improved immediately." },
+  { avatar: PM4, name: "Rohan Shah", role: "Jr. Designer", rating: 4, title: "Deep industry knowledge", text: "The depth of Shruti's industry knowledge is remarkable. She understands both the creative and commercial dimensions of fashion and helps you see how they connect. A mentor who genuinely cares about your long-term development." },
 ];
 
 const mentorFAQs = [
@@ -868,15 +842,16 @@ export function MentorProfilePage() {
                   <ReviewCard key={i} {...review} />
                 ))}
 
-                {visibleReviews < mentorReviews.length && (
-                  <ViewMoreButton
-                    onClick={() =>
-                      setVisibleReviews((v) =>
-                        Math.min(v + 3, mentorReviews.length)
-                      )
-                    }
-                  />
-                )}
+                <ViewMoreButton
+                  onClick={() =>
+                    setVisibleReviews((v) => Math.min(v + 3, mentorReviews.length))
+                  }
+                  className={
+                    visibleReviews >= mentorReviews.length
+                      ? "pointer-events-none cursor-default"
+                      : ""
+                  }
+                />
 
                 {/* Other Highest Rated Mentors */}
                 <div className="flex flex-col gap-[16px] items-start w-full border-t border-[#f0ecf7] pt-[20px]">

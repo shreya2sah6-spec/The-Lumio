@@ -36,59 +36,42 @@ const statusBarPaths = {
 
 type Tab = "Overview" | "Mentors review" | "Mentee review" | "Mentee FAQ";
 
-// Sample data
+// ─── Review avatar URLs (face-cropped, Indian-presenting, 20–40, professional) ─
+const ANON_AVATAR =
+  "https://tse1.explicit.bing.net/th/id/OIP.0CZd1ESLnyWIHdO38nyJDAHaGF?r=0&cb=thfvnextfalcon&rs=1&pid=ImgDetMain&o=7&rm=3";
+const PF1 = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF2 = "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF3 = "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF4 = "https://images.unsplash.com/photo-1530785602389-07594beb8b73?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM1 = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM2 = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM3 = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM4 = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face&auto=format";
+
+// Mentors Reviews — reviews written by Sanya's mentors about her as a mentee
 const mentorReviews = [
-  {
-    avatar: imgReviewer1,
-    name: "Ananya Sharma",
-    role: "Sr. Fashion Designer @ MAX",
-    rating: 5,
-    title: "Amazing mentor and guide",
-    text: "Sanya has been an incredible mentor. Her guidance on pattern making and fabric selection was invaluable. She takes time to understand your goals and provides actionable feedback that accelerates growth.",
-  },
-  {
-    avatar: imgReviewer2,
-    name: "Rahul Verma",
-    role: "Lead Designer @ Myntra",
-    rating: 5,
-    title: "Exceptional design thinking",
-    text: "Working with Sanya transformed my approach to fashion design. Her insights on garment construction and industry navigation helped me advance my career significantly.",
-  },
-  {
-    avatar: imgReviewer3,
-    name: "Priya Nair",
-    role: "Fashion Consultant",
-    rating: 4,
-    title: "Great industry knowledge",
-    text: "Sanya brings real-world experience to every session. Her advice on design techniques and dealing with production challenges has been eye-opening.",
-  },
+  { avatar: PF1, name: "Ananya Sharma", role: "Sr. Fashion Designer @ MAX", rating: 5, title: "Outstanding dedication", text: "Sanya is one of the most dedicated mentees I have worked with. She comes to every session with specific questions, applies feedback immediately, and follows through on every recommendation. Her progress has been remarkable." },
+  { avatar: PM1, name: "Rahul Verma", role: "Lead Designer @ Myntra", rating: 5, title: "Exceptional design thinking", text: "Working with Sanya transformed my expectations of what a junior mentee can achieve. Her design thinking is already at a level that most designers take years to reach. She's going to be a significant voice in Indian fashion." },
+  { avatar: PF2, name: "Priya Nair", role: "Fashion Consultant", rating: 4, title: "Great industry awareness", text: "Sanya brings a level of industry awareness that is rare at her stage. She understands the commercial side of fashion as well as the creative, and she asks questions that show she is thinking about her career strategically." },
+  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "A pleasure to mentor", text: "Mentoring Sanya has been one of the most rewarding experiences of my career. She is genuinely curious, not just career-focused, and her love for Indian craft traditions gives her work a depth that is hard to manufacture." },
+  { avatar: PF3, name: "Kavita Desai", role: "Creative Director", rating: 5, title: "Natural talent in fashion", text: "Sanya has a natural sense of proportion, colour, and fabric that cannot be taught — only refined. Our sessions have been focused on honing that instinct and giving her the technical vocabulary to articulate what she already feels." },
+  { avatar: PM2, name: "Sameer Joshi", role: "Head of Design", rating: 5, title: "Remarkable growth trajectory", text: "The growth I have seen in Sanya over our sessions together is extraordinary. She started with strong potential and has turned that into genuine craft. Her portfolio now reflects a designer who is ready for a senior environment." },
+  { avatar: PF4, name: "Deepa Krishnan", role: "Senior Stylist", rating: 4, title: "Strong technical foundation", text: "Sanya has worked seriously on building her technical foundation. Her understanding of construction, garment engineering, and textile properties is now well above par for her experience level." },
+  { avatar: PM3, name: "Aditya Sharma", role: "Fashion Educator", rating: 5, title: "Star student", text: "In fifteen years of mentoring, I can count on one hand the students who approached their development with Sanya's combination of humility and ambition. She is the kind of designer who will continue growing long after formal mentorship ends." },
+  { avatar: PF2, name: "Meera Bose", role: "Design Studio Head", rating: 4, title: "Ready for senior roles", text: "After our mentorship sessions, I would have no hesitation recommending Sanya for a senior design position. She has the creative maturity, the technical skills, and the professional attitude that design houses look for." },
 ];
 
+// Mentees Reviews — reviews written by Sanya's mentees about her as a mentor
 const menteeReviews = [
-  {
-    avatar: imgReviewer1,
-    name: "Kavya Reddy",
-    role: "Fashion Design Student",
-    rating: 5,
-    title: "Best mentee experience",
-    text: "Learning from Sanya has been transformative. Her patience and clear explanations made complex concepts easy to understand. Highly recommend!",
-  },
-  {
-    avatar: imgReviewer2,
-    name: "Arjun Malhotra",
-    role: "Design Intern",
-    rating: 5,
-    title: "Career-changing mentorship",
-    text: "Sanya's guidance helped me transition from student work to professional-level designs. She's generous with her time and genuinely cares about seeing mentees succeed.",
-  },
-  {
-    avatar: imgReviewer3,
-    name: "Neha Singh",
-    role: "Jr. Designer",
-    rating: 4,
-    title: "Excellent technical guidance",
-    text: "Sanya's technical knowledge is exceptional. She taught me advanced draping techniques and how to work with difficult fabrics.",
-  },
+  { avatar: PF1, name: "Kavya Reddy", role: "Fashion Design Student", rating: 5, title: "Transformative experience", text: "Learning from Sanya has been one of the most transformative things I've done for my career. She has a gift for explaining complex concepts simply and always knows exactly what you need to hear at exactly the right moment." },
+  { avatar: PM1, name: "Arjun Malhotra", role: "Design Intern", rating: 5, title: "Career-changing mentorship", text: "Sanya's guidance helped me make the leap from student work to professional-level design thinking. She is generous with her time, her knowledge, and her network. My first real design job came directly from her recommendation." },
+  { avatar: PF2, name: "Neha Singh", role: "Jr. Designer", rating: 4, title: "Excellent technical guidance", text: "Sanya's technical knowledge is exceptional and she communicates it with real clarity. She helped me understand draping, proportion, and fabric choice at a level that my formal education simply didn't cover." },
+  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Incredible mentor", text: "Sanya is the kind of mentor you remember for life. She doesn't just answer your questions — she helps you ask better questions. Our sessions shifted my entire perspective on what it means to be a thoughtful designer." },
+  { avatar: PF3, name: "Tanvi Bose", role: "Fashion Graduate", rating: 5, title: "Patient and insightful", text: "Sanya's patience is extraordinary. She never makes you feel rushed and always finds a way to explain something from a different angle if the first approach doesn't click. I left every session feeling more capable and more confident." },
+  { avatar: PM2, name: "Mihir Joshi", role: "Jr. Print Designer", rating: 5, title: "Transformed my practice", text: "The sessions with Sanya completely changed how I approach my design practice. She helped me see my work with much more critical eyes while also encouraging me to trust my instincts. A rare and valuable balance." },
+  { avatar: PF4, name: "Aditi Sharma", role: "Design Student", rating: 4, title: "Practical and actionable", text: "What I value most about Sanya's mentorship is that it's always actionable. She doesn't deal in vague encouragement — she gives specific feedback, concrete next steps, and real examples from her own experience." },
+  { avatar: PM3, name: "Kiran Rao", role: "Textile Intern", rating: 5, title: "World-class mentorship", text: "I have had several mentors over my early career and Sanya is in a different category. Her combination of genuine care for your development and deep professional knowledge makes her mentorship feel uniquely valuable." },
+  { avatar: PM4, name: "Dev Kapoor", role: "Fashion Graduate", rating: 4, title: "Sets you up for success", text: "Sanya doesn't just help you with your immediate challenges — she prepares you for the ones ahead. Her mentorship has given me a professional framework that I keep coming back to at every stage of my career." },
 ];
 
 const faqs = [
@@ -366,7 +349,8 @@ function MentorshipInsights({
 export function ProfilePage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
-  const [visibleReviews, setVisibleReviews] = useState(3);
+  const [visibleMentorReviews, setVisibleMentorReviews] = useState(3);
+  const [visibleMenteeReviews, setVisibleMenteeReviews] = useState(3);
   const [expandedFAQs, setExpandedFAQs] = useState<Set<number>>(new Set([0]));
   const [visibleFAQCount, setVisibleFAQCount] = useState(3);
 
@@ -700,14 +684,21 @@ export function ProfilePage() {
               />
 
               <div className="flex flex-col gap-[16px]">
-                {mentorReviews.slice(0, visibleReviews).map((review, i) => (
+                {mentorReviews.slice(0, visibleMentorReviews).map((review, i) => (
                   <ReviewCard key={i} {...review} />
                 ))}
               </div>
 
-              {visibleReviews < mentorReviews.length && (
-                <ViewMoreButton onClick={() => setVisibleReviews(mentorReviews.length)} />
-              )}
+              <ViewMoreButton
+                onClick={() =>
+                  setVisibleMentorReviews((v) => Math.min(v + 3, mentorReviews.length))
+                }
+                className={
+                  visibleMentorReviews >= mentorReviews.length
+                    ? "pointer-events-none cursor-default"
+                    : ""
+                }
+              />
 
               <div className="border-t border-[#f0ecf7] pt-[20px]">
                 <DesignersYouMayKnow />
@@ -738,14 +729,21 @@ export function ProfilePage() {
               />
 
               <div className="flex flex-col gap-[16px]">
-                {menteeReviews.slice(0, visibleReviews).map((review, i) => (
+                {menteeReviews.slice(0, visibleMenteeReviews).map((review, i) => (
                   <ReviewCard key={i} {...review} />
                 ))}
               </div>
 
-              {visibleReviews < menteeReviews.length && (
-                <ViewMoreButton onClick={() => setVisibleReviews(menteeReviews.length)} />
-              )}
+              <ViewMoreButton
+                onClick={() =>
+                  setVisibleMenteeReviews((v) => Math.min(v + 3, menteeReviews.length))
+                }
+                className={
+                  visibleMenteeReviews >= menteeReviews.length
+                    ? "pointer-events-none cursor-default"
+                    : ""
+                }
+              />
 
               <div className="border-t border-[#f0ecf7] pt-[20px]">
                 <DesignersYouMayKnow />
