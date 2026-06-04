@@ -548,6 +548,39 @@ const INIT_APPLIED: Record<AppliedFilter, Set<string>> = {
 
 const NON_FASHION_DOMAINS = new Set(["Buying & Merch", "Costume Design"]);
 
+/** Filter all discover-tab jobs by the active filter selections. */
+function applyDiscoverFilters(
+  jobs: Job[],
+  filters: Record<DiscoverFilter, Set<string>>
+): Job[] {
+  return jobs.filter((job) => {
+    // Job Type
+    const typeFilter = filters["Job Type"];
+    if (typeFilter.size > 0 && !typeFilter.has("All")) {
+      const t = (job.typeTag || "").toLowerCase();
+      if (![...typeFilter].some((f) => t.includes(f.toLowerCase())))
+        return false;
+    }
+    // Design Domain — exact match against job.domain
+    const domainFilter = filters["Design Domain"];
+    if (domainFilter.size > 0) {
+      if (!job.domain || !domainFilter.has(job.domain)) return false;
+    }
+    // Location — match against city names only (ignore work-mode tokens)
+    const locFilter = filters["Location"];
+    if (locFilter.size > 0) {
+      const cityTokens = new Set(LOCATION_CITIES);
+      const citySelections = [...locFilter].filter((f) => cityTokens.has(f));
+      if (
+        citySelections.length > 0 &&
+        !citySelections.some((c) => job.location?.includes(c))
+      )
+        return false;
+    }
+    return true;
+  });
+}
+
 function isOutOfScope(job: Job): boolean {
   const exp = job.expTag.toLowerCase();
   const highExp =
@@ -763,7 +796,7 @@ function NoResultsState() {
         />
       </div>
       <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] text-center w-full">
-        No matches this time
+        No jobs found
       </p>
     </div>
   );
@@ -1092,6 +1125,7 @@ function ListingView({
   onViewDetails,
   onFilter,
   isFiltered,
+  activeFilters,
 }: {
   activeTab: JobsTab;
   onTabChange: (t: JobsTab) => void;
@@ -1100,10 +1134,19 @@ function ListingView({
   onViewDetails: (job: Job) => void;
   onFilter: () => void;
   isFiltered: boolean;
+  activeFilters: ActiveFilters | null;
 }) {
   const [visibleRecent, setVisibleRecent] = useState(PAGE_SIZE);
   const [visibleLatest, setVisibleLatest] = useState(PAGE_SIZE);
   const [visibleFiltered, setVisibleFiltered] = useState(PAGE_SIZE);
+
+  // Compute filtered jobs from all available jobs based on active filter selections.
+  // Falls back to the static filteredJobs when no filters are stored yet.
+  const allDiscoverJobs = [...recentJobs, ...latestJobs];
+  const computedFilteredJobs =
+    activeFilters
+      ? applyDiscoverFilters(allDiscoverJobs, activeFilters.discover)
+      : filteredJobs;
 
   const searchPlaceholder =
     activeTab === "Discover"
@@ -1133,16 +1176,16 @@ function ListingView({
       <div className="flex-1 overflow-y-auto">
         {activeTab === "Discover" ? (
           isFiltered ? (
-            <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-              <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
-                Jobs matching your search
-              </p>
-              {filteredJobs.length === 0 ? (
+            computedFilteredJobs.length === 0 ? (
+              // ── Empty filter state — matches Figma shared/not-found layout ──
+              <>
                 <NoResultsState />
-              ) : (
-                <>
+                <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
+                  <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                    Similar jobs
+                  </p>
                   <div className="flex flex-col gap-[4px] items-start w-full">
-                    {filteredJobs.slice(0, visibleFiltered).map((job) => (
+                    {recentJobs.slice(0, PAGE_SIZE).map((job) => (
                       <JobCard
                         key={job.id}
                         job={job}
@@ -1152,18 +1195,36 @@ function ListingView({
                       />
                     ))}
                   </div>
-                  {visibleFiltered < filteredJobs.length && (
-                    <ViewMoreBtn
-                      onClick={() =>
-                        setVisibleFiltered((v) =>
-                          Math.min(v + PAGE_SIZE, filteredJobs.length)
-                        )
-                      }
+                </div>
+              </>
+            ) : (
+              // ── Filtered results exist ──
+              <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
+                <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                  Jobs matching your search
+                </p>
+                <div className="flex flex-col gap-[4px] items-start w-full">
+                  {computedFilteredJobs.slice(0, visibleFiltered).map((job) => (
+                    <JobCard
+                      key={job.id}
+                      job={job}
+                      applied={appliedIds.has(job.id)}
+                      onApply={() => onApply(job)}
+                      onViewDetails={() => onViewDetails(job)}
                     />
-                  )}
-                </>
-              )}
-            </div>
+                  ))}
+                </div>
+                {visibleFiltered < computedFilteredJobs.length && (
+                  <ViewMoreBtn
+                    onClick={() =>
+                      setVisibleFiltered((v) =>
+                        Math.min(v + PAGE_SIZE, computedFilteredJobs.length)
+                      )
+                    }
+                  />
+                )}
+              </div>
+            )
           ) : (
             <>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
@@ -1634,6 +1695,7 @@ export function JobsPage() {
   const [toastJob, setToastJob] = useState<Job | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isFiltered, setIsFiltered] = useState(false);
+  const [activeFilters, setActiveFilters] = useState<ActiveFilters | null>(null);
 
   function handleApply(id: string) {
     setAppliedIds((prev) => new Set([...prev, id]));
@@ -1676,7 +1738,8 @@ export function JobsPage() {
     setScreen("listing");
   }
 
-  function handleShowResults(_filters: ActiveFilters) {
+  function handleShowResults(filters: ActiveFilters) {
+    setActiveFilters(filters);
     setIsFiltered(true);
   }
 
@@ -1689,13 +1752,14 @@ export function JobsPage() {
               activeTab={activeTab}
               onTabChange={(t) => {
                 setActiveTab(t);
-                if (t === "Applied") setIsFiltered(false);
+                if (t === "Applied") { setIsFiltered(false); setActiveFilters(null); }
               }}
               appliedIds={appliedIds}
               onApply={requestApply}
               onViewDetails={handleViewDetails}
               onFilter={() => setShowFilter(true)}
               isFiltered={isFiltered}
+              activeFilters={activeFilters}
             />
             <BottomNav active="jobs" profileNavImg={imgProfileNav} />
           </>
