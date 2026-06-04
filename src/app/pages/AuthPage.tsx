@@ -695,7 +695,7 @@ function ExperienceScreen({
           This helps us personalize mentors and opportunities.
         </ScreenSubtitle>
       </div>
-      <div className="flex flex-col gap-[222px] w-full">
+      <div className="flex flex-col gap-[120px] w-full">
         <div className="flex flex-wrap gap-4 w-full">
           {EXPERIENCE_OPTIONS.map((e) => (
             <Chip
