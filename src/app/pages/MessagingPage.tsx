@@ -401,11 +401,12 @@ function InboxView({
 function ChatView({
   contact,
   onBack,
+  onSend,
 }: {
   contact: Contact;
   onBack: () => void;
+  onSend: (text: string) => void;
 }) {
-  const navigate = useNavigate();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>(contact.messages);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -429,6 +430,7 @@ function ChatView({
         }),
       },
     ]);
+    onSend(text);
     setInput("");
   }
 
@@ -438,7 +440,7 @@ function ChatView({
         <StatusBar />
         <div className="flex items-center gap-3 px-4 h-[60px]">
           <button
-            onClick={() => navigate("/home/feed")}
+            onClick={onBack}
             className="p-1 cursor-pointer shrink-0"
           >
             <ArrowLeft size={18} color="#1A1128" />
@@ -528,17 +530,37 @@ function ChatView({
 export function MessagingPage() {
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
   const [clearedUnread, setClearedUnread] = useState<Set<string>>(new Set());
+  // Tracks the last message sent by the user per contact (for inbox preview)
+  const [lastSentByContact, setLastSentByContact] = useState<Record<string, string>>({});
 
   function handleOpenChat(contact: Contact) {
+    // Always open the original contact so ChatView doesn't show synthetic preview entries
+    const original = contacts.find((c) => c.id === contact.id) ?? contact;
     if (contact.unread) {
       setClearedUnread((prev) => new Set([...prev, contact.id]));
     }
-    setActiveContact(contact);
+    setActiveContact(original);
   }
 
-  const contactsWithState = contacts.map((c) =>
-    clearedUnread.has(c.id) ? { ...c, unread: undefined } : c
-  );
+  function handleSentMessage(contactId: string, text: string) {
+    setLastSentByContact((prev) => ({ ...prev, [contactId]: text }));
+  }
+
+  const contactsWithState = contacts.map((c) => {
+    let contact: Contact = clearedUnread.has(c.id) ? { ...c, unread: undefined } : c;
+    // Append a synthetic sent entry so InboxView's preview computation picks it up
+    const sentText = lastSentByContact[c.id];
+    if (sentText) {
+      contact = {
+        ...contact,
+        messages: [
+          ...contact.messages,
+          { id: `__sent_preview_${c.id}`, type: "sent" as const, text: sentText },
+        ],
+      };
+    }
+    return contact;
+  });
 
   return (
     <div className="h-screen bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
@@ -547,6 +569,7 @@ export function MessagingPage() {
           <ChatView
             contact={activeContact}
             onBack={() => setActiveContact(null)}
+            onSend={(text) => handleSentMessage(activeContact.id, text)}
           />
         ) : (
           <InboxView contacts={contactsWithState} onOpenChat={handleOpenChat} />
