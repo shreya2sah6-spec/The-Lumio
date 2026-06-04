@@ -428,55 +428,57 @@ function OtpVerifyScreen({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 w-full">
-        <FieldLabel>4 digit OTP</FieldLabel>
-        <div className="flex gap-2 items-center">
-          {digits.map((digit, i) => {
-            const isFocused = focusedIndex === i;
-            const isFilled = digit !== "";
+      <div className="flex flex-col gap-[239px] w-full">
+        <div className="flex flex-col gap-5 w-full">
+          <FieldLabel>4 digit OTP</FieldLabel>
+          <div className="flex gap-2 items-center">
+            {digits.map((digit, i) => {
+              const isFocused = focusedIndex === i;
+              const isFilled = digit !== "";
 
-            // Border color based on state (Figma spec)
-            const borderColor = isFocused ? "#1a1128" : "#c8bbda";
-            // Text color based on whether filled
-            const textColor = isFilled ? "#1a1128" : "#9d90ad";
+              // Border color based on state (Figma spec)
+              const borderColor = isFocused ? "#1a1128" : "#c8bbda";
+              // Text color based on whether filled
+              const textColor = isFilled ? "#1a1128" : "#9d90ad";
 
-            return (
-              <div key={i} className="relative w-[42px]">
-                <div
-                  className="absolute border inset-0 pointer-events-none rounded-[4px] transition-colors"
-                  style={{ borderColor }}
-                />
-                <input
-                  ref={(el) => {
-                    inputRefs.current[i] = el;
-                  }}
-                  className="bg-white w-full rounded-[4px] px-1 py-2 font-['Manrope',sans-serif] font-semibold text-[18px] leading-[28px] text-center outline-none transition-colors"
-                  style={{ color: textColor }}
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleDigit(i, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(i, e)}
-                  onFocus={() => setFocusedIndex(i)}
-                  onBlur={() => setFocusedIndex(null)}
-                />
-              </div>
-            );
-          })}
+              return (
+                <div key={i} className="relative w-[42px]">
+                  <div
+                    className="absolute border inset-0 pointer-events-none rounded-[4px] transition-colors"
+                    style={{ borderColor }}
+                  />
+                  <input
+                    ref={(el) => {
+                      inputRefs.current[i] = el;
+                    }}
+                    className="bg-white w-full rounded-[4px] px-1 py-2 font-['Manrope',sans-serif] font-semibold text-[18px] leading-[28px] text-center outline-none transition-colors"
+                    style={{ color: textColor }}
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleDigit(i, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(i, e)}
+                    onFocus={() => setFocusedIndex(i)}
+                    onBlur={() => setFocusedIndex(null)}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
-      {/* Verify button — disabled until all 4 digits filled */}
-      <Button
-        variant="gradient"
-        size="lg"
-        className="w-full"
-        onClick={onNext}
-        disabled={!isOtpComplete}
-      >
-        Verify & continue
-        <ArrowRight className="size-6" />
-      </Button>
+        {/* Verify button — disabled until all 4 digits filled */}
+        <Button
+          variant="gradient"
+          size="lg"
+          className="w-full"
+          onClick={onNext}
+          disabled={!isOtpComplete}
+        >
+          Verify & continue
+          <ArrowRight className="size-6" />
+        </Button>
+      </div>
 
       <div className="flex gap-1 items-center justify-center w-full">
         <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] whitespace-nowrap">
@@ -530,20 +532,20 @@ function OnboardingNameScreen({
           Your profile name helps people recognize you.
         </ScreenSubtitle>
       </div>
-      <div className="flex flex-col gap-5 w-full">
-        <FieldLabel>Enter your full name</FieldLabel>
-        <TextInput
-          value={name}
-          onChange={setName}
-          placeholder="amit kumar"
-          validationState={validationState}
-          error={name && !nameValidation.valid ? nameValidation.error : undefined}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          charFilter={isNameChar}
-        />
-      </div>
-      <div className="pt-8 w-full">
+      <div className="flex flex-col gap-[344px] w-full">
+        <div className="flex flex-col gap-5 w-full">
+          <FieldLabel>Enter your full name</FieldLabel>
+          <TextInput
+            value={name}
+            onChange={setName}
+            placeholder="amit kumar"
+            validationState={validationState}
+            error={name && !nameValidation.valid ? nameValidation.error : undefined}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            charFilter={isNameChar}
+          />
+        </div>
         <Button
           variant="gradient"
           size="lg"
@@ -572,14 +574,16 @@ function Chip({ label, selected, onClick, showTick = false }: ChipProps) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 rounded-[8px] border bg-white cursor-pointer transition-colors ${
-        selected ? "border-[#7d3aea]" : "border-[#e2d9ef]"
+      className={`flex items-center gap-2 px-4 py-3 rounded-[8px] border bg-white cursor-pointer transition-colors h-[44px] ${
+        selected
+          ? "border-[#7d3aea] text-[#1a1128]"
+          : "border-[#e2d9ef] text-[#6b5f7a]"
       }`}
     >
       {showTick && selected && (
-        <Check size={12} color="#7D3AEA" weight="bold" />
+        <Check size={20} color="#7D3AEA" weight="bold" />
       )}
-      <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[14px] leading-[21px] whitespace-nowrap">
+      <span className={`font-['Manrope',sans-serif] font-${selected ? "medium" : "normal"} text-[16px] leading-[25px] whitespace-nowrap`}>
         {label}
       </span>
     </button>
@@ -629,23 +633,23 @@ function DomainScreen({
         <ProgressBar total={3} filled={2} />
       </div>
       <div className="flex flex-col gap-4 w-full">
-        <ScreenTitle>{"What's your domain?"}</ScreenTitle>
+        <ScreenTitle>{"What Domain do you Work in?"}</ScreenTitle>
         <ScreenSubtitle>
-          Pick the areas that best define your fashion expertise.
+          Choose the field you're most active in.
         </ScreenSubtitle>
       </div>
-      <div className="flex flex-wrap gap-3 w-full">
-        {DOMAIN_OPTIONS.map((d) => (
-          <Chip
-            key={d}
-            label={d}
-            selected={selected.has(d)}
-            onClick={() => toggle(d)}
-            showTick
-          />
-        ))}
-      </div>
-      <div className="pt-4 w-full">
+      <div className="flex flex-col gap-[247px] w-full">
+        <div className="flex flex-wrap gap-4 w-full">
+          {DOMAIN_OPTIONS.map((d) => (
+            <Chip
+              key={d}
+              label={d}
+              selected={selected.has(d)}
+              onClick={() => toggle(d)}
+              showTick
+            />
+          ))}
+        </div>
         <PrimaryButton label="Continue" onClick={onNext} />
       </div>
     </div>
@@ -686,22 +690,22 @@ function ExperienceScreen({
         <ProgressBar total={3} filled={3} />
       </div>
       <div className="flex flex-col gap-4 w-full">
-        <ScreenTitle>Years of experience?</ScreenTitle>
+        <ScreenTitle>How much Experience do you have?</ScreenTitle>
         <ScreenSubtitle>
-          Help us personalize your Lumio feed and opportunities.
+          This helps us personalize mentors and opportunities.
         </ScreenSubtitle>
       </div>
-      <div className="flex flex-wrap gap-3 w-full">
-        {EXPERIENCE_OPTIONS.map((e) => (
-          <Chip
-            key={e}
-            label={e}
-            selected={selected === e}
-            onClick={() => setSelected(e)}
-          />
-        ))}
-      </div>
-      <div className="pt-4 w-full">
+      <div className="flex flex-col gap-[222px] w-full">
+        <div className="flex flex-wrap gap-4 w-full">
+          {EXPERIENCE_OPTIONS.map((e) => (
+            <Chip
+              key={e}
+              label={e}
+              selected={selected === e}
+              onClick={() => setSelected(e)}
+            />
+          ))}
+        </div>
         <PrimaryButton label="Start the journey" onClick={onNext} />
       </div>
     </div>
