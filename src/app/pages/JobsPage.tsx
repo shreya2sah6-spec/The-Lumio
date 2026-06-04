@@ -586,18 +586,29 @@ function applyAppliedFilters(
   jobs: Job[],
   filters: Record<AppliedFilter, Set<string>>
 ): Job[] {
+  // Normalize a string for loose comparison (remove hyphens and spaces)
+  const norm = (s: string) => s.toLowerCase().replace(/[-\s]/g, "");
+
   return jobs.filter((job) => {
-    // Job Type
+    // Status — all pre-seeded applied jobs are in "Applied" state.
+    // Selecting any other status (Interviewing, Offered, Rejected, Withdrawn)
+    // correctly produces zero results, triggering the empty state.
+    const statusFilter = filters["Status"];
+    if (statusFilter.size > 0 && !statusFilter.has("Applied")) return false;
+
+    // Job Type — normalize both sides so "Full-time" matches "Full Time"
     const typeFilter = filters["Job Type"];
     if (typeFilter.size > 0) {
-      const t = (job.typeTag || "").toLowerCase();
-      if (![...typeFilter].some((f) => t.includes(f.toLowerCase()))) return false;
+      const t = norm(job.typeTag || "");
+      if (![...typeFilter].some((f) => t.includes(norm(f)))) return false;
     }
+
     // Company — exact match against company name
     const companyFilter = filters["Company"];
     if (companyFilter.size > 0) {
       if (!companyFilter.has(job.company)) return false;
     }
+
     return true;
   });
 }
