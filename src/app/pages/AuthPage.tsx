@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Phone, ArrowLeft, ArrowRight, Check } from "@phosphor-icons/react";
+import { Button } from "../components/ui/button";
+import { FieldError } from "../components/FieldError";
+import {
+  validatePhone,
+  validateOtp,
+  validateName,
+  isPhoneDigit,
+  isNameChar,
+  type ValidationResult,
+} from "../utils/validation";
 import imgLogo from "@/imports/AuthPhoneEntry/4cc7ee0fe5188ecaeb60505d7ea8a035d0ee470b.png";
 import imgGoogle from "@/imports/AuthPhoneEntry/c821627267af44f079059837a664f4fe169b9fb6.png";
 import imgLinkedin from "@/imports/AuthPhoneEntry/fbbd2871c82071c66cadf90243ea1b3ae31ffda5.png";
@@ -122,6 +132,14 @@ interface TextInputProps {
   placeholder: string;
   icon?: "phone";
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  /** Validation state: "default" | "focused" | "error" */
+  validationState?: "default" | "focused" | "error";
+  /** Error message to display below the field */
+  error?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  /** Character filter function (optional) */
+  charFilter?: (char: string) => boolean;
 }
 
 function TextInput({
@@ -130,24 +148,59 @@ function TextInput({
   placeholder,
   icon,
   inputMode,
+  validationState = "default",
+  error,
+  onFocus,
+  onBlur,
+  charFilter,
 }: TextInputProps) {
+  const borderColor =
+    validationState === "error"
+      ? "#de3226"
+      : validationState === "focused"
+        ? "#1a1128"
+        : "#e2d9ef";
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let newValue = e.target.value;
+
+    // Apply character filter if provided
+    if (charFilter) {
+      newValue = Array.from(newValue)
+        .filter(charFilter)
+        .join("");
+    }
+
+    onChange(newValue);
+  };
+
   return (
-    <div className="bg-white rounded-[4px] w-full relative shadow-[0px_1px_0.5px_rgba(200,192,212,0.6)]">
-      <div className="absolute border border-[#e2d9ef] inset-[-0.5px] pointer-events-none rounded-[4.5px]" />
-      <div className="flex items-center justify-between px-4 py-3">
-        <input
-          className="flex-1 font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] bg-transparent outline-none placeholder:text-[#6b5f7a]"
-          inputMode={inputMode}
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
+    <div className="flex flex-col gap-[8px] w-full">
+      <div className="bg-white rounded-[4px] w-full relative shadow-[0px_1px_0.5px_rgba(200,192,212,0.6)]">
+        <div
+          className="absolute border inset-[-0.5px] pointer-events-none rounded-[4.5px] transition-colors"
+          style={{ borderColor }}
         />
-        {icon === "phone" && (
-          <div className="ml-2 shrink-0">
-            <Phone size={24} color="#6B5F7A" />
-          </div>
-        )}
+        <div className="flex items-center justify-between px-4 py-3">
+          <input
+            className="flex-1 font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] bg-transparent outline-none placeholder:text-[#6b5f7a]"
+            inputMode={inputMode}
+            placeholder={placeholder}
+            value={value}
+            onChange={handleChange}
+            onFocus={onFocus}
+            onBlur={onBlur}
+          />
+          {icon === "phone" && (
+            <div className="ml-2 shrink-0">
+              <Phone size={24} color="#6B5F7A" />
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Error message — gap-[8px] above prevents layout shift */}
+      {error && <FieldError message={error} />}
     </div>
   );
 }
@@ -160,15 +213,10 @@ function PrimaryButton({
   onClick: () => void;
 }) {
   return (
-    <button
-      onClick={onClick}
-      className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] h-12 rounded-[8px] w-full flex items-center justify-center gap-2 px-4 py-3 cursor-pointer"
-    >
-      <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
-        {label}
-      </span>
-      <ArrowRight size={24} color="white" />
-    </button>
+    <Button onClick={onClick} variant="gradient" size="lg" className="w-full">
+      {label}
+      <ArrowRight className="size-6" />
+    </Button>
   );
 }
 
@@ -209,13 +257,23 @@ function ProgressBar({ total, filled }: { total: number; filled: number }) {
 
 function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
   const [phone, setPhone] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const phoneValidation = validatePhone(phone);
+
+  // Determine validation state
+  let validationState: "default" | "focused" | "error" = "default";
+  if (isFocused) validationState = "focused";
+  else if (phone && !phoneValidation.valid) validationState = "error";
+
+  // Button disabled if phone is invalid
+  const isDisabled = phone.length === 0 || !phoneValidation.valid;
 
   return (
     <div className="flex flex-col gap-7 w-full">
       <div className="flex flex-col gap-8 w-full">
         <BrandLogo />
         <div className="flex flex-col gap-4 w-full">
-          <ScreenTitle>Your Work should open Doors.</ScreenTitle>
+          <ScreenTitle>Your Work should Open Doors.</ScreenTitle>
           <ScreenSubtitle>
             {"India's fashion community starts here."}
           </ScreenSubtitle>
@@ -228,9 +286,23 @@ function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
             placeholder="99999 99999"
             icon="phone"
             inputMode="tel"
+            validationState={validationState}
+            error={phone && !phoneValidation.valid ? phoneValidation.error : undefined}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            charFilter={isPhoneDigit}
           />
         </div>
-        <PrimaryButton label="Send OTP" onClick={onNext} />
+        <Button
+          variant="gradient"
+          size="lg"
+          className="w-full"
+          onClick={onNext}
+          disabled={isDisabled}
+        >
+          Send OTP
+          <ArrowRight className="size-6" />
+        </Button>
         <div className="flex flex-col gap-1 items-center w-full">
           <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[12px] leading-[18px] tracking-[0.24px] text-center">
             By continuing you agree to our
@@ -246,7 +318,8 @@ function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-9 items-center w-full">
+      {/* gap-[47px] before divider matches Figma auth-layout gap */}
+      <div className="flex flex-col gap-9 items-center w-full mt-[47px]">
         <Divider label="Or continue with" />
         <div className="flex gap-4 items-center">
           {[
@@ -264,11 +337,12 @@ function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
         </div>
       </div>
 
-      <div className="flex gap-1 items-center justify-center w-full">
+      {/* gap-2 (8px) matches Figma signup-prompt gap-8px; rounded-[4px] matches Figma */}
+      <div className="flex gap-2 items-center justify-center w-full">
         <p className="font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] whitespace-nowrap">
           New to Lumio?
         </p>
-        <button className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px] px-3 py-2 rounded-[24px] cursor-pointer">
+        <button className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px] px-3 py-2 rounded-[4px] cursor-pointer">
           Sign up
         </button>
       </div>
@@ -387,6 +461,16 @@ function OnboardingNameScreen({
   onBack: () => void;
 }) {
   const [name, setName] = useState("");
+  const [isFocused, setIsFocused] = useState(false);
+  const nameValidation = validateName(name);
+
+  // Determine validation state
+  let validationState: "default" | "focused" | "error" = "default";
+  if (isFocused) validationState = "focused";
+  else if (name && !nameValidation.valid) validationState = "error";
+
+  // Button disabled if name is invalid
+  const isDisabled = name.length === 0 || !nameValidation.valid;
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -408,10 +492,28 @@ function OnboardingNameScreen({
       </div>
       <div className="flex flex-col gap-5 w-full">
         <FieldLabel>Enter your full name</FieldLabel>
-        <TextInput value={name} onChange={setName} placeholder="amit kumar" />
+        <TextInput
+          value={name}
+          onChange={setName}
+          placeholder="amit kumar"
+          validationState={validationState}
+          error={name && !nameValidation.valid ? nameValidation.error : undefined}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          charFilter={isNameChar}
+        />
       </div>
       <div className="pt-8 w-full">
-        <PrimaryButton label="Continue" onClick={onNext} />
+        <Button
+          variant="gradient"
+          size="lg"
+          className="w-full"
+          onClick={onNext}
+          disabled={isDisabled}
+        >
+          Continue
+          <ArrowRight className="size-6" />
+        </Button>
       </div>
     </div>
   );
