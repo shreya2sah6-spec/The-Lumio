@@ -279,11 +279,11 @@ function Footer() {
     >
       <div className="content-stretch flex gap-[16px] items-start max-w-[inherit] min-w-[inherit] pb-[24px] pt-[12px] px-[16px] relative size-full">
         <div
-          className="bg-[#fffeff] content-stretch flex gap-[8px] h-[48px] items-center justify-center max-h-[48px] min-h-[48px] px-[16px] py-[12px] relative rounded-[8px] shrink-0"
+          className="bg-[#fffeff] content-stretch flex gap-[8px] h-[48px] items-center justify-center max-h-[48px] min-h-[48px] px-[16px] py-[12px] relative rounded-[8px] shrink-0 text-[#7d3aea]"
           data-name="primary-button"
         >
-          <div className="[text-box-edge:cap_alphabetic] [text-box-trim:trim-both] [word-break:break-word] flex flex-col font-['Manrope:SemiBold',sans-serif] font-semibold justify-center leading-[0] relative shrink-0 text-[#7d3aea] text-[16px] text-center tracking-[0.48px] whitespace-nowrap">
-            <p className="leading-[20px] text-[#7d3aea]">Clear All</p>
+          <div className="[text-box-edge:cap_alphabetic] [text-box-trim:trim-both] [word-break:break-word] flex flex-col font-['Manrope:SemiBold',sans-serif] font-semibold justify-center leading-[0] relative shrink-0 text-[16px] text-center tracking-[0.48px] whitespace-nowrap">
+            <p className="leading-[20px]">Clear All</p>
           </div>
         </div>
         <div
