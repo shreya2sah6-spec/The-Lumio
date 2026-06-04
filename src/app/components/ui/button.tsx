@@ -14,10 +14,12 @@ const buttonVariants = cva(
     "font-manrope not-italic",
 
     // STATES
+    "cursor-pointer",
     "transition-colors duration-200",
     "outline-none",
     "disabled:pointer-events-none",
     "disabled:opacity-50",
+    "disabled:cursor-not-allowed",
 
     // ICONS
     "[&_svg]:pointer-events-none",

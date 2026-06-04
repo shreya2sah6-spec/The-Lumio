@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { BottomNav } from "../components/BottomNav";
+import { Button } from "../components/ui/button";
 
 const statusBarPaths = {
   signalBars:
@@ -109,15 +110,9 @@ export function HomeProfileCompletionPage() {
             </div>
 
             {/* Button */}
-            <button
-              onClick={handleComplete}
-              className="bg-white flex gap-[8px] items-center justify-center h-[48px] px-[16px] py-[12px] relative rounded-[8px] w-full"
-            >
-              <div className="absolute border border-[#7d3aea] inset-0 pointer-events-none rounded-[8px]" />
-              <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] text-center tracking-[0.48px]">
-                Autofill Demo Profile
-              </span>
-            </button>
+            <Button variant="outline" size="lg" onClick={handleComplete} className="w-full">
+              Autofill Demo Profile
+            </Button>
           </div>
         </div>
 

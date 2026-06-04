@@ -20,6 +20,7 @@ import {
 import { MentorCard, type Mentor } from "../components/MentorCard";
 import { Button } from "../components/ui/button";
 import { SaveButton } from "../components/SaveButton";
+import { ViewMoreButton } from "../components/ViewMoreButton";
 
 import { PageHeader } from "../components/PageHeader";
 
@@ -782,7 +783,7 @@ export function MentorProfilePage() {
                       size="sm"
                       className="w-full text-[#7d3aea]"
                     >
-                      View More
+                      <span className="text-[#7d3aea]">View More</span>
                       <CaretDown size={16} color="#7D3AEA" />
                     </Button>
                   )}
@@ -868,19 +869,13 @@ export function MentorProfilePage() {
                 ))}
 
                 {visibleReviews < mentorReviews.length && (
-                  <button
+                  <ViewMoreButton
                     onClick={() =>
                       setVisibleReviews((v) =>
                         Math.min(v + 3, mentorReviews.length)
                       )
                     }
-                    className="h-[48px] rounded-[8px] w-full flex gap-[8px] items-center justify-center cursor-pointer"
-                  >
-                    <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-                      View More
-                    </span>
-                    <CaretDown size={20} color="#7D3AEA" weight="bold" />
-                  </button>
+                  />
                 )}
 
                 {/* Other Highest Rated Mentors */}
@@ -974,29 +969,11 @@ export function MentorProfilePage() {
 
                 {/* View More Button */}
                 {visibleFAQCount < mentorFAQs.length && (
-                  <button
+                  <ViewMoreButton
                     onClick={() => setVisibleFAQCount(mentorFAQs.length)}
-                    className="flex gap-[8px] items-center justify-center max-h-[48px] min-h-[48px] px-[16px] py-[12px] rounded-[8px] w-full mt-[16px] cursor-pointer"
-                  >
-                    <div className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] text-center whitespace-nowrap">
-                      View {mentorFAQs.length - visibleFAQCount} More
-                    </div>
-                    <div className="overflow-clip relative shrink-0 size-[24px]">
-                      <div className="absolute inset-[34.37%_15.62%_28.12%_15.62%]">
-                        <svg
-                          className="absolute block inset-0 size-full"
-                          fill="none"
-                          preserveAspectRatio="none"
-                          viewBox="0 0 16.5008 9.00101"
-                        >
-                          <path
-                            d="M16.281 1.28104L8.78104 8.78104C8.71139 8.85077 8.62867 8.90609 8.53762 8.94384C8.44657 8.98158 8.34898 9.00101 8.25042 9.00101C8.15186 9.00101 8.05426 8.98158 7.96321 8.94384C7.87216 8.90609 7.78945 8.85077 7.71979 8.78104L0.219792 1.28104C0.0790615 1.14031 0 0.94944 0 0.750417C0 0.551394 0.0790615 0.360522 0.219792 0.219792C0.360523 0.0790612 0.551394 0 0.750417 0C0.94944 0 1.14031 0.0790612 1.28104 0.219792L8.25042 7.1901L15.2198 0.219792C15.2895 0.150109 15.3722 0.0948337 15.4632 0.0571218C15.5543 0.0194098 15.6519 0 15.7504 0C15.849 0 15.9465 0.0194098 16.0376 0.0571218C16.1286 0.0948337 16.2114 0.150109 16.281 0.219792C16.3507 0.289474 16.406 0.3722 16.4437 0.463245C16.4814 0.554289 16.5008 0.651871 16.5008 0.750417C16.5008 0.848963 16.4814 0.946545 16.4437 1.03759C16.406 1.12863 16.3507 1.21136 16.281 1.28104Z"
-                            fill="#7D3AEA"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </button>
+                    label={`View ${mentorFAQs.length - visibleFAQCount} More`}
+                    className="mt-[16px]"
+                  />
                 )}
 
                 {/* Other Highest Rated Mentors */}

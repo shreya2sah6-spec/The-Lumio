@@ -14,6 +14,8 @@ import { BottomNav } from "../components/BottomNav";
 import { PageHeader } from "../components/PageHeader";
 import { SearchBar } from "../components/SearchBar";
 import { Job, LogoCell, JobCard, logoInitials } from "../components/JobCard";
+import { Button } from "../components/ui/button";
+import { ViewMoreButton } from "../components/ViewMoreButton";
 
 // ─── Images ──────────────────────────────────────────────────────────────────
 
@@ -736,22 +738,12 @@ function ApplicationStatusModal({
 
         {/* action buttons */}
         <div className="flex gap-[12px] items-start w-full">
-          <button
-            onClick={onClose}
-            className="bg-white flex h-[48px] items-center justify-center px-[16px] py-[12px] rounded-[8px] w-[112px] shrink-0 cursor-pointer border border-[#7d3aea]"
-          >
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
-              Close
-            </span>
-          </button>
-          <button
-            onClick={onContinueApplying}
-            className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] flex flex-1 h-[48px] items-center justify-center px-[16px] py-[12px] rounded-[8px] cursor-pointer min-w-px"
-          >
-            <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
-              Continue Applying
-            </span>
-          </button>
+          <Button variant="outline" size="lg" onClick={onClose} className="w-[112px] shrink-0">
+            Close
+          </Button>
+          <Button variant="gradient" size="lg" onClick={onContinueApplying} className="flex-1 min-w-px">
+            Continue Applying
+          </Button>
         </div>
       </div>
     </div>
@@ -1034,22 +1026,12 @@ function FilterSheet({
           {renderSecondaryContent()}
         </div>
         <div className="flex gap-[16px] items-center pt-[12px] pb-[24px] px-[16px] w-full border-t border-[#f0ecf7]">
-          <button
-            onClick={clearAll}
-            className="bg-[#fffeff] flex h-[48px] items-center justify-center px-[16px] rounded-[8px] shrink-0 cursor-pointer"
-          >
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
-              Clear All
-            </span>
-          </button>
-          <button
-            onClick={handleShowResults}
-            className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] flex h-[48px] flex-1 items-center justify-center px-[16px] rounded-[8px] cursor-pointer"
-          >
-            <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
-              Show Results
-            </span>
-          </button>
+          <Button variant="ghost" size="lg" onClick={clearAll} className="shrink-0">
+            Clear All
+          </Button>
+          <Button variant="gradient" size="lg" onClick={handleShowResults} className="flex-1">
+            Show Results
+          </Button>
         </div>
         <div className="bg-white h-[46px] w-full flex items-end justify-center pb-[7.69px]">
           <div className="bg-[#1a1128] h-[4.808px] rounded-[200px] w-[128.846px]" />
@@ -1095,21 +1077,8 @@ function TabBar<T extends string>({
   );
 }
 
-// ─── View More button ─────────────────────────────────────────────────────────
-
-function ViewMoreBtn({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="h-[48px] rounded-[8px] w-full flex gap-[8px] items-center justify-center cursor-pointer"
-    >
-      <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-        View More
-      </span>
-      <CaretDown size={24} color="#7D3AEA" />
-    </button>
-  );
-}
+// ViewMoreBtn aliased to shared component so all call-sites stay unchanged
+const ViewMoreBtn = ViewMoreButton;
 
 // ─── Listing view ─────────────────────────────────────────────────────────────
 
@@ -1599,17 +1568,11 @@ function DetailView({
             ))}
 
             {visibleReviews < reviewsPool.length && (
-              <button
+              <ViewMoreButton
                 onClick={() =>
                   setVisibleReviews((v) => Math.min(v + 3, reviewsPool.length))
                 }
-                className="h-[48px] rounded-[8px] w-full flex gap-[8px] items-center justify-center cursor-pointer"
-              >
-                <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-                  View More
-                </span>
-                <CaretDown size={20} color="#7D3AEA" weight="bold" />
-              </button>
+              />
             )}
           </div>
         )}
@@ -1637,27 +1600,19 @@ function DetailView({
       {/* footer */}
       <div className="bg-white shrink-0 shadow-[0px_-1px_2px_rgba(200,192,212,0.6)]">
         <div className="flex gap-[16px] items-start pb-[24px] pt-[12px] px-[16px]">
-          <button className="bg-white flex gap-[8px] h-[48px] items-center justify-center px-[16px] py-[12px] rounded-[8px] w-[140px] cursor-pointer border border-[#7d3aea] shrink-0">
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap">
-              Save
-            </span>
-          </button>
-          <button
+          <Button variant="outline" size="lg" className="w-[140px] shrink-0">
+            <span className="text-[#7d3aea]">Save</span>
+          </Button>
+          <Button
+            variant={applied ? "success" : "gradient"}
+            size="lg"
             onClick={applied ? undefined : onQuickApply}
             disabled={applied}
-            className={`flex gap-[8px] h-[48px] flex-1 items-center justify-center px-[16px] py-[12px] rounded-[8px] cursor-pointer transition-colors ${
-              applied
-                ? "bg-[#D6F5DD] border border-[#208436]"
-                : "bg-gradient-to-r from-[#7d3aea] to-[#5e28b5]"
-            }`}
+            className="flex-1 disabled:opacity-100"
           >
-            {applied && <Check size={18} color="#208436" weight="bold" />}
-            <span
-              className={`font-['Manrope',sans-serif] font-semibold text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap ${applied ? "text-[#208436]" : "text-white"}`}
-            >
-              {applied ? "Applied" : "Quick Apply"}
-            </span>
-          </button>
+            {applied && <Check className="size-[18px]" color="#208436" weight="bold" />}
+            {applied ? "Applied" : "Quick Apply"}
+          </Button>
         </div>
         <div className="h-[46px] w-full bg-white flex items-end justify-center pb-[7.69px]">
           <div className="bg-[#1a1128] h-[4.808px] rounded-[200px] w-[128.846px]" />

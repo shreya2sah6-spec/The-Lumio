@@ -1,5 +1,6 @@
 import { Check } from "@phosphor-icons/react";
 import { SaveButton } from "./SaveButton";
+import { Button } from "./ui/button";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -139,34 +140,24 @@ export function JobCard({
       {/* ── Bottom row: action buttons OR status badge ── */}
       {showActions ? (
         <div className="flex gap-[12px] items-center justify-end w-full">
-          <button
-            onClick={onViewDetails}
-            className="bg-[#fffeff] flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] cursor-pointer"
-          >
-            {/* Button Small */}
-            <span className="type-btn-sm text-[#7d3aea] whitespace-nowrap">
-              View Details
-            </span>
-          </button>
-          <button
+          {/* ghost sm — no border, brand-purple text */}
+          <Button variant="ghost" size="sm" onClick={onViewDetails}>
+            <span className="text-[#7d3aea]">View Details</span>
+          </Button>
+          {/* outline sm → success sm once applied; disabled:opacity-100 keeps the
+              applied state fully visible while still blocking pointer events */}
+          <Button
+            variant={applied ? "success" : "outline"}
+            size="sm"
             onClick={onApply}
             disabled={applied}
-            className={`flex gap-[8px] h-[40px] items-center justify-center px-[12px] py-[8px] rounded-[4px] w-[110px] cursor-pointer transition-colors ${
-              applied
-                ? "bg-[#D6F5DD] border border-[#208436]"
-                : "bg-white border border-[#7d3aea]"
-            }`}
+            className="w-[110px] disabled:opacity-100"
           >
-            {applied && <Check size={14} color="#208436" weight="bold" />}
-            {/* Button Small */}
-            <span
-              className={`type-btn-sm whitespace-nowrap ${
-                applied ? "text-[#208436]" : "text-[#7d3aea]"
-              }`}
-            >
+            {applied && <Check className="size-[14px]" color="#208436" weight="bold" />}
+            <span className={applied ? "text-[#208436]" : "text-[#7d3aea]"}>
               {applied ? "Applied" : "Apply"}
             </span>
-          </button>
+          </Button>
         </div>
       ) : statusLabel ? (
         /* Caption 1 status badge */

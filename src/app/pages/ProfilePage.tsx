@@ -7,6 +7,7 @@ import {
   MagicWand,
 } from "@phosphor-icons/react";
 import { BottomNav } from "../components/BottomNav";
+import { ViewMoreButton } from "../components/ViewMoreButton";
 import svgPaths from "@/imports/ProfileOverview-2/svg-n8z2v8xsv9";
 import imgAvatar from "@/imports/ProfileOverview-2/bb5b0e0896cc0396e3c8e2b6811f344da7f15455.png";
 import imgAboutImage from "@/imports/ProfileOverview-2/76ae4b7f2a4ed92c5b6590f918eac3b778e97c34.png";
@@ -310,20 +311,7 @@ function DesignersYouMayKnow() {
           </div>
         </div>
       ))}
-      <button className="w-full h-[48px] rounded-[8px] flex items-center justify-center gap-[8px] cursor-pointer">
-        <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-          View More
-        </span>
-        <div className="flex items-center justify-center h-[20px]">
-          <svg
-            className="block size-[20px] shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path d={svgPaths.p13567b00} fill="#7D3AEA" />
-          </svg>
-        </div>
-      </button>
+      <ViewMoreButton />
     </div>
   );
 }
@@ -682,20 +670,7 @@ export function ProfilePage() {
 
               {/* View More Button */}
               <div className="py-[20px]">
-                <button className="w-full h-[48px] rounded-[8px] flex items-center justify-center gap-[8px] cursor-pointer">
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-                    View More
-                  </span>
-                  <div className="flex items-center justify-center h-[20px]">
-                    <svg
-                      className="block size-[20px] shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d={svgPaths.p13567b00} fill="#7D3AEA" />
-                    </svg>
-                  </div>
-                </button>
+                <ViewMoreButton />
               </div>
 
               <DesignersYouMayKnow />
@@ -731,23 +706,7 @@ export function ProfilePage() {
               </div>
 
               {visibleReviews < mentorReviews.length && (
-                <button
-                  onClick={() => setVisibleReviews(mentorReviews.length)}
-                  className="w-full h-[48px] rounded-[8px] flex items-center justify-center gap-[8px] cursor-pointer"
-                >
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-                    View More
-                  </span>
-                  <div className="flex items-center justify-center h-[20px]">
-                    <svg
-                      className="block size-[20px] shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d={svgPaths.p13567b00} fill="#7D3AEA" />
-                    </svg>
-                  </div>
-                </button>
+                <ViewMoreButton onClick={() => setVisibleReviews(mentorReviews.length)} />
               )}
 
               <div className="border-t border-[#f0ecf7] pt-[20px]">
@@ -785,23 +744,7 @@ export function ProfilePage() {
               </div>
 
               {visibleReviews < menteeReviews.length && (
-                <button
-                  onClick={() => setVisibleReviews(menteeReviews.length)}
-                  className="w-full h-[48px] rounded-[8px] flex items-center justify-center gap-[8px] cursor-pointer"
-                >
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-                    View More
-                  </span>
-                  <div className="flex items-center justify-center h-[20px]">
-                    <svg
-                      className="block size-[20px]"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d={svgPaths.p13567b00} fill="#7D3AEA" />
-                    </svg>
-                  </div>
-                </button>
+                <ViewMoreButton onClick={() => setVisibleReviews(menteeReviews.length)} />
               )}
 
               <div className="border-t border-[#f0ecf7] pt-[20px]">
@@ -849,23 +792,7 @@ export function ProfilePage() {
               })}
 
               {visibleFAQCount < faqs.length && (
-                <button
-                  onClick={() => setVisibleFAQCount(faqs.length)}
-                  className="w-full h-[48px] rounded-[8px] flex items-center justify-center gap-[8px] cursor-pointer"
-                >
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-                    View More
-                  </span>
-                  <div className="flex items-center justify-center h-[20px]">
-                    <svg
-                      className="block size-[20px] shrink-0"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d={svgPaths.p13567b00} fill="#7D3AEA" />
-                    </svg>
-                  </div>
-                </button>
+                <ViewMoreButton onClick={() => setVisibleFAQCount(faqs.length)} />
               )}
 
               <div className="border-t border-[#f0ecf7] pt-[20px]">

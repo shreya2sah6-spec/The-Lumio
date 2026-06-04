@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { ArrowRight } from "@phosphor-icons/react";
 
 // SVG paths inlined to avoid dependency on deletable Figma-synced .ts files
 const svgStatus = {
@@ -135,7 +136,7 @@ function PrimaryButton({
       className="bg-gradient-to-r from-[#7d3aea] to-[#5e28b5] h-[48px] rounded-[8px] w-full flex items-center justify-center gap-[8px] px-4 cursor-pointer"
     >
       <span
-        className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-none tracking-[0.4px] whitespace-nowrap"
+        className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px] whitespace-nowrap"
         style={{ verticalAlign: "middle" }}
       >
         {label}
@@ -265,12 +266,13 @@ function SlideScreen({
           </div>
         </div>
 
-        {/* Skip button */}
-        <div className="flex justify-end px-4 pt-6">
+        {/* Skip button — pt-[36px] matches Figma header-area py-xxxxl */}
+        <div className="flex justify-end px-4 pt-[36px]">
           <button
             onClick={onSkip}
-            className="bg-[#fffeff] flex h-10 items-center justify-center px-3 py-2 rounded-[4px] cursor-pointer"
+            className="bg-[#fffeff] flex h-10 items-center gap-[8px] justify-center px-3 py-2 rounded-[4px] cursor-pointer"
           >
+            <ArrowRight size={24} color="#7D3AEA" />
             <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-5 tracking-[0.14px]">
               Skip
             </span>
@@ -303,7 +305,7 @@ function SlideScreen({
           </div>
         </div>
 
-        {/* Home indicator */}
+        {/* Home indicator — semi-transparent white, overlaid on background image */}
         <div className="flex items-end justify-center h-[46px] pb-[7.69px]">
           <div className="bg-white/60 h-[4.808px] rounded-[200px] w-[128.846px]" />
         </div>
