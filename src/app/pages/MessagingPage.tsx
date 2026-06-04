@@ -405,7 +405,7 @@ function ChatView({
 }: {
   contact: Contact;
   onBack: () => void;
-  onSend: (text: string) => void;
+  onSend: (msg: ChatMessage) => void;
 }) {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>(contact.messages);
@@ -418,19 +418,17 @@ function ChatView({
   function handleSend() {
     const text = input.trim();
     if (!text) return;
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: String(Date.now()),
-        type: "sent",
-        text,
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      },
-    ]);
-    onSend(text);
+    const newMsg: ChatMessage = {
+      id: String(Date.now()),
+      type: "sent",
+      text,
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+    setMessages((prev) => [...prev, newMsg]);
+    onSend(newMsg);
     setInput("");
   }
 
@@ -463,12 +461,12 @@ function ChatView({
         {messages.map((msg) => {
           if (msg.type === "divider") {
             return (
-              <div key={msg.id} className="flex items-center gap-3 my-1">
-                <div className="flex-1 h-px bg-[#e2d9ef]" />
-                <span className="font-['Manrope',sans-serif] font-normal text-[#9d94aa] text-[12px] leading-[18px] shrink-0">
-                  {msg.text}
-                </span>
-                <div className="flex-1 h-px bg-[#e2d9ef]" />
+              <div key={msg.id} className="flex items-center justify-center py-1">
+                <div className="bg-[#EFE9FC] px-4 py-3 rounded-[8px]">
+                  <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[14px] leading-[21px] tracking-[0.14px] whitespace-nowrap">
+                    {msg.text}
+                  </span>
+                </div>
               </div>
             );
           }
@@ -481,7 +479,7 @@ function ChatView({
                 className={`max-w-[75%] px-4 py-3 ${
                   msg.type === "sent"
                     ? "bg-[#9F99E6] rounded-tl-[8px] rounded-bl-[8px] rounded-br-[8px]"
-                    : "bg-[#F7F4FA] rounded-tr-[8px] rounded-bl-[8px] rounded-br-[8px]"
+                    : "bg-[#F5F0FF] rounded-tr-[8px] rounded-bl-[8px] rounded-br-[8px]"
                 }`}
               >
                 <p className="font-['Manrope',sans-serif] font-normal text-[14px] leading-[21px] text-[#1a1128]">
@@ -530,32 +528,43 @@ function ChatView({
 export function MessagingPage() {
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
   const [clearedUnread, setClearedUnread] = useState<Set<string>>(new Set());
-  // Tracks the last message sent by the user per contact (for inbox preview)
-  const [lastSentByContact, setLastSentByContact] = useState<Record<string, string>>({});
+  // Persists all user-sent messages per contact across chat opens
+  const [sentMessagesByContact, setSentMessagesByContact] = useState<
+    Record<string, ChatMessage[]>
+  >({});
 
   function handleOpenChat(contact: Contact) {
-    // Always open the original contact so ChatView doesn't show synthetic preview entries
     const original = contacts.find((c) => c.id === contact.id) ?? contact;
+    // Merge persisted sent messages so they survive back-navigation and reopen
+    const sentMessages = sentMessagesByContact[original.id] ?? [];
+    const merged: Contact = sentMessages.length
+      ? { ...original, messages: [...original.messages, ...sentMessages] }
+      : original;
     if (contact.unread) {
       setClearedUnread((prev) => new Set([...prev, contact.id]));
     }
-    setActiveContact(original);
+    setActiveContact(merged);
   }
 
-  function handleSentMessage(contactId: string, text: string) {
-    setLastSentByContact((prev) => ({ ...prev, [contactId]: text }));
+  function handleSentMessage(contactId: string, msg: ChatMessage) {
+    setSentMessagesByContact((prev) => ({
+      ...prev,
+      [contactId]: [...(prev[contactId] ?? []), msg],
+    }));
   }
 
+  // contactsWithState: for inbox preview, append the last sent message so
+  // InboxView's existing "You: …" logic picks it up automatically
   const contactsWithState = contacts.map((c) => {
     let contact: Contact = clearedUnread.has(c.id) ? { ...c, unread: undefined } : c;
-    // Append a synthetic sent entry so InboxView's preview computation picks it up
-    const sentText = lastSentByContact[c.id];
-    if (sentText) {
+    const sent = sentMessagesByContact[c.id];
+    if (sent && sent.length > 0) {
+      const last = sent[sent.length - 1];
       contact = {
         ...contact,
         messages: [
           ...contact.messages,
-          { id: `__sent_preview_${c.id}`, type: "sent" as const, text: sentText },
+          { id: `__preview_${c.id}`, type: "sent" as const, text: last.text },
         ],
       };
     }
@@ -569,7 +578,7 @@ export function MessagingPage() {
           <ChatView
             contact={activeContact}
             onBack={() => setActiveContact(null)}
-            onSend={(text) => handleSentMessage(activeContact.id, text)}
+            onSend={(msg) => handleSentMessage(activeContact.id, msg)}
           />
         ) : (
           <InboxView contacts={contactsWithState} onOpenChat={handleOpenChat} />
