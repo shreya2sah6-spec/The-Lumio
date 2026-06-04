@@ -1,6 +1,5 @@
 ﻿import { useState } from "react";
 import { useNavigate, useLocation } from "react-router";
-import type { Mentor } from "../components/MentorCard";
 import { BookingReviewPage } from "./BookingReviewPage";
 import {
   Star,
