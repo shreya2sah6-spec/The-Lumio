@@ -23,7 +23,7 @@ export function MentorCard({ mentor }: { mentor: Mentor }) {
 
   return (
     <div
-      onClick={() => navigate("/mentor-profile")}
+      onClick={() => navigate("/mentor-profile", { state: { mentor } })}
       className="bg-white border border-[#e2d9ef] rounded-[8px] max-w-[340px] min-w-[158px] justify-self-stretch self-start cursor-pointer"
     >
       <div className="flex flex-col gap-2 items-start px-4 py-3">

@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
+import type { Mentor } from "../components/MentorCard";
 import { BookingReviewPage } from "./BookingReviewPage";
 import {
   Star,
@@ -137,6 +138,329 @@ const mentorFAQs = [
       "Understand your target market and their needs while maintaining your unique design perspective. Study successful brands that balance both aspects. Learn to present creative ideas in ways that highlight their business value and market appeal.",
   },
 ];
+
+// ─── Per-mentor profile content ───────────────────────────────────────────────
+
+interface ReviewEntry { avatar: string; name: string; role: string; rating: number; title: string; text: string; }
+interface ExperienceEntry { company: string; letter: string; role: string; start: string; end: string; }
+interface EducationEntry { school: string; letter: string; degree: string; start: string; end: string; }
+interface MentorData {
+  trainedCount: string;
+  aboutMode: "image" | "text" | "hidden";
+  aboutText?: string;
+  aboutImage?: string;
+  aboutImageText?: string;
+  showWebinar: boolean;
+  showResponseTime: boolean;
+  experience: ExperienceEntry[];
+  education: EducationEntry;
+  skills: string[];
+  faqs: { question: string; answer: string }[];
+  insights: { label: string; text: string }[];
+  reviews: ReviewEntry[];
+}
+
+// Additional review pools with fresh names from the curated pool
+const reviewsB: ReviewEntry[] = [
+  { avatar: PF1, name: "Sonal Kapoor", role: "Fashion Design Student", rating: 5, title: "Exceptional depth of knowledge", text: "The sessions were incredibly rich in content. The guidance on understanding fabric behaviour and how it translates into garment silhouettes gave me a level of technical clarity I had been missing throughout my formal education." },
+  { avatar: PM1, name: "Chirag Arora", role: "Jr. Designer", rating: 5, title: "A mentor who truly invests in you", text: "What sets this mentorship apart is the genuine investment in your long-term development. Every session builds on the last and the feedback is specific, honest, and always directed at helping you grow into a more capable designer." },
+  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Strong real-world perspective", text: "The insights on navigating the commercial pressures of fashion design while staying creatively authentic are ones I keep coming back to. The practical wisdom shared is something no design school can fully teach you." },
+  { avatar: PF2, name: "Gayatri Naidu", role: "Design Intern", rating: 4, title: "Clarity and confidence", text: "I came into these sessions unsure about my direction and left with a much clearer sense of what I want to build in my career and how to get there. The mentorship style is warm but direct and exactly what I needed." },
+  { avatar: PM2, name: "Tarun Khanna", role: "Fashion Graduate", rating: 5, title: "Portfolio transformed", text: "My portfolio went from being a collection of work I was uncertain about to a cohesive story that I present with confidence. The guidance on how to frame your work and communicate your design thinking made a visible difference." },
+  { avatar: PF3, name: "Muskaan Bedi", role: "Textile Design Student", rating: 5, title: "Technical mastery shared generously", text: "The technical depth in these sessions is remarkable. Advanced construction methods, draping solutions, and how to work with unconventional materials — all explained with patience and a real understanding of how designers learn." },
+  { avatar: PM3, name: "Tejas Pawar", role: "Associate Designer", rating: 4, title: "Grounded in industry reality", text: "One of the most valuable things about this mentorship is how grounded it is in how the industry actually works. The advice on studio culture, career progression, and professional relationships is genuinely useful and honest." },
+  { avatar: PF4, name: "Zara Mirza", role: "Design Intern", rating: 5, title: "Highly recommended for any designer", text: "Whether you are just starting out or are a few years into your career, this mentorship offers something meaningful. The ability to meet you exactly where you are and help you move forward is a rare skill in a mentor." },
+  { avatar: PM4, name: "Amarjeet Gill", role: "Jr. Designer", rating: 4, title: "Career direction and clarity", text: "I had been drifting in my career without a clear strategy. These sessions helped me understand my strengths, identify opportunities that suit my profile, and build a focused plan for the next stage of my development." },
+];
+
+const reviewsC: ReviewEntry[] = [
+  { avatar: PF1, name: "Heena Qureshi", role: "Fashion Design Student", rating: 5, title: "Practical, honest, impactful", text: "Every session was filled with practical advice that I could apply immediately. No vague encouragement — just specific, honest guidance on what to improve, what to keep, and how to think about the next step in my design journey." },
+  { avatar: PM1, name: "Rohit Parmar", role: "Jr. Fashion Designer", rating: 5, title: "The mentor I needed at this stage", text: "At my stage of career, finding someone who understood exactly what I was facing and could give me relevant, specific advice was invaluable. The sessions gave me both technical improvements and a stronger sense of professional direction." },
+  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Clear and structured guidance", text: "The structured approach to each session made the mentorship feel focused and purposeful. We worked through real challenges I was facing, and by the end of each session I had concrete next steps to work on. Very effective format." },
+  { avatar: PF2, name: "Lavanya Krishnan", role: "Textile Design Student", rating: 5, title: "Transformed how I see garment design", text: "My understanding of how a garment comes together — the relationship between design intent, fabric choice, and construction — was fundamentally transformed through these sessions. This is knowledge that will stay with me throughout my career." },
+  { avatar: PM2, name: "Ayush Srivastava", role: "Design Intern", rating: 4, title: "Great for building industry confidence", text: "The mentorship helped me understand the unwritten rules of the fashion industry — how to communicate with studios, how to handle feedback, how to present work. These things are rarely taught formally but matter enormously." },
+  { avatar: PF3, name: "Monica Dutta", role: "Sr. Design Student", rating: 5, title: "A mentor who understands growth", text: "What I valued most was the long-term perspective on career development. Rather than just addressing immediate concerns, the mentorship helped me think about where I want to be in 5 years and what choices will help me get there." },
+  { avatar: PM3, name: "Dhruv Kulshreshtha", role: "Fashion Graduate", rating: 4, title: "Sharp technical eye", text: "The technical feedback in these sessions is precise and actionable. Each critique comes with a clear explanation of why something works or doesn't, which builds genuine understanding rather than just implementing corrections." },
+  { avatar: PF4, name: "Farah Siddiqui", role: "Jr. Designer", rating: 5, title: "Invaluable industry knowledge", text: "The insider knowledge about how different types of fashion companies work, what they look for in junior designers, and how to position yourself effectively in the market is something you genuinely cannot get anywhere else." },
+  { avatar: PM4, name: "Vinayak Sawant", role: "Associate Designer", rating: 4, title: "Accelerated my development", text: "I made more progress in three months of mentorship than I had in the previous year on my own. The combination of technical guidance, career coaching, and honest feedback accelerated my development in a way I did not expect." },
+];
+
+const reviewsD: ReviewEntry[] = [
+  { avatar: PF1, name: "Preeti Sood", role: "Fashion Design Student", rating: 5, title: "Opened my eyes to the industry", text: "This mentorship gave me a realistic and inspiring picture of what a design career can look like. The honesty about both the challenges and the opportunities helped me set expectations and approach my career with real confidence." },
+  { avatar: PM1, name: "Gaurav Sehgal", role: "Jr. Designer", rating: 4, title: "Focused and effective", text: "The sessions are structured and focused, which makes every minute feel useful. I came with specific questions and left with clear answers and a deeper understanding of the issues I was working through. Very efficient mentorship." },
+  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Real-world wisdom", text: "The mentorship brings real-world wisdom to every conversation. Understanding how studios actually operate, how decisions are made, and what matters to hiring managers gave me knowledge that changed how I approach my career." },
+  { avatar: PF2, name: "Sanjana Rao", role: "Design Intern", rating: 5, title: "Patient and thorough", text: "I appreciated how thoroughly each of my questions and concerns was addressed. Nothing felt rushed. The patience with which complex topics were explained helped me build genuine understanding rather than surface-level knowledge." },
+  { avatar: PM2, name: "Lakshay Oberoi", role: "Fashion Graduate", rating: 5, title: "Helped me think like a professional", text: "The shift from thinking like a student to thinking like a professional designer happened through these sessions. The perspective on how to evaluate your own work, engage with clients, and take ownership of your practice was transformative." },
+  { avatar: PF3, name: "Radhika Menon", role: "Textile Design Student", rating: 4, title: "Great for early-career designers", text: "If you are at the beginning of your design career and feeling uncertain about where to go next, this mentorship will give you clarity and direction. The guidance is specific to where you actually are, not generic career advice." },
+  { avatar: PM3, name: "Pankaj Tyagi", role: "Associate Designer", rating: 5, title: "Builds real capability", text: "The mentorship does not just give you answers — it builds your ability to find better answers yourself. The frameworks and perspectives shared have become part of how I think about design problems and career decisions every day." },
+  { avatar: PF4, name: "Sakshi Batra", role: "Jr. Designer", rating: 4, title: "Consistent quality and care", text: "Every session maintained a high standard of quality and genuine care for my development. The consistency made the mentorship feel trustworthy and made me confident that I was investing my time in something genuinely valuable." },
+  { avatar: PM4, name: "Uday Chawla", role: "Design Graduate", rating: 5, title: "Worth every rupee", text: "The investment in this mentorship paid off many times over within the first few months. The combination of technical skill building, career guidance, and the confidence that comes from having an experienced mentor in your corner is priceless." },
+];
+
+const MENTOR_DATA: Record<string, MentorData> = {
+  m1: {
+    trainedCount: "500+",
+    aboutMode: "image",
+    aboutImage: imgAbout,
+    aboutImageText: "Passionate about craft, I design collections rooted in Indian heritage and contemporary sensibility. Every stitch tells a story of tradition meeting the modern wardrobe.",
+    showWebinar: true,
+    showResponseTime: true,
+    experience: [
+      { company: "MAX Fashion", letter: "M", role: "Sr. Fashion Designer", start: "2020", end: "Present" },
+      { company: "Zara", letter: "Z", role: "Junior Fashion Designer", start: "2018", end: "2020" },
+    ],
+    education: { school: "Pearl Academy", letter: "P", degree: "B.Des in Fashion Design", start: "2014", end: "2018" },
+    skills: ["Pattern Making", "Fabric Knowledge", "Garment Construction", "Fit Analysis", "Color Theory", "Trend Forecasting", "Technical Sketching", "Draping"],
+    faqs: mentorFAQs,
+    insights: [
+      { label: "Expert guidance", text: "Shruti provides personalised mentorship with real-world fashion industry expertise from 7 years across top Indian and global brands." },
+      { label: "Career acceleration", text: "Mentees report significant improvements in skills and career opportunities within months of their first session." },
+      { label: "Supportive approach", text: "Patient, encouraging teaching style with actionable feedback focused on continuous, measurable growth." },
+    ],
+    reviews: mentorReviews,
+  },
+  m2: {
+    trainedCount: "350+",
+    aboutMode: "text",
+    aboutText: "I have spent seven years building fashion collections that balance commercial relevance with genuine creative vision. At MAX Fashion, I lead a design team focused on accessible, trend-forward womenswear that resonates with Indian consumers across price points and seasons. My background in sustainable design practices informs everything from fabric sourcing to construction decisions. I believe mentorship is about giving younger designers the industry perspective they need to make confident, strategic choices in their careers.",
+    showWebinar: true,
+    showResponseTime: true,
+    experience: [
+      { company: "MAX Fashion", letter: "M", role: "Sr. Fashion Designer", start: "2019", end: "Present" },
+      { company: "Fab India", letter: "F", role: "Designer", start: "2017", end: "2019" },
+    ],
+    education: { school: "NIFT Delhi", letter: "N", degree: "B.Des in Fashion Technology", start: "2013", end: "2017" },
+    skills: ["Womenswear Design", "Sustainable Fashion", "Fabric Sourcing", "Range Planning", "Visual Merchandising", "Team Leadership", "Trend Analysis", "CAD / Illustrator"],
+    faqs: [
+      { question: "How do I break into sustainable fashion design?", answer: "Start by learning about natural fibres, low-impact dyes, and zero-waste pattern cutting. Build relationships with ethical fabric suppliers and document your process — brands now want transparency as much as creativity." },
+      { question: "What does a Sr. Fashion Designer actually do day to day?", answer: "Range planning, fabric sourcing meetings, design development with juniors, fitting sessions, and plenty of cross-functional coordination. The creative part is maybe 40% — the rest is communication and execution." },
+      { question: "How important is CAD vs hand sketching early in a career?", answer: "Both matter, but CAD fluency will get you shortlisted. Learn Illustrator for tech packs and flats. Keep hand sketching for ideation — it is still faster for mood boarding and initial concept exploration." },
+      { question: "How do I negotiate my first salary as a fashion designer?", answer: "Research market rates for your city and level. Know your BATNA. Lead with value — what specific skills, experience, or projects make you worth more. Most studios expect negotiation; the first offer is rarely the final one." },
+      { question: "What separates good junior designers from great ones?", answer: "Curiosity and reliability in equal measure. Great juniors ask intelligent questions, take feedback without ego, and follow through on every detail. Technical skills can be taught; attitude and work ethic are what studios hire for." },
+    ],
+    insights: [
+      { label: "Range intelligence", text: "Priya brings deep expertise in commercial range planning — how to balance trend-driven pieces with core staples across a seasonal collection." },
+      { label: "Sustainable practice", text: "With a background in ethical sourcing, she guides mentees on building careers that are both commercially relevant and environmentally conscious." },
+      { label: "Clear communication", text: "Known for her ability to explain complex industry dynamics in plain language that junior designers can apply immediately to their own situations." },
+    ],
+    reviews: reviewsB,
+  },
+  m3: {
+    trainedCount: "420+",
+    aboutMode: "hidden",
+    showWebinar: true,
+    showResponseTime: true,
+    experience: [
+      { company: "Myntra", letter: "M", role: "Sr. Fashion Designer", start: "2018", end: "Present" },
+      { company: "H&M India", letter: "H", role: "Associate Designer", start: "2016", end: "2018" },
+    ],
+    education: { school: "Symbiosis Institute of Design", letter: "S", degree: "B.Des in Fashion Design", start: "2012", end: "2016" },
+    skills: ["E-commerce Design", "Digital Trend Research", "Photo Direction", "Technical Packs", "Fast Fashion", "Menswear", "Category Management", "Supplier Coordination"],
+    faqs: [
+      { question: "How do I design for e-commerce vs physical retail?", answer: "E-commerce demands that garments photograph well from multiple angles and communicate fabric quality visually. Think about how your design reads as a thumbnail. Physical retail allows more texture and drape experimentation." },
+      { question: "What is it like working in fast fashion vs premium design?", answer: "Fast fashion is volume, speed, and commercial judgment. Premium is depth, craft, and storytelling. Both build valuable skills. Fast fashion sharpens your trend read and execution speed; premium builds your craft and conceptual thinking." },
+      { question: "How do I develop menswear design skills as a womenswear trained designer?", answer: "Study tailoring, construction, and proportion carefully — menswear rewards technical precision. Work on fabric understanding and fit standards. Many transferable skills from womenswear apply; the aesthetic sensibility is the main shift." },
+      { question: "How do I stay current with trends without losing my design identity?", answer: "Curate your inspiration sources carefully. Follow the trends that resonate with your design language and ignore the rest. The goal is to be informed, not to follow everything. Your distinct voice is what will make you memorable." },
+      { question: "What should I prioritise in my first design role?", answer: "Learning to execute well. Show up with curiosity, ask intelligent questions, and take every brief seriously — even the simple ones. The best junior designers are the ones who make their seniors' jobs easier while learning everything they can." },
+    ],
+    insights: [
+      { label: "E-commerce expertise", text: "Ravi brings rare insight into designing for digital-first fashion — how garments need to communicate quality and appeal in a thumbnail-sized image." },
+      { label: "Speed and precision", text: "His experience in fast fashion has honed an ability to develop commercially strong designs quickly and accurately, a skill he passes directly to mentees." },
+      { label: "Category breadth", text: "Working across womenswear, menswear, and accessories at Myntra gives him a broad perspective that helps mentees think beyond single-category careers." },
+    ],
+    reviews: reviewsB,
+  },
+  m4: {
+    trainedCount: "280+",
+    aboutMode: "image",
+    aboutImage: imgProject1,
+    aboutImageText: "Leading design at Anita Dongre means working at the intersection of Indian craft traditions and contemporary luxury. My work is grounded in a deep respect for artisan communities and the slow, intentional craft they preserve.",
+    showWebinar: true,
+    showResponseTime: true,
+    experience: [
+      { company: "Anita Dongre", letter: "A", role: "Lead Fashion Designer", start: "2016", end: "Present" },
+      { company: "Mango India", letter: "M", role: "Senior Designer", start: "2014", end: "2016" },
+    ],
+    education: { school: "NIFT Mumbai", letter: "N", degree: "M.Des in Fashion Design", start: "2012", end: "2014" },
+    skills: ["Luxury Design", "Craft Collaboration", "Artisan Partnership", "Bridal Design", "Hand Embroidery Direction", "Heritage Textiles", "Sustainable Luxury", "Studio Management"],
+    faqs: [
+      { question: "How do I break into luxury or couture fashion design?", answer: "Build a portfolio that demonstrates craft sensibility, technical depth, and an understanding of the client at this price point. Internships at premium studios are invaluable — and be patient, as luxury moves slower and hires carefully." },
+      { question: "What is the difference between designing for craft heritage vs commercial fashion?", answer: "Heritage design requires deep research, humility about the craft tradition, and patience with artisan timelines. Commercial design demands speed and commercial instinct. The best designers can operate in both modes depending on the context." },
+      { question: "How do I develop relationships with artisan communities?", answer: "Start by listening and learning before asking for anything. Visit craft clusters, attend textile fairs, and take time to understand the craft tradition before trying to incorporate it into your work. Respect and patience are essential." },
+      { question: "How do I build a design career in bridal or occasion wear?", answer: "Understand the emotional weight of the category — every garment marks a significant moment in someone's life. Study Indian bridal traditions across regions. Build technical skills in embroidery, heavy fabrics, and structured silhouettes." },
+      { question: "What skills do fashion schools underteach that really matter in practice?", answer: "Studio management, artisan communication, cost awareness, and the commercial realities of running a design business. Also, resilience — the ability to handle creative rejection, iterate quickly, and maintain your vision under pressure." },
+    ],
+    insights: [
+      { label: "Luxury craft expertise", text: "Sneha's experience at Anita Dongre gives mentees rare insight into how world-class Indian luxury fashion is conceived, crafted, and brought to market." },
+      { label: "Artisan collaboration", text: "She guides designers on building authentic, respectful relationships with artisan communities — the foundation of India's strongest design houses." },
+      { label: "Heritage with modernity", text: "Her mentorship helps designers understand how to draw on traditional craft traditions without appropriating them, creating work that feels both rooted and contemporary." },
+    ],
+    reviews: reviewsC,
+  },
+  m5: {
+    trainedCount: "190+",
+    aboutMode: "hidden",
+    showWebinar: true,
+    showResponseTime: true,
+    experience: [
+      { company: "Biba", letter: "B", role: "Mid-Level Designer", start: "2021", end: "Present" },
+      { company: "Forever 21 India", letter: "F", role: "Jr. Designer", start: "2019", end: "2021" },
+    ],
+    education: { school: "Pearl Academy Bangalore", letter: "P", degree: "B.Des in Fashion Design", start: "2015", end: "2019" },
+    skills: ["Indian Ethnic Wear", "Kurta Design", "Salwar Kameez", "Print Development", "Block Printing", "Embellishment", "Market Research", "Trend Adaption"],
+    faqs: [
+      { question: "How do I design for the Indian ethnic wear market specifically?", answer: "Understand regional preferences — what sells in Rajasthan differs from what sells in Bengal. Study craft traditions relevant to your category. Work on fit standards for Indian body types, which are often underserved by global design education." },
+      { question: "How do I transition from fast fashion experience to ethnic or traditional wear?", answer: "The commercial skills transfer well — trend reading, execution speed, supplier management. The key shift is developing cultural sensitivity and craft understanding. Immerse yourself in the traditions you want to work with." },
+      { question: "What are the career opportunities in the Indian mass-market fashion segment?", answer: "Enormous and underrated. Brands like Biba, W for Woman, and Global Desi serve a massive market with real design needs. The segment offers good career stability, strong commercial training, and the chance to design for how most Indians actually dress." },
+      { question: "How do I develop original print designs rather than adapting existing ones?", answer: "Start with deep research into your source material — regional textiles, craft motifs, historical archives. Develop your own drawing practice and learn to translate reference into original artwork. Originality comes from thorough research, not from trying to be different." },
+      { question: "What should I focus on as a mid-level designer trying to move to a senior role?", answer: "Take ownership of projects end to end. Demonstrate that you can deliver without constant guidance, manage suppliers independently, and make commercial decisions. Show leadership by mentoring juniors and contributing ideas at the brief stage." },
+    ],
+    insights: [
+      { label: "Indian ethnic wear focus", text: "Amit's deep knowledge of the Indian ethnic wear market helps mentees understand a segment that is commercially huge but underrepresented in formal design education." },
+      { label: "Market-driven thinking", text: "His commercial training at both fast fashion and ethnic wear brands gives mentees a strong grounding in how to design for real consumers with specific cultural needs." },
+      { label: "Print and craft expertise", text: "With hands-on experience in block printing and print development, he guides mentees through the technical and creative aspects of surface design for the Indian market." },
+    ],
+    reviews: reviewsC,
+  },
+  m6: {
+    trainedCount: "230+",
+    aboutMode: "text",
+    aboutText: "Six years into a career spanning two of India's strongest mid-market womenswear brands, I have built expertise in designing collections that balance trend relevance with deep cultural understanding of the Indian woman consumer. My work at W for Woman taught me how to make fashion feel simultaneously aspirational and genuinely wearable. Before that, a formative stint at Lifestyle brand gave me strong foundations in commercial range planning and supplier development. I mentor designers who want to build meaningful careers in India's domestic fashion market — a space that is growing rapidly and where great designers are genuinely needed.",
+    showWebinar: false,
+    showResponseTime: true,
+    experience: [
+      { company: "W for Woman", letter: "W", role: "Fashion Designer", start: "2020", end: "Present" },
+      { company: "Lifestyle Brand", letter: "L", role: "Jr. Designer", start: "2018", end: "2020" },
+    ],
+    education: { school: "NIFT Hyderabad", letter: "N", degree: "B.Des in Apparel Design", start: "2014", end: "2018" },
+    skills: ["Womenswear", "Indian Consumer Research", "Commercial Range Building", "Colour Palette Development", "Fabric Selection", "Work Wear Design", "Weekend Wear", "Occasion Dressing"],
+    faqs: [
+      { question: "How do I design for working Indian women specifically?", answer: "Understand the dual demands of professionalism and cultural sensitivity. The modern Indian woman wants clothes that work in a meeting and a family gathering. Study silhouettes, fabrics, and colour palettes that serve both contexts without compromise." },
+      { question: "What is range planning and why should junior designers understand it?", answer: "Range planning is the commercial backbone of a collection — how many styles, at what price points, in which categories, and for which occasions. Understanding it makes you a far more effective designer and a more attractive candidate for senior roles." },
+      { question: "How important is understanding consumer research as a designer?", answer: "Extremely important, especially in the mid-market. You are designing for real women with specific incomes, lifestyles, and cultural contexts. The more precisely you understand your consumer, the more effectively you can design for her." },
+      { question: "How do I build a career in domestic Indian fashion rather than pursuing international brands?", answer: "The domestic market offers more opportunity than most designers realise. Focus on understanding India deeply — its regional diversity, its evolving consumer base, its craft traditions. This is knowledge that gives you a competitive edge internationally applied locally." },
+      { question: "How do I make a collection feel cohesive when working to a commercial brief?", answer: "Start with a strong colour story and a single clear point of view on proportion. Let the brief define the commercial guardrails and then find the creative direction within them. Cohesion comes from a clear lens, not from matching everything." },
+    ],
+    insights: [
+      { label: "Consumer clarity", text: "Neha's deep understanding of the Indian woman consumer gives mentees a powerful framework for designing work that is both culturally resonant and commercially viable." },
+      { label: "Range-building expertise", text: "Her experience building seasonal ranges at W for Woman teaches mentees the commercial architecture behind fashion collections that sell consistently." },
+      { label: "Domestic market focus", text: "She is a strong advocate for building careers in India's domestic fashion market and provides mentees with a realistic, optimistic view of the opportunities available." },
+    ],
+    reviews: reviewsC,
+  },
+  m7: {
+    trainedCount: "120+",
+    aboutMode: "text",
+    aboutText: "Three years into my design career and I have already learned more than I thought possible about how the fashion industry actually works. At Biba I design across ethnic and fusion categories, working quickly and responding to market feedback in real time. My experience at Shein India taught me the discipline of fast-cycle design — how to develop a garment from brief to final spec in days rather than weeks. I mentor designers who are just starting out, particularly those navigating the gap between design school and their first professional role. The confusion, uncertainty, and imposter syndrome of the early career is something I still remember clearly — and I am genuinely invested in helping others navigate it.",
+    showWebinar: false,
+    showResponseTime: false,
+    experience: [
+      { company: "Biba", letter: "B", role: "Mid-Level Designer", start: "2023", end: "Present" },
+      { company: "Shein India", letter: "S", role: "Jr. Designer", start: "2021", end: "2023" },
+    ],
+    education: { school: "INIFD Pune", letter: "I", degree: "Diploma in Fashion Design", start: "2019", end: "2021" },
+    skills: ["Fast Fashion Execution", "Ethnic Fusion Design", "Technical Spec Writing", "Trend Adoption", "Vendor Communication", "CAD Basics", "Print Selection", "Cost-Conscious Design"],
+    faqs: [
+      { question: "How do I deal with imposter syndrome as a new designer?", answer: "Almost every designer feels it, especially in the first two years. The antidote is doing the work — consistently, carefully, and without waiting to feel ready. Confidence follows action, not the other way around." },
+      { question: "What is the best way to get my first design job with limited experience?", answer: "Have a clean, focused portfolio with 4 to 6 strong projects. Apply broadly and include smaller brands that are more likely to take a chance on you. Offer to do a brief trial project if they are hesitant. Getting in the door matters more than the salary at this stage." },
+      { question: "How do I manage the mental load of working in fast fashion?", answer: "Pace and prioritisation are everything. Learn to work in focused sprints, protect your creative energy for the highest-priority tasks, and develop routines that help you decompress at the end of the day. Fast fashion is intense — boundaries matter." },
+      { question: "Is it worth doing a paid design course after graduating from a design college?", answer: "Depends entirely on the course and what gap it fills. If it teaches something your college did not — specific software, a technical skill, industry knowledge — then potentially yes. But real work experience is almost always more valuable than another course." },
+      { question: "How do I make the most of an internship in a design studio?", answer: "Be early, be enthusiastic, and say yes to everything. Observe more than you speak. Ask thoughtful questions at the right moments. Build relationships — internships are as much about proving your attitude as your skills. The best interns get offered jobs." },
+    ],
+    insights: [
+      { label: "Early-career expertise", text: "Vikram specialises in mentoring designers at the very start of their careers — helping them navigate the transition from design school to professional practice with confidence." },
+      { label: "Fast fashion knowledge", text: "His experience in fast-cycle design gives mentees practical knowledge of execution speed, commercial judgment, and the technical discipline required at high-volume studios." },
+      { label: "Peer-level honesty", text: "As a designer earlier in his own career, Vikram offers a peer-level honesty about the challenges, doubts, and learning curves of early professional life that more senior mentors cannot replicate." },
+    ],
+    reviews: reviewsD,
+  },
+  m8: {
+    trainedCount: "160+",
+    aboutMode: "image",
+    aboutImage: imgProject2,
+    aboutImageText: "At Fabindia I design across handloom and craft-based categories, working directly with artisan communities to translate traditional weaves into contemporary garments. Craft and commerce in honest conversation.",
+    showWebinar: false,
+    showResponseTime: true,
+    experience: [
+      { company: "Fabindia", letter: "F", role: "Fashion Designer", start: "2022", end: "Present" },
+      { company: "Westside", letter: "W", role: "Jr. Designer", start: "2020", end: "2022" },
+    ],
+    education: { school: "NIFT Chennai", letter: "N", degree: "B.Des in Textile Design", start: "2016", end: "2020" },
+    skills: ["Handloom Design", "Craft Collaboration", "Natural Fibres", "Woven Textiles", "Artisan Communication", "Surface Design", "Sustainable Sourcing", "Block Printing"],
+    faqs: [
+      { question: "How do I build a career in handloom and craft-based fashion?", answer: "Immerse yourself in the craft traditions. Visit weaving clusters, study regional textile histories, and learn to communicate with artisans in their language — literally and metaphorically. The design knowledge is secondary; the relationship and respect come first." },
+      { question: "How do I work with natural fibres at a commercial scale?", answer: "Understand that natural fibres have variability that synthetics do not — and that is both a challenge and an opportunity. Learn how to spec for variation, how to work with artisan production timelines, and how to communicate natural uniqueness as a value proposition." },
+      { question: "What is the career path in the Indian sustainable fashion space?", answer: "It ranges from craft-based labels like Fabindia and Good Earth to independent sustainable brands to NGOs working at the intersection of craft and livelihood. Build deep expertise in one craft tradition and a broad understanding of the sustainable design ecosystem." },
+      { question: "How do I design garments that honour a craft tradition without making them feel like costumes?", answer: "The key is proportions and styling. Traditional textiles can sit in contemporary silhouettes. Study how designers like Anavila, Abraham & Thakore, and Injiri do it — they make handloom feel completely of-the-moment without compromising the textile's identity." },
+      { question: "Is a textile design background more useful than fashion design for a handloom career?", answer: "Both are valuable. Textile design gives you deeper material knowledge. Fashion design gives you stronger garment construction and commercial sense. The ideal is developing both — take every opportunity to learn across disciplines." },
+    ],
+    insights: [
+      { label: "Craft-based design", text: "Anjali's work at Fabindia positions her as an expert in craft-based fashion — the growing intersection of artisan tradition, sustainability, and contemporary design that defines India's strongest design identity." },
+      { label: "Natural material mastery", text: "Her deep knowledge of handloom textiles and natural fibres helps mentees understand materials at a level that transforms how they approach every design decision." },
+      { label: "Artisan partnership", text: "She teaches the art of building genuine, respectful partnerships with artisan communities — an essential skill for any designer who wants to work at this end of the fashion spectrum." },
+    ],
+    reviews: reviewsD,
+  },
+  m9: {
+    trainedCount: "390+",
+    aboutMode: "image",
+    aboutImage: imgProject3,
+    aboutImageText: "Nine years of designing for some of India's largest retail fashion brands has taught me that great design is as much about understanding business as it is about creativity. My work at Lifestyle and Shoppers Stop shaped my commercial instincts and gave me the breadth of category knowledge I now bring to mentorship.",
+    showWebinar: false,
+    showResponseTime: true,
+    experience: [
+      { company: "Lifestyle Brand", letter: "L", role: "Sr. Fashion Designer", start: "2019", end: "Present" },
+      { company: "Shoppers Stop", letter: "S", role: "Designer", start: "2017", end: "2019" },
+    ],
+    education: { school: "Pearl Academy Jaipur", letter: "P", degree: "B.Des in Fashion Design", start: "2013", end: "2017" },
+    skills: ["Multi-Category Design", "Private Label Development", "Buying & Merchandising", "Retail Fashion", "Value Fashion", "Category Strategy", "Colour Story Development", "Visual Merchandising"],
+    faqs: [
+      { question: "How do I transition from design into buying or merchandising?", answer: "Start by understanding the commercial language — sell-through rates, margin, markdown cycles. Shadow buyers where possible. Your design eye is an asset in buying but you need to complement it with strong quantitative thinking and supplier management skills." },
+      { question: "What does it mean to develop a private label for a large retailer?", answer: "You are building a brand within a brand — with its own identity, aesthetic codes, and target consumer. It requires the full spectrum of design skills: consumer research, range planning, design execution, and quality oversight from spec to finished garment." },
+      { question: "How do I make value fashion feel premium without increasing the cost?", answer: "Design is about perception. Strong colour stories, clean silhouettes, and thoughtful print placement can elevate a garment regardless of price point. The details that matter most — finish, fit, proportion — often do not cost more to get right." },
+      { question: "How should designers think about retail calendars and buying cycles?", answer: "Understand that retail is driven by business cycles, not creative cycles. Learn the seasons, the markdown windows, and the planning timelines your buying team works to. The more commercially fluent you are, the more effective you become as a designer." },
+      { question: "What are the key differences between designing for a department store vs a brand?", answer: "Department stores require range breadth and category versatility. Brands allow deeper aesthetic focus and stronger identity. Both demand commercial competence, but in different forms. Department store experience builds range planning muscle; brand experience builds identity and consistency." },
+    ],
+    insights: [
+      { label: "Retail and commercial expertise", text: "Rajesh's nine years across India's largest retail fashion organisations give mentees unparalleled insight into how commercial fashion actually works at scale." },
+      { label: "Private label mastery", text: "His experience developing private labels for major retailers teaches designers how to build distinct brand identities within large commercial organisations." },
+      { label: "Category breadth", text: "With experience across multiple fashion categories, he helps mentees think about career choices strategically — understanding the trade-offs and opportunities across different design paths." },
+    ],
+    reviews: reviewsD,
+  },
+  m10: {
+    trainedCount: "310+",
+    aboutMode: "text",
+    aboutText: "Eleven years in fashion design have taken me from a junior position at Good Earth to leading the design team at FabIndia, one of India's most culturally significant fashion and lifestyle brands. The through-line in my career has been a commitment to India's craft traditions — understanding them deeply, working with them honestly, and finding ways to make them relevant to contemporary consumers without diluting their integrity. Mentorship for me is about passing on not just the technical knowledge of design but the broader cultural intelligence and business acumen that are equally essential for a meaningful career in Indian fashion today.",
+    showWebinar: false,
+    showResponseTime: true,
+    experience: [
+      { company: "FabIndia", letter: "F", role: "Lead Designer", start: "2018", end: "Present" },
+      { company: "Good Earth", letter: "G", role: "Sr. Designer", start: "2015", end: "2018" },
+    ],
+    education: { school: "NIFT Kolkata", letter: "N", degree: "B.Des in Leather Design & Accessories", start: "2011", end: "2015" },
+    skills: ["Craft Heritage Design", "Multi-Category Leadership", "Lifestyle Brand Design", "Handcraft Direction", "Artisan Network Development", "Category Expansion", "Brand Identity", "Design Leadership"],
+    faqs: [
+      { question: "How do I build a career at the intersection of heritage craft and contemporary design?", answer: "Develop your craft knowledge as rigorously as your design knowledge. Travel to craft clusters. Study both the tradition and the business of craft. The designers who do this well are rare and consistently in demand." },
+      { question: "What does design leadership look like in the Indian fashion context?", answer: "It is equal parts creative direction, team development, stakeholder management, and cultural stewardship. The best design leaders in India understand the commercial pressures and the craft responsibilities equally, and navigate between them with skill." },
+      { question: "How do I build and manage a design team as I move into more senior roles?", answer: "Invest in your team's development the way you wish someone had invested in yours. Be clear about creative direction, fair about feedback, and consistent in your support. Great design leaders make their teams feel safe to take creative risks." },
+      { question: "How do I stay relevant in Indian fashion as trends and consumer tastes evolve rapidly?", answer: "The designers who stay relevant are those rooted in something deeper than trend — in craft knowledge, cultural intelligence, or a strong design philosophy. Trend fluency matters, but it is the depth beneath the trend that creates longevity." },
+      { question: "What is the difference between designing for a lifestyle brand vs a pure fashion brand?", answer: "Lifestyle brands require a broader sensibility — you are designing for a way of living, not just a way of dressing. Home, accessories, and apparel need to speak a coherent visual language. It demands range breadth and a consistent aesthetic point of view across categories." },
+    ],
+    insights: [
+      { label: "Cultural design intelligence", text: "Kavita's eleven years navigating India's craft-heritage fashion space give mentees a rare depth of cultural intelligence that goes far beyond what formal design education provides." },
+      { label: "Design leadership", text: "As a team leader at FabIndia, she offers mentees genuine insight into what design leadership looks like in practice — the creative, commercial, and interpersonal dimensions of the role." },
+      { label: "Long-term career thinking", text: "Her ability to think strategically about design careers over a decade-long horizon helps mentees make choices today that will position them well for where the industry is heading." },
+    ],
+    reviews: reviewsD,
+  },
+};
+
+// Default data for unknown mentor IDs
+const defaultMentorData: MentorData = MENTOR_DATA["m1"];
+
+// Mentor IDs where About Me is hidden (m3, m5)
+// Mentor IDs where Webinar is hidden (m7, m8, m9, m10) — stored in the data map
 
 const statusBarPaths = {
   signalBars:
@@ -284,6 +608,18 @@ function ReviewCard({
 
 export function MentorProfilePage() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Read mentor passed via navigation state; fall back to m1 (Shruti Jain)
+  const passedMentor = (location.state as { mentor?: Mentor } | null)?.mentor;
+  const mentor: Mentor = passedMentor ?? {
+    id: "m1", name: "Shruti Jain", title: "Sr. Fashion Designer", company: "MAX",
+    avatar: imgMentor, experience: "7 yrs exp • EX - ZARA",
+    rating: 4.9, reviews: 120, originalPrice: 600, discountedPrice: 300, isTopMentor: true,
+  };
+  const pd = MENTOR_DATA[mentor.id] ?? defaultMentorData;
+  const isFree = mentor.discountedPrice === "Free";
+
   const [showBookingReview, setShowBookingReview] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   const [selectedDateIdx, setSelectedDateIdx] = useState(0);
@@ -372,17 +708,7 @@ export function MentorProfilePage() {
 
   const timeSlots = getTimeSlotsForDate(selectedDateIdx);
 
-  const skills = [
-    "Pattern Making",
-    "Fabric Knowledge",
-    "Garment Construction",
-    "Fit Analysis",
-    "Color Theory",
-    "Trend Forecasting",
-    "Technical Sketching",
-    "Draping",
-  ];
-
+  const skills = pd.skills;
   const displayedSkills = showAllSkills ? skills : skills.slice(0, 4);
 
   const footerHeight = 178; // Footer height for proper scroll padding
@@ -415,8 +741,8 @@ export function MentorProfilePage() {
             <div className="flex justify-between items-center mb-3">
               <div className="relative shrink-0 size-[72px] rounded-full overflow-hidden border-2 border-[#e2d9ef]">
                 <img
-                  src={imgMentor}
-                  alt="Shruti Jain"
+                  src={mentor.avatar}
+                  alt={mentor.name}
                   className="absolute inset-0 size-full object-cover"
                 />
               </div>
@@ -449,58 +775,66 @@ export function MentorProfilePage() {
             <div className="mb-[2px]">
               <div className="flex items-center justify-between mb-1">
                 <h1 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[24px]">
-                  Shruti Jain
+                  {mentor.name}
                 </h1>
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-1 px-2 py-0.5 rounded-[4px] bg-[#fffeff]">
                     <Star size={12} weight="fill" color="#1A1128" />
                     <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px]">
-                      4.9
+                      {mentor.rating}
                     </span>
                     <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px]">
-                      (120)
+                      ({mentor.reviews})
                     </span>
                   </div>
-                  <div className="bg-gradient-to-l from-[rgba(247,181,0,0.4)] to-[rgba(254,250,225,0.4)] py-0.5 rounded-[4px] px-[8px] py-[4px]">
-                    <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px]">
-                      Top 1%
-                    </span>
-                  </div>
+                  {mentor.isTopMentor && (
+                    <div className="bg-gradient-to-l from-[rgba(247,181,0,0.4)] to-[rgba(254,250,225,0.4)] py-0.5 rounded-[4px] px-[8px]">
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px]">
+                        Top 1%
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px] mb-1">
-                Sr. Fashion Designer @ MAX Fashion
+                {mentor.title} @ {mentor.company}
               </p>
               <div className="flex flex-wrap gap-1.5 text-[12px] text-[#6b5f7a] font-['Manrope',sans-serif] mb-1">
-                <span>7 yrs exp</span>
+                <span>{mentor.experience.split(" • ")[0]}</span>
+                {mentor.experience.split(" • ")[1] && (
+                  <>
+                    <span>•</span>
+                    <span>{mentor.experience.split(" • ")[1]}</span>
+                  </>
+                )}
                 <span>•</span>
-                <span>Ex-Zara</span>
-                <span>•</span>
-                <span className="font-m text-[12px]edium">
-                  Trained 500+ designers
-                </span>
+                <span>Trained {pd.trainedCount} designers</span>
               </div>
-              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">
-                Usually responds within 24 hours
-              </p>
+              {pd.showResponseTime && (
+                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">
+                  Usually responds within 24 hours
+                </p>
+              )}
             </div>
 
             <div className="rounded-[8px] p-[0px]">
               <div className="flex items-baseline gap-2">
                 <span className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[14px] line-through">
-                  ₹600
+                  ₹{mentor.originalPrice}
                 </span>
-                <span className="inline-block font-['Roboto_Serif',serif] font-semibold leading-[36px] font-[Manrope] text-[16px] text-[#1a1128]">
-                  ₹300
+                <span className="inline-block font-['Roboto_Serif',serif] font-semibold leading-[36px] text-[16px] text-[#1a1128]">
+                  {isFree ? "Free" : `₹${mentor.discountedPrice}`}
                 </span>
-                <div className="flex items-baseline gap-1">
-                  <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px]">
-                    /hr
-                  </span>
-                  <span className="font-['Manrope',sans-serif] font-medium text-[12px] leading-[18px] text-[#1a1128]">
-                    + Free Chat for 10 days
-                  </span>
-                </div>
+                {!isFree && (
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px]">
+                      /hr
+                    </span>
+                    <span className="font-['Manrope',sans-serif] font-medium text-[12px] leading-[18px] text-[#1a1128]">
+                      + Free Chat for 10 days
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -563,19 +897,21 @@ export function MentorProfilePage() {
             </div>
           </div>
 
-          {/* Webinar */}
-          <div className="bg-[#fffeff] px-4 py-3 mt-1">
-            <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
-              Webinar
-            </h3>
-            <div className="rounded-[12px] overflow-hidden mb-3">
-              <img
-                src={imgWebinar}
-                alt="Webinar"
-                className="w-full h-[268px] object-cover"
-              />
+          {/* Webinar — hidden for last 4 mentor cards (m7–m10) */}
+          {pd.showWebinar && (
+            <div className="bg-[#fffeff] px-4 py-3 mt-1">
+              <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                Webinar
+              </h3>
+              <div className="rounded-[12px] overflow-hidden mb-3">
+                <img
+                  src={imgWebinar}
+                  alt="Webinar"
+                  className="w-full h-[268px] object-cover"
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Sticky Tabs */}
           <div className="sticky top-[60px] z-10 w-full border-b border-[#e2d9ef] bg-[#fffeff]">
@@ -607,17 +943,30 @@ export function MentorProfilePage() {
           <div style={{ paddingBottom: `${footerHeight}px` }}>
             {activeTab === "Overview" && (
               <>
-                {/* About Me */}
-                <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-2">
-                    About Me
-                  </h3>
-                  <img
-                    src={imgAbout}
-                    alt="About Me"
-                    className="w-full h-[240px] object-cover rounded-[8px]"
-                  />
-                </div>
+                {/* About Me — hidden for m3/m5; text-only for m2/m6/m7/m10; image+text for rest */}
+                {pd.aboutMode !== "hidden" && (
+                  <div className="bg-[#fffeff] px-4 py-3 mt-1">
+                    <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-2">
+                      About Me
+                    </h3>
+                    {pd.aboutMode === "image" && pd.aboutImage ? (
+                      <div className="flex flex-col">
+                        <img
+                          src={pd.aboutImage}
+                          alt="About"
+                          className="w-full h-[200px] object-cover rounded-[8px]"
+                        />
+                        <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px] mt-[12px]">
+                          {pd.aboutImageText}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
+                        {pd.aboutText}
+                      </p>
+                    )}
+                  </div>
+                )}
 
                 {/* Recent Projects */}
                 <div className="bg-[#fffeff] py-3 mt-1">
@@ -670,43 +1019,23 @@ export function MentorProfilePage() {
                     Experience
                   </h3>
                   <div className="space-y-4">
-                    <div className="flex gap-3 items-center">
-                      <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                        <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">
-                          M
-                        </span>
+                    {pd.experience.map((exp, i) => (
+                      <div key={i}>
+                        {i > 0 && <div className="h-px bg-[#e2d9ef] mb-4" />}
+                        <div className="flex gap-3 items-center">
+                          <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
+                            <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">{exp.letter}</span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">{exp.company}</h4>
+                            <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">{exp.role}</p>
+                          </div>
+                          <span className="shrink-0 bg-[#f7f4fa] px-[12px] py-[8px] rounded-[4px] font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[16px]">
+                            {exp.start} – {exp.end}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">
-                          MAX Fashion
-                        </h4>
-                        <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">
-                          Sr. Fashion Designer
-                        </p>
-                      </div>
-                      <span className="shrink-0 bg-[#f7f4fa] px-[12px] py-[8px] rounded-[4px] font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[16px]">
-                        2020 - Present
-                      </span>
-                    </div>
-                    <div className="h-px bg-[#e2d9ef]" />
-                    <div className="flex gap-3 items-center">
-                      <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                        <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">
-                          Z
-                        </span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">
-                          Zara
-                        </h4>
-                        <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">
-                          Junior Fashion Designer
-                        </p>
-                      </div>
-                      <span className="shrink-0 bg-[#f7f4fa] px-[12px] py-[8px] rounded-[4px] font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[16px]">
-                        2018 - 2020
-                      </span>
-                    </div>
+                    ))}
                   </div>
                 </div>
 
@@ -717,20 +1046,14 @@ export function MentorProfilePage() {
                   </h3>
                   <div className="flex gap-3 items-center">
                     <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                      <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">
-                        P
-                      </span>
+                      <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">{pd.education.letter}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">
-                        Pearl Academy
-                      </h4>
-                      <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">
-                        Bachelor of Design in Fashion Design
-                      </p>
+                      <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">{pd.education.school}</h4>
+                      <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">{pd.education.degree}</p>
                     </div>
                     <span className="shrink-0 bg-[#f7f4fa] px-[12px] py-[8px] rounded-[4px] font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[16px]">
-                      2014 - 2018
+                      {pd.education.start} – {pd.education.end}
                     </span>
                   </div>
                 </div>
@@ -806,48 +1129,31 @@ export function MentorProfilePage() {
                   <div className="bg-white relative rounded-[12px] w-full border border-[#e2d9ef]">
                     <div className="flex flex-col items-start px-[16px] py-[12px]">
                       <ul className="list-disc pl-[20px] flex flex-col gap-[2px]">
-                        <li>
-                          <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
-                            Expert guidance:{" "}
-                          </span>
-                          <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                            Shruti provides personalized mentorship with
-                            real-world fashion industry expertise.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
-                            Career acceleration:{" "}
-                          </span>
-                          <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                            Mentees report significant improvements in skills
-                            and career opportunities.
-                          </span>
-                        </li>
-                        <li>
-                          <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
-                            Supportive approach:{" "}
-                          </span>
-                          <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                            Patient, encouraging teaching style with actionable
-                            feedback for continuous growth.
-                          </span>
-                        </li>
+                        {pd.insights.map((ins, i) => (
+                          <li key={i}>
+                            <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                              {ins.label}:{" "}
+                            </span>
+                            <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                              {ins.text}
+                            </span>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   </div>
                 </div>
 
-                {mentorReviews.slice(0, visibleReviews).map((review, i) => (
+                {pd.reviews.slice(0, visibleReviews).map((review, i) => (
                   <ReviewCard key={i} {...review} />
                 ))}
 
                 <ViewMoreButton
                   onClick={() =>
-                    setVisibleReviews((v) => Math.min(v + 3, mentorReviews.length))
+                    setVisibleReviews((v) => Math.min(v + 3, pd.reviews.length))
                   }
                   className={
-                    visibleReviews >= mentorReviews.length
+                    visibleReviews >= pd.reviews.length
                       ? "pointer-events-none cursor-default"
                       : ""
                   }
@@ -879,7 +1185,7 @@ export function MentorProfilePage() {
               <div className="bg-[#fffeff] px-4 py-12">
                 {/* FAQ List */}
                 <div className="flex flex-col gap-[4px] items-start w-full">
-                  {mentorFAQs.slice(0, visibleFAQCount).map((faq, index) => {
+                  {pd.faqs.slice(0, visibleFAQCount).map((faq, index) => {
                     const isExpanded = expandedFAQs.has(index);
                     return (
                       <button
@@ -981,7 +1287,7 @@ export function MentorProfilePage() {
             {/* Unlock Chat Banner */}
             <div className="bg-[#f5f0ff] px-4 py-3 rounded-t-[8px]">
               <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[14px] leading-[20px] text-center">
-                Chat will be unlocked after the call is booked.
+                {isFree ? "Chat will be unlocked in 99 rs" : "Chat will be unlocked after the call is booked."}
               </p>
             </div>
 
