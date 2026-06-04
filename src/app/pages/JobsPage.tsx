@@ -1758,24 +1758,29 @@ function DetailView({
           </div>
         )}
 
-        {/* similar jobs */}
-        <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-          <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#2d2040] text-[20px] leading-[28px] w-full">
-            Similar jobs
-          </p>
-          <div className="flex flex-col gap-[4px] items-start w-full">
-            {similarJobs.map((sj) => (
-              <JobCard
-                key={sj.id}
-                job={sj}
-                applied={appliedIds.has(sj.id)}
-                onApply={() => onApplyJob(sj)}
-                onViewDetails={() => onViewDetailsJob(sj)}
-              />
-            ))}
-          </div>
-          <ViewMoreBtn onClick={() => {}} />
-        </div>
+        {/* similar jobs — exclude the currently open job */}
+        {(() => {
+          const displaySimilarJobs = similarJobs.filter((sj) => sj.id !== job.id);
+          return (
+            <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
+              <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#2d2040] text-[20px] leading-[28px] w-full">
+                Similar jobs
+              </p>
+              <div className="flex flex-col gap-[4px] items-start w-full">
+                {displaySimilarJobs.map((sj) => (
+                  <JobCard
+                    key={sj.id}
+                    job={sj}
+                    applied={appliedIds.has(sj.id)}
+                    onApply={() => onApplyJob(sj)}
+                    onViewDetails={() => onViewDetailsJob(sj)}
+                  />
+                ))}
+              </div>
+              <ViewMoreBtn onClick={() => {}} />
+            </div>
+          );
+        })()}
       </div>
 
       {/* footer */}
@@ -1890,6 +1895,7 @@ export function JobsPage() {
           </>
         ) : selectedJob ? (
           <DetailView
+            key={selectedJob.id}
             job={selectedJob}
             detailTab={detailTab}
             onTabChange={setDetailTab}
