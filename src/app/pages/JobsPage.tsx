@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
 import {
   Funnel,
@@ -581,6 +581,27 @@ function applyDiscoverFilters(
   });
 }
 
+/** Filter applied-tab jobs by the active filter selections. */
+function applyAppliedFilters(
+  jobs: Job[],
+  filters: Record<AppliedFilter, Set<string>>
+): Job[] {
+  return jobs.filter((job) => {
+    // Job Type
+    const typeFilter = filters["Job Type"];
+    if (typeFilter.size > 0) {
+      const t = (job.typeTag || "").toLowerCase();
+      if (![...typeFilter].some((f) => t.includes(f.toLowerCase()))) return false;
+    }
+    // Company — exact match against company name
+    const companyFilter = filters["Company"];
+    if (companyFilter.size > 0) {
+      if (!companyFilter.has(job.company)) return false;
+    }
+    return true;
+  });
+}
+
 function isOutOfScope(job: Job): boolean {
   const exp = job.expTag.toLowerCase();
   const highExp =
@@ -1134,6 +1155,7 @@ function ListingView({
   onViewDetails: (job: Job) => void;
   onFilter: () => void;
   isFiltered: boolean;
+  isAppliedFiltered: boolean;
   activeFilters: ActiveFilters | null;
 }) {
   const [visibleRecent, setVisibleRecent] = useState(PAGE_SIZE);
@@ -1147,6 +1169,22 @@ function ListingView({
     activeFilters
       ? applyDiscoverFilters(allDiscoverJobs, activeFilters.discover)
       : filteredJobs;
+
+  // Build the live applied-jobs list: static pre-seeded jobs + jobs applied
+  // during this session (from recentJobs/latestJobs via appliedIds).
+  const userAppliedJobs = useMemo(() => {
+    const seenIds = new Set(appliedJobs.map((j) => j.id));
+    const sessionApplied = allDiscoverJobs.filter(
+      (j) => appliedIds.has(j.id) && !seenIds.has(j.id)
+    );
+    return [...appliedJobs, ...sessionApplied];
+  }, [appliedIds]);
+
+  // When Applied tab has an active filter, compute the filtered subset.
+  const computedAppliedJobs =
+    isAppliedFiltered && activeFilters
+      ? applyAppliedFilters(userAppliedJobs, activeFilters.applied)
+      : userAppliedJobs;
 
   const searchPlaceholder =
     activeTab === "Discover"
@@ -1280,20 +1318,34 @@ function ListingView({
             </>
           )
         ) : (
-          <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-            <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
-              Under review
-            </p>
-            <div className="flex flex-col gap-[4px] items-start w-full">
-              {appliedJobs.map((job) => (
-                <JobCard
-                  key={job.id}
-                  job={job}
-                  statusLabel="Under Review"
-                />
-              ))}
+          isAppliedFiltered && computedAppliedJobs.length === 0 ? (
+            // ── Empty applied-filter state — Figma: shared/job-applied-not-found ──
+            <>
+              <NoResultsState />
+              <div className="flex flex-col gap-[16px] items-start px-[16px] py-[28px]">
+                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                  In review
+                </p>
+                <div className="flex flex-col gap-[4px] items-start w-full">
+                  {userAppliedJobs.map((job) => (
+                    <JobCard key={job.id} job={job} statusLabel="In Review" />
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : (
+            // ── Normal applied list ──
+            <div className="flex flex-col gap-[16px] items-start px-[16px] py-[28px]">
+              <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                In review
+              </p>
+              <div className="flex flex-col gap-[4px] items-start w-full">
+                {computedAppliedJobs.map((job) => (
+                  <JobCard key={job.id} job={job} statusLabel="In Review" />
+                ))}
+              </div>
             </div>
-          </div>
+          )
         )}
       </div>
     </div>
@@ -1695,6 +1747,7 @@ export function JobsPage() {
   const [toastJob, setToastJob] = useState<Job | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isFiltered, setIsFiltered] = useState(false);
+  const [isAppliedFiltered, setIsAppliedFiltered] = useState(false);
   const [activeFilters, setActiveFilters] = useState<ActiveFilters | null>(null);
 
   function handleApply(id: string) {
@@ -1740,7 +1793,8 @@ export function JobsPage() {
 
   function handleShowResults(filters: ActiveFilters) {
     setActiveFilters(filters);
-    setIsFiltered(true);
+    if (activeTab === "Discover") setIsFiltered(true);
+    else setIsAppliedFiltered(true);
   }
 
   return (
@@ -1752,13 +1806,16 @@ export function JobsPage() {
               activeTab={activeTab}
               onTabChange={(t) => {
                 setActiveTab(t);
-                if (t === "Applied") { setIsFiltered(false); setActiveFilters(null); }
+                setActiveFilters(null);
+                if (t === "Applied") setIsFiltered(false);
+                if (t === "Discover") setIsAppliedFiltered(false);
               }}
               appliedIds={appliedIds}
               onApply={requestApply}
               onViewDetails={handleViewDetails}
               onFilter={() => setShowFilter(true)}
               isFiltered={isFiltered}
+              isAppliedFiltered={isAppliedFiltered}
               activeFilters={activeFilters}
             />
             <BottomNav active="jobs" profileNavImg={imgProfileNav} />
