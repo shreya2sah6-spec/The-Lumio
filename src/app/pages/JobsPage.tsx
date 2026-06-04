@@ -383,56 +383,129 @@ const similarJobs: Job[] = [
   },
 ];
 
-const reviewsPool = [
-  {
-    avatar: imgReviewer1,
-    name: "Anaya",
-    role: "Fashion Designer",
-    rating: 5,
-    title: "Supportive learning environment",
-    text: "I had a great experience working at this company, as the team was professional and supportive. The work environment encouraged learning, growth, and collaboration. Senior designers are always willing to share knowledge and guide younger talent through the creative process.",
-  },
-  {
-    avatar: imgReviewer2,
-    name: "Anonymous",
-    role: "",
-    rating: 4,
-    title: "Great place to grow",
-    text: "This studio offers a unique opportunity to work with traditional Indian textiles and craftsmanship. The mentorship from senior designers is invaluable. You learn by doing, and the exposure to haute couture is unparalleled in the industry.",
-  },
-  {
-    avatar: imgReviewer3,
-    name: "Riya Mehta",
-    role: "Jr. Designer",
-    rating: 5,
-    title: "Incredible craft exposure",
-    text: "Working here gave me exposure to the finest Indian craftsmanship. The attention to detail is unmatched and I learned immensely from every project. The studio culture is intense but deeply rewarding for anyone passionate about Indian fashion.",
-  },
-  {
-    avatar: imgReviewer1,
-    name: "Priya Sharma",
-    role: "Textile Designer",
-    rating: 4,
-    title: "Excellent craft traditions",
-    text: "The brand's commitment to Indian handcraft is genuine and inspiring. Every project involves deep research into regional craft traditions. A wonderful place to develop as a designer with a respect for heritage.",
-  },
-  {
-    avatar: imgReviewer2,
-    name: "Aakash Verma",
-    role: "Design Intern",
-    rating: 5,
-    title: "Transformative experience",
-    text: "My internship here transformed my understanding of Indian couture. The studio's attention to detail, its relationship with artisans, and the pride everyone takes in the work makes this an extraordinary place to begin a career.",
-  },
-  {
-    avatar: imgReviewer3,
-    name: "Meera Nair",
-    role: "Sr. Designer",
-    rating: 4,
-    title: "World-class atelier",
-    text: "The level of craft here is world-class. Working alongside master karigars and seeing how traditional embroidery techniques are preserved and evolved is a privilege. The pace is demanding but the work is deeply fulfilling.",
-  },
-];
+// ─── Role-specific content ─────────────────────────────────────────────────────
+
+// Anonymous reviewer avatar (user-specified)
+const ANON_AVATAR =
+  "https://tse1.explicit.bing.net/th/id/OIP.0CZd1ESLnyWIHdO38nyJDAHaGF?r=0&cb=thfvnextfalcon&rs=1&pid=ImgDetMain&o=7&rm=3";
+
+// Realistic face-cropped Unsplash portrait URLs — Indian-presenting, 20–40, professional
+const PF1 = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF2 = "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF3 = "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face&auto=format";
+const PF4 = "https://images.unsplash.com/photo-1530785602389-07594beb8b73?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM1 = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM2 = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM3 = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face&auto=format";
+const PM4 = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face&auto=format";
+
+interface ReviewEntry {
+  avatar: string;
+  name: string;
+  role: string;
+  rating: number;
+  title: string;
+  text: string;
+}
+interface RoleContent {
+  roleSnapshot: { keyWork: string; idealCandidate: string; skillsRequired: string };
+  workplaceInsights: { label: string; text: string }[];
+  description: string;
+  reviews: ReviewEntry[];
+}
+
+function fashionRoleContent(job: Job): RoleContent {
+  return {
+    roleSnapshot: {
+      keyWork: `Assist in developing ${job.company}'s seasonal collections — sketching silhouettes, selecting textiles, coordinating embroidery and embellishment with artisan partners, attending fittings, and supporting production handoffs.`,
+      idealCandidate: "Deep appreciation for Indian fashion heritage, portfolio demonstrating garment construction sensibility, collaborative and curious mindset eager to learn from senior designers.",
+      skillsRequired: "Garment construction basics, flat sketching and technical illustration (Adobe Illustrator/Photoshop), textile and fabric knowledge, strong communication skills.",
+    },
+    workplaceInsights: [
+      { label: "Creative mentorship", text: "Senior designers personally guide juniors through collection development, from concept mood boarding to production sign-off." },
+      { label: "Heritage immersion", text: "Daily exposure to India's finest handloom, zari, and embroidery traditions — a rare education unavailable in any classroom." },
+      { label: "Growth-oriented culture", text: "Team members are encouraged to pitch ideas, take creative ownership, and grow into increasingly senior roles over time." },
+    ],
+    description: `Are you a designer who wants your work to become part of India's most celebrated fashion story? If you have a deep appreciation for Indian craftsmanship, textiles, and detail-driven design, this is your opportunity.\n\n${job.company} is seeking a ${job.title} to join their creative studio in ${job.location}. This is a ${job.typeTag} position where you will learn by doing — working side by side with senior designers, artisans, and production teams across seasonal collections.\n\nYour day-to-day will include developing sketches and technical specifications, sourcing textiles and surface embellishments, attending fitting sessions, and coordinating with craft clusters and manufacturing partners. A rare chance to be immersed in one of India's most storied design houses and build a career rooted in authentic Indian craftsmanship.`,
+    reviews: [
+      { avatar: PF1, name: "Ananya Mehta", role: "Fashion Designer", rating: 5, title: "Incredible learning curve", text: "Every single day I was learning something new — whether it was the way zardozi is applied at scale or how pattern grading works for couture silhouettes. The senior team are extremely open to sharing knowledge and genuinely invested in your growth." },
+      { avatar: PM1, name: "Arjun Kapoor", role: "Jr. Fashion Designer", rating: 5, title: "Best decision of my career", text: `Joining ${job.company} was the best decision I made. The creative energy on the floor is unlike anything I experienced during my degree. You're pushed to think deeply about every design choice, which makes you a sharper designer.` },
+      { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Challenging but rewarding", text: "The pace is demanding and the deadlines are tight, especially during collection season. But the exposure to real couture production is worth every challenging moment. I grew more in six months here than in two years elsewhere." },
+      { avatar: PF2, name: "Priya Singh", role: "Textile Designer", rating: 4, title: "Rich craft traditions", text: "Working here opened my eyes to how deeply rooted Indian fashion is in regional craft traditions. Every collection is a research journey. The attention to sourcing and material authenticity is something very few studios practice at this level." },
+      { avatar: PM2, name: "Rajan Nair", role: "Design Intern", rating: 5, title: "A transformative internship", text: "I came in expecting basic tasks and instead I was attending fittings, sourcing fabric with the design team, and presenting mood boards by week three. The trust this studio places in young designers is extraordinary." },
+      { avatar: PF3, name: "Shreya Joshi", role: "Sr. Fashion Designer", rating: 4, title: "Strong collaborative culture", text: "The team works closely together across collections and there is a genuine sense of shared ownership over the work. You feel proud of what you put out because everyone has invested deeply in the process." },
+      { avatar: PM3, name: "Vikram Pillai", role: "Associate Designer", rating: 5, title: "World-class craftsmanship exposure", text: "Working alongside master karigar families and understanding how traditional embroidery techniques are passed down and evolved is a privilege that permanently changed my relationship with design." },
+      { avatar: PF4, name: "Kavya Reddy", role: "Fashion Graduate", rating: 4, title: "A real launch pad", text: "I came fresh out of NIFT and this role gave me a real understanding of how a design house actually functions — not just the creative side but the technical, business, and craft dimensions too. An invaluable foundation." },
+      { avatar: PM4, name: "Rohan Shah", role: "Creative Lead", rating: 5, title: "The benchmark for Indian fashion", text: `${job.company} sets the benchmark for what Indian fashion can be. The rigor, the heritage, the craft relationships — nothing else in the industry comes close. If you get the opportunity to work here, take it without hesitation.` },
+    ],
+  };
+}
+
+function accessoriesRoleContent(job: Job): RoleContent {
+  return {
+    roleSnapshot: {
+      keyWork: "Design and develop accessories collections — from initial concept sketching through material sourcing, prototype development, and final production sign-off in collaboration with craft vendors.",
+      idealCandidate: "Passion for materials and 3D form, strong technical drawing skills, understanding of hardware sourcing and vendor relationships, meticulous attention to product-level detail.",
+      skillsRequired: "Technical drawing, material and hardware sourcing, CAD / 3D visualisation basics (Rhino or equivalent), vendor communication, colour and material trend awareness.",
+    },
+    workplaceInsights: [
+      { label: "Materials expertise", text: "Hands-on learning across leather, metal hardware, precious and semi-precious stones — rare exposure to the full spectrum of accessory materials." },
+      { label: "End-to-end ownership", text: "Designers follow a product from first sketch to the retail floor, building thorough production knowledge rarely offered at junior level." },
+      { label: "Cross-functional collaboration", text: "Close work with buying, merchandising, and retail teams gives designers a broader commercial perspective that accelerates career growth." },
+    ],
+    description: `Are you a designer drawn to the tactile — to materials, form, and the craft of creating objects that complete a look? ${job.company} is seeking a ${job.title} to join their accessories design studio in ${job.location}.\n\nThis is a ${job.typeTag} role where you will develop accessories collections from initial concept through to production. Your work will span concept ideation, technical sketching, hardware and material sourcing, prototype reviews, and vendor coordination.\n\nJoin a team that is redefining Indian accessories design — where traditional craft sensibility meets contemporary product thinking.`,
+    reviews: [
+      { avatar: PF1, name: "Divya Kapoor", role: "Accessory Designer", rating: 5, title: "Unmatched materials exposure", text: "I never expected to work with such a range of materials — python leather, brass hardware, hand-knotted silk threads. The material education here cannot be replicated in any design program." },
+      { avatar: PM1, name: "Nikhil Sharma", role: "Jr. Product Designer", rating: 4, title: "Great team energy", text: "The accessories team is tight-knit and very collaborative. Senior designers are genuinely invested in sharing knowledge, and the culture encourages asking questions and exploring beyond your immediate brief." },
+      { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Steep but rewarding learning curve", text: "The workload is significant, especially when multiple collections run in parallel. But the quality of work you are exposed to and the trust placed in junior designers makes it absolutely worth it." },
+      { avatar: PF2, name: "Tanvi Bose", role: "Design Intern", rating: 5, title: "Best internship I could have asked for", text: "I was involved in real projects from day one — attending vendor visits, sitting in on prototype reviews, contributing to colorway decisions. This is not a coffee-fetching internship; it is a genuine design education." },
+      { avatar: PM2, name: "Aditya Rao", role: "Footwear Designer", rating: 4, title: "Serious craft commitment", text: "The studio's commitment to craft is remarkable. Decisions about materials, construction, and finish are made with real care and consideration. As a designer you develop deep respect for the process and for quality." },
+      { avatar: PF3, name: "Priyanka Malhotra", role: "Accessories Lead", rating: 5, title: "Where careers are made", text: "The skills and relationships I built in this studio have been foundational to everything I have done since. There is a reason this company consistently produces some of the best designers working in Indian accessories today." },
+      { avatar: PM3, name: "Karan Mehra", role: "Material Technologist", rating: 4, title: "Deep product understanding", text: "What I most valued was understanding a product end-to-end — not just the design but the construction, costs, vendor relationships, and retail context. This is rare access for a young designer." },
+      { avatar: PF4, name: "Swati Nair", role: "Senior Stylist", rating: 5, title: "Creative and commercial balance", text: "This studio genuinely understands how to balance creative ambition with commercial reality. You learn to design beautifully while also thinking practically — a combination that is incredibly valuable in the industry." },
+      { avatar: PM4, name: "Dev Sinha", role: "Head of Product", rating: 4, title: "A strong foundation", text: "Starting your career here gives you a foundation that is very hard to replicate. The standards are high, the mentors are excellent, and the work you produce is something you will be proud of for a long time." },
+    ],
+  };
+}
+
+function printRoleContent(job: Job): RoleContent {
+  return {
+    roleSnapshot: {
+      keyWork: "Create original repeat patterns, surface illustrations, and colorways for seasonal collections — working across both digital and traditional print techniques in collaboration with artisan print studios.",
+      idealCandidate: "Strong command of pattern and colour, skilled in digital illustration tools, curious about traditional Indian printing techniques, detail-oriented with a strong personal design voice.",
+      skillsRequired: "Adobe Photoshop and Illustrator (intermediate to advanced), repeat pattern construction, colorway development, understanding of screen, digital, and discharge printing processes.",
+    },
+    workplaceInsights: [
+      { label: "Artisan print collaboration", text: "Work directly with master block-printers, screen-printing studios, and digital print facilities to bring surface designs from artwork to finished fabric." },
+      { label: "Creative research culture", text: "Each collection begins with deep archival and cultural research — designers are encouraged to travel, study, and bring genuine stories into their surface work." },
+      { label: "Technical depth", text: "From repeat construction to colour separation and print production, you build rare technical depth that makes you a more versatile and commercially valuable designer." },
+    ],
+    description: `Are you a designer who sees stories in patterns — in repeat motifs, colour relationships, and surface texture? ${job.company} is looking for a ${job.title} to join their surface design studio in ${job.location}.\n\nThis is a ${job.typeTag} role where you will create original print artworks, colour stories, and repeat patterns for use across seasonal garment collections. You will work with both digital tools and traditional craft techniques — from screen and block printing to digital and discharge — collaborating closely with artisan printing partners.\n\nBring your distinct design voice to a studio that values both contemporary visual language and India's extraordinary heritage of hand-printed textiles.`,
+    reviews: [
+      { avatar: PM1, name: "Ishaan Verma", role: "Print Designer", rating: 5, title: "Best environment for a print designer", text: "The depth of research that goes into every collection here is extraordinary. You are not just creating pretty patterns — you are telling stories rooted in specific craft traditions, cultural archives, and seasonal concepts." },
+      { avatar: PF1, name: "Tara Pillai", role: "Textile Artist", rating: 5, title: "Exceptional creative freedom", text: "I was given genuine creative space to develop my own design language from a relatively early stage. The team values distinct voices and encourages you to push beyond safe, commercial pattern solutions." },
+      { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Intense but creatively fulfilling", text: "Collection deadlines are real and the pace picks up significantly during launch periods. But the level of creative work you are producing and the craft relationships you are building make the intensity completely worthwhile." },
+      { avatar: PM2, name: "Mihir Joshi", role: "Surface Design Lead", rating: 4, title: "Strong technical foundation", text: "This studio taught me more about the technical side of print production — repeats, separations, colour matching — than any other experience. The blend of digital fluency and artisan collaboration is very rare." },
+      { avatar: PF2, name: "Pooja Agarwal", role: "Print Intern", rating: 5, title: "A genuine design education", text: "As an intern I was involved in actual collection briefs, not just admin tasks. I produced repeat artworks that went into production — an extraordinary thing to be able to say about an internship." },
+      { avatar: PM3, name: "Siddharth Gupta", role: "Jr. Print Designer", rating: 4, title: "Rare artisan access", text: "The opportunity to visit block-printing villages and work directly with craft communities was something I did not expect from this role. It fundamentally changed how I think about surface design and its relationship to Indian craft." },
+      { avatar: PF3, name: "Aditi Sharma", role: "Senior Print Designer", rating: 5, title: "Sets the standard", text: `${job.company} is genuinely setting the standard for print and surface design in Indian fashion. The rigour, the craft relationships, and the creative ambition make this an extraordinary place to grow.` },
+      { avatar: PM4, name: "Deepak Menon", role: "Creative Director", rating: 4, title: "A studio that takes craft seriously", text: "Very few studios in the country approach print and textile with the same level of seriousness and investment as this team. If you care about craft, this is the place to build your career." },
+      { avatar: PF4, name: "Nandini Roy", role: "Textile Graduate", rating: 5, title: "Where surface design careers are launched", text: "The combination of technical training, creative development, and artisan exposure here is unmatched. I left with a professional foundation that continues to define how I approach every project." },
+    ],
+  };
+}
+
+function getRoleContent(job: Job): RoleContent {
+  const d = job.domain ?? "";
+  const t = job.title.toLowerCase();
+  if (d === "Accessories" || t.includes("footwear") || t.includes("jewel") || t.includes("accessor")) {
+    return accessoriesRoleContent(job);
+  }
+  if (d === "Surface & Print" || t.includes("print") || t.includes("textile")) {
+    return printRoleContent(job);
+  }
+  return fashionRoleContent(job);
+}
 
 // ─── Filter options ───────────────────────────────────────────────────────────
 
@@ -1465,7 +1538,8 @@ function DetailView({
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [imgs] = useState(() => getDetailImages(job.id));
 
-  const descFull = `Are you a designer eager to experience what it feels like when your work becomes part of iconic fashion worn across generations? If you have a deep appreciation for Indian craftsmanship, textiles, and detail-driven design, this role is for you.\n\n${job.company} is looking for a ${job.title} to join its studio. This is a ${job.typeTag} role based in ${job.location} where you will learn by doing — working closely with senior designers, artisans, and production teams.\n\nYou will assist in developing seasonal collections, create detailed sketches and technical specs, source textiles and embroidery, attend fittings, and coordinate with craft clusters and production partners. This is a rare opportunity to be immersed in one of India's most celebrated design houses.`;
+  const roleContent = getRoleContent(job);
+  const { roleSnapshot, workplaceInsights, description: descFull, reviews } = roleContent;
   const descPreview = descFull.slice(0, 220);
 
   return (
@@ -1548,9 +1622,7 @@ function DetailView({
                         Key Work:{" "}
                       </span>
                       <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                        Assist in collections, sketches, textiles, embroidery,
-                        fittings, and coordination with artisans & production
-                        teams.
+                        {roleSnapshot.keyWork}
                       </span>
                     </li>
                     <li>
@@ -1558,9 +1630,7 @@ function DetailView({
                         Ideal Candidate:{" "}
                       </span>
                       <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                        Strong appreciation for Indian craftsmanship,
-                        detail-oriented, curious, collaborative, and eager to
-                        learn.
+                        {roleSnapshot.idealCandidate}
                       </span>
                     </li>
                     <li>
@@ -1568,8 +1638,7 @@ function DetailView({
                         Skills Required:{" "}
                       </span>
                       <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                        Knowledge of textiles & couture, software (Illustrator,
-                        Photoshop) & communication skills.
+                        {roleSnapshot.skillsRequired}
                       </span>
                     </li>
                   </ul>
@@ -1656,49 +1725,36 @@ function DetailView({
               <div className="bg-white relative rounded-[12px] w-full border border-[#e2d9ef]">
                 <div className="flex flex-col items-start px-[16px] py-[12px]">
                   <ul className="list-disc pl-[20px] flex flex-col gap-[2px]">
-                    <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
-                        Strong mentorship:{" "}
-                      </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                        Culture with opportunities to learn and grow from senior
-                        designers.
-                      </span>
-                    </li>
-                    <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
-                        Fast-paced work:{" "}
-                      </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                        Demanding environment that sharpens craft instincts
-                        quickly.
-                      </span>
-                    </li>
-                    <li>
-                      <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
-                        Supportive workplace:{" "}
-                      </span>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                        Focused on innovation, work–life balance, and employee
-                        empowerment.
-                      </span>
-                    </li>
+                    {workplaceInsights.map((insight, i) => (
+                      <li key={i}>
+                        <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                          {insight.label}:{" "}
+                        </span>
+                        <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                          {insight.text}
+                        </span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>
             </div>
 
-            {reviewsPool.slice(0, visibleReviews).map((review, i) => (
+            {reviews.slice(0, visibleReviews).map((review, i) => (
               <ReviewCard key={i} {...review} />
             ))}
 
-            {visibleReviews < reviewsPool.length && (
-              <ViewMoreButton
-                onClick={() =>
-                  setVisibleReviews((v) => Math.min(v + 3, reviewsPool.length))
-                }
-              />
-            )}
+            {/* View More — always visible; becomes a no-op after all reviews are shown */}
+            <ViewMoreButton
+              onClick={() =>
+                setVisibleReviews((v) => Math.min(v + 3, reviews.length))
+              }
+              className={
+                visibleReviews >= reviews.length
+                  ? "pointer-events-none cursor-default"
+                  : ""
+              }
+            />
           </div>
         )}
 
