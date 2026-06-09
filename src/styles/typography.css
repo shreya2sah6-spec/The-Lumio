@@ -127,6 +127,18 @@
     letter-spacing: 0.24px;
   }
 
+  /* ── Tab / Navigation label ─────────────────────────────────────────────── */
+
+  /* Tab · Manrope · Medium 500 · 15/22 · ls 0.15
+     Used on all horizontal tab bars (Mentors, Jobs, Session Journal, etc.)   */
+  .type-tab {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 0.15px;
+  }
+
   /* ── Button ──────────────────────────────────────────────────────────────── */
 
   /* Button Large · Manrope · Semibold 600 · 16/20 · ls 0.48 */

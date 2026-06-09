@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Check } from "@phosphor-icons/react";
 import { SaveButton } from "./SaveButton";
 import { Button } from "./ui/button";
@@ -17,6 +18,8 @@ export interface Job {
   posted: string;
   promoted?: boolean;
   domain?: string;
+  /** Key matching a brand in BrandProfilePage's BRAND_DATA. Enables logo/company click to deep-link to the correct brand page. */
+  brandKey?: string;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -32,18 +35,27 @@ export function logoInitials(company: string): string {
 // ─── LogoCell ─────────────────────────────────────────────────────────────────
 // Exported so JobDetailView (in JobsPage) can use the 84px variant.
 
-export function LogoCell({ job, size }: { job: Job; size: number }) {
+export function LogoCell({ job, size, priority = false }: { job: Job; size: number; priority?: boolean }) {
+  const [imgFailed, setImgFailed] = useState(false);
+
   const cls =
     size === 84
-      ? "relative rounded-[8px] shrink-0 size-[84px] border border-[#e2d9ef] overflow-hidden"
-      : "overflow-clip relative rounded-[8px] shrink-0 size-[54px] border border-[#e2d9ef]";
+      ? "relative rounded-[8px] shrink-0 size-[84px] border border-[#e2d9ef] overflow-hidden bg-white"
+      : "overflow-clip relative rounded-[8px] shrink-0 size-[54px] border border-[#e2d9ef] bg-white";
+
+  const showImg = !!job.logo && !imgFailed;
+
   return (
     <div className={cls}>
-      {job.logo ? (
+      {showImg ? (
         <img
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover rounded-[8px]"
+          alt={job.company}
+          className="absolute inset-0 w-full h-full rounded-[8px] object-contain object-center"
           src={job.logo}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          {...(priority ? { fetchpriority: "high" } as Record<string, string> : {})}
+          onError={() => setImgFailed(true)}
         />
       ) : (
         <div
@@ -74,6 +86,16 @@ interface JobCardProps {
    * Bookmark button is also hidden in this mode.
    */
   statusLabel?: string;
+  /**
+   * When true, the company logo cell is hidden.
+   * Use inside Brand Profile Jobs tab where company context is already established.
+   */
+  hideLogo?: boolean;
+  /**
+   * When provided, the logo + company name row becomes a tappable link to the
+   * company/brand profile. Used in the listing view (JobsPage).
+   */
+  onCompanyClick?: () => void;
 }
 
 export function JobCard({
@@ -82,27 +104,55 @@ export function JobCard({
   onApply,
   onViewDetails,
   statusLabel,
+  hideLogo = false,
+  onCompanyClick,
 }: JobCardProps) {
   const showActions = Boolean(onApply);
   const showBookmark = showActions;
 
   return (
-    <div className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]">
+ <div data-card="interactive" className="bg-[#fffeff] flex flex-col gap-[8px] items-end py-[12px] relative w-full border-b border-[#e2d9ef]">
 
-      {/* ── Header row: logo · title/company · bookmark ── */}
-      <div className="flex flex-col gap-[4px] items-start w-full">
-        <div className="flex gap-[8px] items-start w-full">
-          <div className="flex flex-[1_0_0] gap-[12px] items-center pt-[4px] min-w-px">
+  {/* ── Header row: logo · title/company · bookmark ── */}
+  <div className="flex flex-col gap-[4px] items-start w-full">
+
+    <div className="flex gap-[8px] items-start w-full">
+
+      {/* pt-[4px] aligns text with the top of the logo; drop it when the logo is hidden */}
+      <div className={`flex flex-[1_0_0] gap-[12px] items-center ${hideLogo ? "" : "pt-[4px]"}`}>
+
+        {!hideLogo && (
+          onCompanyClick ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); onCompanyClick(); }}
+              className="shrink-0 cursor-pointer active:opacity-70 transition-opacity"
+              aria-label={`View ${job.company} company profile`}
+            >
+              <LogoCell job={job} size={54} />
+            </button>
+          ) : (
             <LogoCell job={job} size={54} />
-            <div className="flex flex-col gap-[2px] flex-1 min-w-px">
-              {/* H3 — primary emphasis */}
-              <p className="type-h3 text-[#1a1128] truncate">{job.title}</p>
-              {/* H4 — secondary metadata */}
-              <p className="type-h4 text-[#6b5f7a] truncate">{job.company}</p>
-            </div>
-          </div>
-          {showBookmark && <SaveButton />}
+          )
+        )}
+
+        <div className="flex flex-col gap-[2px] flex-1">
+
+          <p className="type-h3 text-[#1a1128] truncate">
+            {job.title}
+          </p>
+
+          <p className="type-h4 text-[#6b5f7a] truncate">
+            {job.company}
+          </p>
+
         </div>
+
+      </div>
+
+      {showBookmark && <SaveButton />}
+
+    </div>
+
 
         {/* ── Salary + tag chips ── */}
         <div className="flex gap-[16px] items-center w-full">

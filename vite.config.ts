@@ -32,4 +32,29 @@ export default defineConfig({
 
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ["**/*.svg", "**/*.csv"],
+
+  build: {
+    // Inline assets ≤ 4 KB as base64 — eliminates a network round-trip for
+    // tiny icons/logos while keeping larger images as separate hashed files.
+    assetsInlineLimit: 4096,
+
+    rollupOptions: {
+      output: {
+        // Split vendor code from app code so the browser can cache React/
+        // router separately from Lumio page code. Page chunks are hashed so
+        // they bust only when their content changes.
+        manualChunks: (id) => {
+          if (id.includes("node_modules/react") || id.includes("node_modules/react-dom")) {
+            return "vendor-react";
+          }
+          if (id.includes("node_modules/react-router")) {
+            return "vendor-router";
+          }
+          if (id.includes("node_modules/@phosphor-icons")) {
+            return "vendor-icons";
+          }
+        },
+      },
+    },
+  },
 });

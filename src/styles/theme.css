@@ -202,54 +202,102 @@
   }
 
   /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
+   * Lumio global typography baseline.
+   *
+   * Font-family rules are set here so EVERY element — whether rendered by a
+   * Lumio component or as a raw HTML element — gets the correct font without
+   * needing an explicit Tailwind class.
+   *
+   * Rule:
+   *   h1, h2            → Roboto Serif  (display / editorial headings)
+   *   everything else   → Manrope       (body, UI, CTAs, labels, captions)
+   *
+   * Tailwind utility classes (font-display, font-body, type-h1 … type-h5,
+   * type-body-1, etc.) always override these base rules where needed.
+   */
 
   html {
     font-size: var(--font-size);
+    /* Body-level font so all unstyled text inherits Manrope by default */
+    font-family: var(--font-body);
   }
 
+  /* ── Headings ───────────────────────────────────────────────────────────── */
+
   h1 {
+    font-family: var(--font-display); /* Roboto Serif */
     font-size: var(--text-2xl);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h2 {
+    font-family: var(--font-display); /* Roboto Serif */
     font-size: var(--text-xl);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
+  /* h3–h6: Manrope (UI headings, not editorial) */
   h3 {
+    font-family: var(--font-body); /* Manrope */
     font-size: var(--text-lg);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   h4 {
+    font-family: var(--font-body); /* Manrope */
+    font-size: var(--text-base);
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  h5, h6 {
+    font-family: var(--font-body); /* Manrope */
+    font-weight: var(--font-weight-medium);
+    line-height: 1.5;
+  }
+
+  /* ── Interactive / form elements ───────────────────────────────────────── */
+
+  /*
+   * button — covers every <button> regardless of whether it uses the Lumio
+   * Button component or is a bare HTML element (nav items, chip buttons,
+   * inline actions, CTA rows, etc.)
+   */
+  button {
+    font-family: var(--font-body); /* Manrope */
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   label {
+    font-family: var(--font-body); /* Manrope */
     font-size: var(--text-base);
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
-  button {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
-
-  input {
+  input,
+  textarea,
+  select {
+    font-family: var(--font-body); /* Manrope */
     font-size: var(--text-base);
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
+  }
+
+  /* ── Inline text elements ───────────────────────────────────────────────── */
+
+  /*
+   * p, span, li, a — ensures body copy, captions, review text, metadata,
+   * navigation labels, and helper text all default to Manrope.
+   * Individual components may override via Tailwind utilities.
+   */
+  p, span, li, a, td, th, caption, blockquote, cite {
+    font-family: var(--font-body); /* Manrope */
   }
 }
 

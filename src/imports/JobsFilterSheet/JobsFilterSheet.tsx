@@ -278,15 +278,16 @@ function Footer() {
       data-name="footer"
     >
       <div className="content-stretch flex gap-[16px] items-start max-w-[inherit] min-w-[inherit] pb-[24px] pt-[12px] px-[16px] relative size-full">
+
         <button
-          className="bg-[#fffeff] content-stretch flex gap-[8px] h-[48px] items-center justify-center max-h-[48px] min-h-[48px] px-[16px] py-[12px] relative rounded-[8px] shrink-0 cursor-pointer"
+          className="bg-[#fffeff] text-[#7D3AEA] content-stretch flex gap-[8px] h-[48px] items-center justify-center max-h-[48px] min-h-[48px] px-[16px] py-[12px] relative rounded-[8px] shrink-0 cursor-pointer"
           data-name="primary-button"
-          style={{ color: "#7D3AEA" }}
         >
           <div className="[text-box-edge:cap_alphabetic] [text-box-trim:trim-both] [word-break:break-word] flex flex-col font-['Manrope:SemiBold',sans-serif] font-semibold justify-center leading-[0] relative shrink-0 text-[16px] text-center tracking-[0.48px] whitespace-nowrap">
             <p className="leading-[20px]">Clear All</p>
           </div>
         </button>
+
         <div
           className="bg-gradient-to-r content-stretch flex from-[#7d3aea] gap-[8px] h-[48px] items-center justify-center max-h-[48px] min-h-[48px] px-[16px] py-[12px] relative rounded-[8px] shrink-0 to-[#5e28b5] w-[243px]"
           data-name="primary-button"
@@ -295,6 +296,7 @@ function Footer() {
             <p className="leading-[20px]">Show Results</p>
           </div>
         </div>
+
       </div>
     </div>
   );

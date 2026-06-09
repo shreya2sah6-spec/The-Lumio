@@ -1,0 +1,80 @@
+/* =============================================================================
+   Lumio — Keyboard & Desktop Interaction Layer
+   Progressive enhancement on top of the mobile-first base.
+   Never changes layout, spacing, or typography.
+   ============================================================================= */
+
+/* ── Focus rings ─────────────────────────────────────────────────────────────
+   :focus-visible fires only for keyboard/programmatic focus, never for mouse
+   or touch. This gives keyboard users a visible indicator without affecting
+   the mobile-first visual experience.
+   The 2px/2px offset ring uses the Lumio brand purple at 50% opacity — soft
+   enough to feel premium, clear enough to meet WCAG 2.1 AA.
+   --------------------------------------------------------------------------- */
+
+/* Global focus ring — applies to buttons, chips, tabs, nav items, links.
+   Excluded below for inputs and textareas which manage their own focus style. */
+:focus-visible:not(input):not(textarea):not(select) {
+  outline: 2px solid rgba(125, 58, 234, 0.5);   /* #7D3AEA @ 50% */
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Suppress the ring for mouse/touch focus (browsers that still fire :focus) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Input / textarea focus ──────────────────────────────────────────────────
+   Remove every browser default — outline, glow, box-shadow.
+   Visual focus is handled by the Lumio TextInput component's borderColor
+   transition (default → #e2d9ef, focused → #1a1128, error → #de3226).
+   --------------------------------------------------------------------------- */
+
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* ── Interactive card hover ──────────────────────────────────────────────────
+   Any element with data-card="interactive" gets a subtle bg tint and shadow
+   lift on desktop hover. Mobile hover-events are one-shot and harmless.
+   --------------------------------------------------------------------------- */
+
+[data-card="interactive"] {
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+[data-card="interactive"]:hover {
+  background-color: #f7f4fa;
+  box-shadow: 0px 2px 6px rgba(125, 58, 234, 0.08);
+}
+
+/* ── Chip / filter button hover ─────────────────────────────────────────────
+   Chip elements typically toggle selection. Give them a soft purple tint on
+   hover so users know they're clickable on desktop.
+   --------------------------------------------------------------------------- */
+
+[data-chip] {
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+[data-chip]:not([data-active="true"]):hover {
+  background-color: #f5f0ff;
+  border-color: #c9b4f6;
+}
+
+/* ── Nav item hover ──────────────────────────────────────────────────────────
+   Bottom-nav and tab-bar items get a very light tint on desktop hover.
+   --------------------------------------------------------------------------- */
+
+[data-nav-item]:hover {
+  background-color: rgba(125, 58, 234, 0.05);
+  border-radius: 8px;
+  transition: background-color 150ms ease;
+}

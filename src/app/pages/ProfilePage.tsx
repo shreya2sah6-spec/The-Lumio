@@ -1,12 +1,17 @@
-﻿import { useState } from "react";
-import { useNavigate } from "react-router";
+﻿import { useState, useEffect } from "react";
+import { usePublishedPosts } from "../stores/postDraftStore";
+import { useNavigate } from "react-router-dom";
 import {
   Star,
-  CaretDown,
-  CaretUp,
   MagicWand,
+  Check,
+  Users,
+  UserList,
 } from "@phosphor-icons/react";
+import { toTitleCase } from "../utils/validation";
+import { truncateAiBulletItem } from "../utils/aiSummary";
 import { BottomNav } from "../components/BottomNav";
+import { StatusBar } from "../components/StatusBar";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 import svgPaths from "@/imports/ProfileOverview-2/svg-n8z2v8xsv9";
 import imgAvatar from "@/imports/ProfileOverview-2/bb5b0e0896cc0396e3c8e2b6811f344da7f15455.png";
@@ -18,60 +23,38 @@ import imgImage1 from "@/imports/ProfileOverview-2/8d8cb47d126979904b08090e24b75
 import imgAvatarImage from "@/imports/ProfileOverview-2/40a55e11240d1f280bd2d46727f4c3745c016d02.png";
 import imgAvatarImage1 from "@/imports/ProfileOverview-2/e21bfbc91d761c7bd6af9e2636361814de15e5dd.png";
 import imgAvatarImage2 from "@/imports/ProfileOverview-2/1ba86bd95c41542063481b8e7645f2f1062e44a0.png";
-import imgReviewer1 from "@/imports/MentorsListing-1/4a29d0654aaab6716cd873400f7020bd2faded80.png";
-import imgReviewer2 from "@/imports/MentorsListing-1/44f0132e097541fab04aec7d33348dc2876131fb.png";
-import imgReviewer3 from "@/imports/MentorsListing-1/9aecea038a5eba6222a77595fc22c0549d614720.png";
+import { rv, rvAnon } from "@/app/data/reviewIdentities";
 
-const statusBarPaths = {
-  signalBars:
-    "M3.26916 9.60239C3.8002 9.60239 4.23107 10.0333 4.23107 10.5643V12.4872C4.23107 13.0182 3.8002 13.4491 3.26916 13.4491H2.30724C1.77641 13.4488 1.3463 13.018 1.3463 12.4872V10.5643C1.3463 10.0334 1.77641 9.60263 2.30724 9.60239H3.26916ZM7.75646 7.67954C8.28748 7.67956 8.71837 8.11043 8.71837 8.64145V12.4872C8.71837 13.0182 8.28748 13.449 7.75646 13.4491H6.79455C6.26365 13.4489 5.83361 13.0181 5.83361 12.4872V8.64145C5.83361 8.11052 6.26365 7.67971 6.79455 7.67954H7.75646ZM12.2438 5.43637C12.7747 5.43647 13.2046 5.86638 13.2047 6.39731V12.4872C13.2047 13.0181 12.7747 13.449 12.2438 13.4491H11.2819C10.7509 13.449 10.3209 13.0181 10.3209 12.4872V6.39731C10.321 5.86639 10.7509 5.43648 11.2819 5.43637H12.2438ZM16.7311 3.19223C17.262 3.1924 17.692 3.6232 17.692 4.15415V12.4872C17.692 13.0181 17.262 13.4489 16.7311 13.4491H15.7692C15.2381 13.449 14.8072 13.0182 14.8072 12.4872V4.15415C14.8072 3.62313 15.2381 3.19227 15.7692 3.19223H16.7311Z",
-  wifi: "M5.86291 11.2694C7.08941 10.2323 8.88553 10.2321 10.1119 11.2694C10.1736 11.3252 10.2098 11.404 10.2115 11.4872C10.2132 11.5703 10.1801 11.6506 10.1207 11.7088L8.19982 13.6473C8.14355 13.7041 8.06686 13.7362 7.98693 13.7362C7.90698 13.7361 7.83028 13.7041 7.77404 13.6473L5.85314 11.7088C5.79385 11.6505 5.76154 11.5703 5.7633 11.4872C5.76508 11.404 5.80118 11.3251 5.86291 11.2694ZM3.29943 8.68442C5.94193 6.22636 10.0349 6.22636 12.6774 8.68442C12.7367 8.74203 12.7703 8.82142 12.7711 8.90415C12.7718 8.98686 12.7395 9.06614 12.6813 9.12485L11.5709 10.2469C11.4566 10.3613 11.2723 10.364 11.1549 10.2528C10.2871 9.46701 9.15759 9.03201 7.98693 9.03208C6.81713 9.03263 5.68901 9.46758 4.82189 10.2528C4.70455 10.364 4.52022 10.3613 4.40587 10.2469L3.29552 9.12485C3.23716 9.06621 3.20403 8.98688 3.2047 8.90415C3.20548 8.82134 3.23996 8.74203 3.29943 8.68442ZM0.736929 6.10532C4.78991 2.22126 11.184 2.22118 15.2369 6.10532C15.2956 6.16301 15.3282 6.24181 15.3287 6.32407C15.3292 6.40622 15.2977 6.48544 15.2399 6.5438L14.1276 7.66587C14.0131 7.78071 13.8278 7.78193 13.7115 7.6688C12.1674 6.20072 10.1176 5.38178 7.98693 5.38169C5.85613 5.38174 3.80665 6.20067 2.26232 7.6688C2.14611 7.7823 1.95977 7.78115 1.84533 7.66587L0.733999 6.5438C0.676061 6.48537 0.643616 6.40635 0.644156 6.32407C0.644697 6.24178 0.678219 6.16298 0.736929 6.10532Z",
-  batteryOutline:
-    "M3.02599 2.71124H19.0514C20.2019 2.71129 21.1344 3.64466 21.1344 4.79522V10.5638C21.1344 11.7143 20.2019 12.6477 19.0514 12.6478H3.02599C1.8754 12.6478 0.942008 11.7144 0.942008 10.5638V4.79522C0.942008 3.64463 1.8754 2.71124 3.02599 2.71124Z",
-  batteryTip:
-    "M22.5769 5.75643V9.60258C23.3507 9.27684 23.8539 8.51906 23.8539 7.67951C23.8539 6.83996 23.3507 6.08218 22.5769 5.75643",
-  batteryFill:
-    "M2.38462 5.4359C2.38462 4.72784 2.95861 4.15385 3.66667 4.15385H18.4103C19.1183 4.15385 19.6923 4.72784 19.6923 5.4359V9.92308C19.6923 10.6311 19.1183 11.2051 18.4103 11.2051H3.66667C2.95861 11.2051 2.38462 10.6311 2.38462 9.92308V5.4359Z",
-};
+type Tab = "Overview" | "Mentor review" | "Mentee review" | "Mentee FAQ";
 
-type Tab = "Overview" | "Mentors review" | "Mentee review" | "Mentee FAQ";
-
-// ─── Review avatar URLs (face-cropped, Indian-presenting, 20–40, professional) ─
-const ANON_AVATAR =
-  "https://tse1.explicit.bing.net/th/id/OIP.0CZd1ESLnyWIHdO38nyJDAHaGF?r=0&cb=thfvnextfalcon&rs=1&pid=ImgDetMain&o=7&rm=3";
-const PF1 = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face&auto=format";
-const PF2 = "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&h=200&fit=crop&crop=face&auto=format";
-const PF3 = "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face&auto=format";
-const PF4 = "https://images.unsplash.com/photo-1530785602389-07594beb8b73?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM1 = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM2 = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM3 = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM4 = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face&auto=format";
+// Avatar constants removed — identities come from reviewIdentities.ts
 
 // Mentors Reviews — reviews written by Sanya's mentors about her as a mentee
+// Identities: F09 M09 F10 F11 M10 F12 M11 M12 + ANON (all unique in this pool)
 const mentorReviews = [
-  { avatar: PF1, name: "Isha Fernandes", role: "Sr. Fashion Designer @ MAX", rating: 5, title: "Outstanding dedication", text: "Sanya is one of the most dedicated mentees I have worked with. She comes to every session with specific questions, applies feedback immediately, and follows through on every recommendation. Her progress has been remarkable." },
-  { avatar: PM1, name: "Akash Tripathi", role: "Lead Designer @ Myntra", rating: 5, title: "Exceptional design thinking", text: "Working with Sanya transformed my expectations of what a junior mentee can achieve. Her design thinking is already at a level that most designers take years to reach. She's going to be a significant voice in Indian fashion." },
-  { avatar: PF2, name: "Nikita Das", role: "Fashion Consultant", rating: 4, title: "Great industry awareness", text: "Sanya brings a level of industry awareness that is rare at her stage. She understands the commercial side of fashion as well as the creative, and she asks questions that show she is thinking about her career strategically." },
-  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "A pleasure to mentor", text: "Mentoring Sanya has been one of the most rewarding experiences of my career. She is genuinely curious, not just career-focused, and her love for Indian craft traditions gives her work a depth that is hard to manufacture." },
-  { avatar: PF3, name: "Pallavi Sen", role: "Creative Director", rating: 5, title: "Natural talent in fashion", text: "Sanya has a natural sense of proportion, colour, and fabric that cannot be taught — only refined. Our sessions have been focused on honing that instinct and giving her the technical vocabulary to articulate what she already feels." },
-  { avatar: PM2, name: "Sameer Chauhan", role: "Head of Design", rating: 5, title: "Remarkable growth trajectory", text: "The growth I have seen in Sanya over our sessions together is extraordinary. She started with strong potential and has turned that into genuine craft. Her portfolio now reflects a designer who is ready for a senior environment." },
-  { avatar: PF4, name: "Bhavna Puri", role: "Senior Stylist", rating: 4, title: "Strong technical foundation", text: "Sanya has worked seriously on building her technical foundation. Her understanding of construction, garment engineering, and textile properties is now well above par for her experience level." },
-  { avatar: PM3, name: "Atharv Mishra", role: "Fashion Educator", rating: 5, title: "Star student", text: "In fifteen years of mentoring, I can count on one hand the students who approached their development with Sanya's combination of humility and ambition. She is the kind of designer who will continue growing long after formal mentorship ends." },
-  { avatar: PF2, name: "Komal Arvind", role: "Design Studio Head", rating: 4, title: "Ready for senior roles", text: "After our mentorship sessions, I would have no hesitation recommending Sanya for a senior design position. She has the creative maturity, the technical skills, and the professional attitude that design houses look for." },
+  { ...rv("F09"), rating: 5, title: "Outstanding dedication",       text: "Sanya is one of the most dedicated mentees I have worked with. She comes to every session with specific questions, applies feedback immediately, and follows through on every recommendation. Her progress has been remarkable." },
+  { ...rv("M09"), rating: 5, title: "Exceptional design thinking",  text: "Working with Sanya transformed my expectations of what a junior mentee can achieve. Her design thinking is already at a level that most designers take years to reach. She's going to be a significant voice in Indian fashion." },
+  { ...rv("F10"), rating: 4, title: "Great industry awareness",     text: "Sanya brings a level of industry awareness that is rare at her stage. She understands the commercial side of fashion as well as the creative, and she asks questions that show she is thinking about her career strategically." },
+  { ...rvAnon(),  rating: 4, title: "A pleasure to mentor",         text: "Mentoring Sanya has been one of the most rewarding experiences of my career. She is genuinely curious, not just career-focused, and her love for Indian craft traditions gives her work a depth that is hard to manufacture." },
+  { ...rv("F11"), rating: 5, title: "Natural talent in fashion",    text: "Sanya has a natural sense of proportion, colour, and fabric that cannot be taught — only refined. Our sessions have been focused on honing that instinct and giving her the technical vocabulary to articulate what she already feels." },
+  { ...rv("M10"), rating: 5, title: "Remarkable growth trajectory", text: "The growth I have seen in Sanya over our sessions together is extraordinary. She started with strong potential and has turned that into genuine craft. Her portfolio now reflects a designer who is ready for a senior environment." },
+  { ...rv("F12"), rating: 4, title: "Strong technical foundation",  text: "Sanya has worked seriously on building her technical foundation. Her understanding of construction, garment engineering, and textile properties is now well above par for her experience level." },
+  { ...rv("M11"), rating: 5, title: "Star student",                 text: "In fifteen years of mentoring, I can count on one hand the students who approached their development with Sanya's combination of humility and ambition. She is the kind of designer who will continue growing long after formal mentorship ends." },
+  { ...rv("M12"), rating: 4, title: "Ready for senior roles",       text: "After our mentorship sessions, I would have no hesitation recommending Sanya for a senior design position. She has the creative maturity, the technical skills, and the professional attitude that design houses look for." },
 ];
 
 // Mentees Reviews — reviews written by Sanya's mentees about her as a mentor
+// Identities: F01 M01 F02 F03 M02 F04 M03 M04 + ANON (all unique in this pool)
 const menteeReviews = [
-  { avatar: PF1, name: "Juhi Narang", role: "Fashion Design Student", rating: 5, title: "Transformative experience", text: "Learning from Sanya has been one of the most transformative things I've done for my career. She has a gift for explaining complex concepts simply and always knows exactly what you need to hear at exactly the right moment." },
-  { avatar: PM1, name: "Rajat Thakur", role: "Design Intern", rating: 5, title: "Career-changing mentorship", text: "Sanya's guidance helped me make the leap from student work to professional-level design thinking. She is generous with her time, her knowledge, and her network. My first real design job came directly from her recommendation." },
-  { avatar: PF2, name: "Alisha Thomas", role: "Jr. Designer", rating: 4, title: "Excellent technical guidance", text: "Sanya's technical knowledge is exceptional and she communicates it with real clarity. She helped me understand draping, proportion, and fabric choice at a level that my formal education simply didn't cover." },
-  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Incredible mentor", text: "Sanya is the kind of mentor you remember for life. She doesn't just answer your questions — she helps you ask better questions. Our sessions shifted my entire perspective on what it means to be a thoughtful designer." },
-  { avatar: PF3, name: "Reshma Ali", role: "Fashion Graduate", rating: 5, title: "Patient and insightful", text: "Sanya's patience is extraordinary. She never makes you feel rushed and always finds a way to explain something from a different angle if the first approach doesn't click. I left every session feeling more capable and more confident." },
-  { avatar: PM2, name: "Pranav Bhat", role: "Jr. Print Designer", rating: 5, title: "Transformed my practice", text: "The sessions with Sanya completely changed how I approach my design practice. She helped me see my work with much more critical eyes while also encouraging me to trust my instincts. A rare and valuable balance." },
-  { avatar: PF4, name: "Trisha Ghosh", role: "Design Student", rating: 4, title: "Practical and actionable", text: "What I value most about Sanya's mentorship is that it's always actionable. She doesn't deal in vague encouragement — she gives specific feedback, concrete next steps, and real examples from her own experience." },
-  { avatar: PM3, name: "Deepak Solanki", role: "Textile Intern", rating: 5, title: "World-class mentorship", text: "I have had several mentors over my early career and Sanya is in a different category. Her combination of genuine care for your development and deep professional knowledge makes her mentorship feel uniquely valuable." },
-  { avatar: PM4, name: "Naveen Tiwari", role: "Fashion Graduate", rating: 4, title: "Sets you up for success", text: "Sanya doesn't just help you with your immediate challenges — she prepares you for the ones ahead. Her mentorship has given me a professional framework that I keep coming back to at every stage of my career." },
+  { ...rv("F01"), rating: 5, title: "Transformative experience",      text: "Learning from Sanya has been one of the most transformative things I've done for my career. She has a gift for explaining complex concepts simply and always knows exactly what you need to hear at exactly the right moment." },
+  { ...rv("M01"), rating: 5, title: "Career-changing mentorship",     text: "Sanya's guidance helped me make the leap from student work to professional-level design thinking. She is generous with her time, her knowledge, and her network. My first real design job came directly from her recommendation." },
+  { ...rv("F02"), rating: 4, title: "Excellent technical guidance",   text: "Sanya's technical knowledge is exceptional and she communicates it with real clarity. She helped me understand draping, proportion, and fabric choice at a level that my formal education simply didn't cover." },
+  { ...rvAnon(),  rating: 4, title: "Incredible mentor",              text: "Sanya is the kind of mentor you remember for life. She doesn't just answer your questions — she helps you ask better questions. Our sessions shifted my entire perspective on what it means to be a thoughtful designer." },
+  { ...rv("F03"), rating: 5, title: "Patient and insightful",         text: "Sanya's patience is extraordinary. She never makes you feel rushed and always finds a way to explain something from a different angle if the first approach doesn't click. I left every session feeling more capable and more confident." },
+  { ...rv("M02"), rating: 5, title: "Transformed my practice",        text: "The sessions with Sanya completely changed how I approach my design practice. She helped me see my work with much more critical eyes while also encouraging me to trust my instincts. A rare and valuable balance." },
+  { ...rv("F04"), rating: 4, title: "Practical and actionable",       text: "What I value most about Sanya's mentorship is that it's always actionable. She doesn't deal in vague encouragement — she gives specific feedback, concrete next steps, and real examples from her own experience." },
+  { ...rv("M03"), rating: 5, title: "World-class mentorship",         text: "I have had several mentors over my early career and Sanya is in a different category. Her combination of genuine care for your development and deep professional knowledge makes her mentorship feel uniquely valuable." },
+  { ...rv("M04"), rating: 4, title: "Sets you up for success",        text: "Sanya doesn't just help you with your immediate challenges — she prepares you for the ones ahead. Her mentorship has given me a professional framework that I keep coming back to at every stage of my career." },
 ];
 
 const faqs = [
@@ -102,57 +85,6 @@ const faqs = [
   },
 ];
 
-function StatusBar() {
-  return (
-    <div className="w-full bg-[#fffeff] flex h-[44px] items-center justify-between px-4 py-2 shrink-0">
-      <p className="font-['Roboto',sans-serif] font-normal text-[14.423px] leading-[20.192px] text-[#1a1128] tracking-[-0.3077px]">
-        9:41
-      </p>
-      <div className="flex gap-[2px] items-center shrink-0">
-        <div className="h-[15.385px] relative w-[19.231px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 19.2308 15.3846"
-          >
-            <path d={statusBarPaths.signalBars} fill="#1A1128" />
-          </svg>
-        </div>
-        <div className="relative size-[15.385px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 15.3846 15.3846"
-          >
-            <path d={statusBarPaths.wifi} fill="#1A1128" />
-          </svg>
-        </div>
-        <div className="h-[15.385px] relative w-[24.038px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 24.0385 15.3846"
-          >
-            <path
-              d={statusBarPaths.batteryOutline}
-              opacity="0.35"
-              stroke="#9D94AA"
-              strokeOpacity="0.4"
-              strokeWidth="0.961538"
-              fill="none"
-            />
-            <path d={statusBarPaths.batteryTip} fill="#1A1128" opacity="0.4" />
-            <path d={statusBarPaths.batteryFill} fill="#1A1128" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ReviewCard({
   avatar,
   name,
@@ -168,9 +100,6 @@ function ReviewCard({
   title: string;
   text: string;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const preview = text.slice(0, 110);
-  const hasMore = text.length > 110;
   return (
     <div className="flex flex-col gap-[8px] items-start w-full border-b border-[#e2d9ef] pb-[16px]">
       <div className="flex gap-[12px] items-center w-full">
@@ -210,90 +139,110 @@ function ReviewCard({
           </span>
         </div>
       </div>
+      {/* Full review text — no truncation, no ellipsis, no expand/collapse */}
       <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
-        {expanded ? text : hasMore ? `${preview}…` : text}
+        {text}
       </p>
-      {hasMore && (
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="flex gap-[6px] items-center cursor-pointer h-[18px]"
-        >
-          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
-            {expanded ? "Read less" : "Read more"}
-          </span>
-          <div className="shrink-0 flex items-center justify-center h-full">
-            {expanded ? (
-              <CaretUp size={14} color="#6B5F7A" />
-            ) : (
-              <CaretDown size={14} color="#6B5F7A" />
-            )}
-          </div>
-        </button>
-      )}
     </div>
   );
 }
 
 function DesignersYouMayKnow() {
+  const navigate = useNavigate();
+  const [followed, setFollowed] = useState<Set<number>>(new Set());
+
+  // Role strings must NEVER include company — DesignerProfilePage derives company
+  // from its own experience data and appends @Company itself.
+  const designers = [
+    { id: 0, designerId: "d1", avatar: imgAvatarImage,  name: "Riya Roy",     role: "Sr. Fashion Designer" },
+    { id: 1, designerId: "d2", avatar: imgAvatarImage1, name: "Rohan Singh",  role: "Textile Designer" },
+    { id: 2, designerId: "d3", avatar: imgAvatarImage2, name: "Akshit Verma", role: "Fashion Designer" },
+  ];
+
+  function toggleFollow(id: number) {
+    setFollowed((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }
+
+  function openProfile(designer: (typeof designers)[number]) {
+    navigate("/designer-profile", {
+      state: {
+        designerId: designer.designerId,
+        name: designer.name,
+        role: designer.role,
+        avatar: designer.avatar,
+      },
+    });
+  }
+
   return (
-    <div className="flex flex-col gap-[16px] pb-[20px]">
+    <div className="w-full flex flex-col gap-[16px] pb-[20px]">
       <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
         Designers you may know
       </p>
-      {[
-        {
-          avatar: imgAvatarImage,
-          name: "Riya Roy",
-          role: "Sr. Fashion Designer @ Anamika Khanna",
-        },
-        {
-          avatar: imgAvatarImage1,
-          name: "Rohan Singh",
-          role: "Textile Designer @ Manish Malhotra",
-        },
-        {
-          avatar: imgAvatarImage2,
-          name: "Akshit Verma",
-          role: "Fashion Designer",
-        },
-      ].map((designer, i) => (
-        <div
-          key={i}
-          className="flex gap-[8px] items-center py-[12px] border-b border-[rgba(157,148,170,0.4)]"
-        >
-          <div className="flex-1 flex gap-[12px] items-center">
-            <div className="size-[54px] rounded-full overflow-hidden border border-[#e2d9ef] shrink-0">
-              <img
-                alt=""
-                className="w-full h-full object-cover"
-                src={designer.avatar}
-              />
-            </div>
-            <div className="flex-1 flex flex-col gap-[4px] min-w-0">
-              <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px]">
-                {designer.name}
-              </p>
-              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                {designer.role}
-              </p>
-            </div>
+      {designers.map((designer) => {
+        const isFollowed = followed.has(designer.id);
+        return (
+          <div
+            key={designer.id}
+            className="flex gap-[8px] items-center py-[12px] border-b border-[rgba(157,148,170,0.4)]"
+          >
+            {/* Avatar + name → clickable, opens Designer Profile */}
+            <button
+              onClick={() => openProfile(designer)}
+              className="flex-1 min-w-0 flex gap-[12px] items-center text-left cursor-pointer active:opacity-70 transition-opacity"
+              style={{ WebkitTapHighlightColor: "transparent" }}
+              aria-label={`View ${designer.name}'s profile`}
+            >
+              <div className="size-[54px] rounded-full overflow-hidden border border-[#e2d9ef] shrink-0">
+                <img
+                  alt=""
+                  className="w-full h-full object-cover"
+                  src={designer.avatar}
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-[4px] min-w-0">
+                <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+                  {designer.name}
+                </p>
+                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] truncate">
+                  {designer.role}
+                </p>
+              </div>
+            </button>
+
+            {/* Follow / Followed toggle */}
+            <button
+              onClick={() => toggleFollow(designer.id)}
+              className="flex gap-[6px] items-center px-[12px] py-[8px] shrink-0 h-[36px]"
+              aria-label={isFollowed ? `Unfollow ${designer.name}` : `Follow ${designer.name}`}
+            >
+              {isFollowed ? (
+                <>
+                  <Check size={14} color="#7d3aea" weight="bold" />
+                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px]">
+                    Followed
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px]">
+                    Follow
+                  </span>
+                  <div className="flex items-center justify-center h-[20px]">
+                    <svg className="block size-[20px] shrink-0" fill="none" viewBox="0 0 24 24">
+                      <path d={svgPaths.p269480} fill="#7D3AEA" />
+                    </svg>
+                  </div>
+                </>
+              )}
+            </button>
           </div>
-          <div className="flex gap-[8px] items-center px-[12px] py-[8px] shrink-0 h-[36px]">
-            <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px]">
-              Follow
-            </span>
-            <div className="flex items-center justify-center h-[20px]">
-              <svg
-                className="block size-[20px] shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path d={svgPaths.p269480} fill="#7D3AEA" />
-              </svg>
-            </div>
-          </div>
-        </div>
-      ))}
+        );
+      })}
       <ViewMoreButton />
     </div>
   );
@@ -334,7 +283,7 @@ function MentorshipInsights({
                   {insight.title}:{" "}
                 </span>
                 <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                  {insight.description}
+                  {truncateAiBulletItem(insight.description, insights.length)}
                 </span>
               </li>
             ))}
@@ -346,8 +295,61 @@ function MentorshipInsights({
 }
 
 
+// ─── Domain → role title mapping ─────────────────────────────────────────────
+
+const DOMAIN_TO_ROLE: Record<string, string> = {
+  Fashion: "Fashion Designer",
+  Textile: "Textile Designer",
+  Jewelry: "Jewelry Designer",
+  Accessory: "Accessory Designer",
+  Footwear: "Footwear Designer",
+  Leather: "Leather Designer",
+  Illustrator: "Fashion Illustrator",
+  Stylist: "Fashion Stylist",
+  Merchandising: "Merchandiser",
+};
+
+const EXPERIENCE_TO_PREFIX: Record<string, string> = {
+  Student: "Intern",
+  Fresher: "Jr.",
+  "1-2 Yrs": "Jr.",
+  "3-5 Yrs": "Mid-Level",
+  "6-9 Yrs": "Senior",
+  "9-15 yrs": "Senior",
+  "16+ yrs": "Senior",
+};
+
+function getProfileData() {
+  const storedName = localStorage.getItem("lumio_name") ?? "";
+  const storedDomain = localStorage.getItem("lumio_domain") ?? "";
+  const storedExperience = localStorage.getItem("lumio_experience") ?? "";
+
+  const hasOnboarded = !!storedName;
+  const displayName = hasOnboarded ? toTitleCase(storedName) : "Sanya Gupta";
+  const domainRole = DOMAIN_TO_ROLE[storedDomain] ?? "Fashion Designer";
+  const expPrefix = EXPERIENCE_TO_PREFIX[storedExperience] ?? "Jr.";
+  const displayTitle = hasOnboarded
+    ? `${expPrefix} ${domainRole}`
+    : "Jr. Fashion Designer";
+  const displayStatus =
+    storedExperience === "Student" ? "Seeking internship" : "Seeking full-time";
+
+  return { displayName, displayTitle, displayStatus };
+}
+
 export function ProfilePage() {
   const navigate = useNavigate();
+  // debug mount log
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log("Mounted: ProfilePage");
+    return () => {
+      // eslint-disable-next-line no-console
+      console.log("Unmounted: ProfilePage");
+    };
+  }, []);
+  const { displayName, displayTitle, displayStatus } = getProfileData();
+  const publishedPosts = usePublishedPosts();
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   const [visibleMentorReviews, setVisibleMentorReviews] = useState(3);
   const [visibleMenteeReviews, setVisibleMenteeReviews] = useState(3);
@@ -356,7 +358,7 @@ export function ProfilePage() {
 
   const tabs: Tab[] = [
     "Overview",
-    "Mentors review",
+    "Mentor review",
     "Mentee review",
     "Mentee FAQ",
   ];
@@ -396,27 +398,21 @@ export function ProfilePage() {
             <div className="flex flex-col gap-[4px] items-center w-full">
               <div className="flex flex-col gap-[2px] items-center text-[#433059] text-center w-full">
                 <p className="font-['Manrope',sans-serif] font-semibold text-[18px] leading-[28px]">
-                  Sanya Gupta
+                  {displayName}
                 </p>
                 <p className="font-['Manrope',sans-serif] font-normal text-[16px] leading-[24px]">
-                  Jr. Fashion Designer
+                  {displayTitle}
                 </p>
               </div>
               <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px] text-center">
-                Seeking full-time
+                {displayStatus}
               </p>
 
               {/* Stats */}
               <div className="flex flex-wrap gap-[12px] items-center justify-center w-full">
                 <div className="flex gap-[8px] items-center h-[18px]">
                   <div className="flex items-center justify-center h-full shrink-0">
-                    <svg
-                      className="block size-[16px]"
-                      fill="none"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d={svgPaths.p3b153b00} fill="#1A1128" />
-                    </svg>
+                    <UserList size={16} weight="fill" color="#1A1128" />
                   </div>
                   <span className="font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
                     200
@@ -424,13 +420,7 @@ export function ProfilePage() {
                 </div>
                 <div className="flex gap-[8px] items-center h-[18px]">
                   <div className="flex items-center justify-center h-full shrink-0">
-                    <svg
-                      className="size-[16px]"
-                      fill="none"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d={svgPaths.p3adf1680} fill="#1A1128" />
-                    </svg>
+                    <Users size={16} weight="fill" color="#1A1128" />
                   </div>
                   <div className="flex gap-[4px] items-center h-full">
                     <span className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">
@@ -466,7 +456,7 @@ export function ProfilePage() {
 
           {/* Settings Button */}
           <button
-            className="p-2 cursor-pointer shrink-0 flex items-center justify-center"
+            className="pl-2 pr-0 pt-0 pb-2 cursor-pointer shrink-0 flex items-start self-start"
             onClick={() => navigate("/settings")}
           >
             <svg
@@ -481,7 +471,7 @@ export function ProfilePage() {
 
         {/* Tabs */}
         <div
-          className="sticky top-0 z-10 bg-white pt-[12px] overflow-x-auto"
+          className="bg-white pt-[12px] overflow-x-auto"
           style={{ scrollbarWidth: "none" }}
         >
           <div className="flex border-b border-[#e2d9ef] min-w-max">
@@ -511,7 +501,7 @@ export function ProfilePage() {
           {activeTab === "Overview" && (
             <div className="flex flex-col">
               {/* About */}
-              <div className="flex flex-col gap-[16px] py-[28px]">
+              <div className="flex flex-col gap-[16px] pt-[28px] pb-[20px]">
                 <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
                   About
                 </p>
@@ -536,11 +526,38 @@ export function ProfilePage() {
                   Recent project
                 </p>
                 <div
-                  className="flex gap-[12px] overflow-x-auto"
+                  className="flex gap-[12px] overflow-x-auto -mx-[16px] px-[16px] pr-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
+                  {/* Published posts from store — prepended */}
+                  {publishedPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="bg-white rounded-[8px] border border-[rgba(157,148,170,0.4)] shrink-0 overflow-hidden"
+                    >
+                      <div className="flex flex-col gap-[8px]">
+                        <div className="h-[140px] w-[246px]">
+                          {post.coverUrl ? (
+                            <img
+                              alt={post.caption || "Project"}
+                              className="w-full h-full object-cover"
+                              src={post.coverUrl}
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-[#f5f0ff]" />
+                          )}
+                        </div>
+                        <div className="px-[12px] pb-[12px]">
+                          <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+                            {post.publishedAt}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {/* Static seed posts */}
                   {[
-                    { img: imgPostThumbnail, label: "1 min" },
+                    { img: imgPostThumbnail, label: "3 days ago" },
                     { img: imgPostThumbnail1, label: "6 July" },
                   ].map((post, i) => (
                     <div
@@ -661,24 +678,31 @@ export function ProfilePage() {
             </div>
           )}
 
-          {activeTab === "Mentors review" && (
+          {activeTab === "Mentor review" && mentorReviews.length === 0 && (
+            <div className="px-4 py-16 flex flex-col items-center gap-2">
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#6b5f7a] text-[16px] leading-[24px] text-center">No reviews available yet.</p>
+              <p className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[14px] leading-[21px] text-center">Reviews will appear here once mentors share their feedback.</p>
+            </div>
+          )}
+
+          {activeTab === "Mentor review" && mentorReviews.length > 0 && (
             <div className="flex flex-col gap-[24px] py-[20px]">
               <MentorshipInsights
                 insights={[
                   {
                     title: "Strong dedication",
                     description:
-                      "Mentors consistently praise Sanya's dedication and strong work ethic in fashion design.",
+                      "Prepares thoroughly, applies feedback without delay, and stays focused on long-term improvement.",
                   },
                   {
                     title: "Technical excellence",
                     description:
-                      "Recognized for exceptional technical skills in pattern making and garment construction.",
+                      "Exceptional in pattern making, construction, and fit — unusual at her career stage.",
                   },
                   {
                     title: "Quick learner",
                     description:
-                      "Demonstrates ability to quickly absorb feedback and apply it to improve her craft.",
+                      "Absorbs critique and implements improvements with a speed and accuracy that is rare.",
                   },
                 ]}
               />
@@ -700,30 +724,37 @@ export function ProfilePage() {
                 }
               />
 
-              <div className="border-t border-[#f0ecf7] pt-[20px]">
+              <div className="w-full border-t border-[#f0ecf7] pt-[20px]">
                 <DesignersYouMayKnow />
               </div>
             </div>
           )}
 
-          {activeTab === "Mentee review" && (
+          {activeTab === "Mentee review" && menteeReviews.length === 0 && (
+            <div className="px-4 py-16 flex flex-col items-center gap-2">
+              <p className="font-['Manrope',sans-serif] font-semibold text-[#6b5f7a] text-[16px] leading-[24px] text-center">No reviews available yet.</p>
+              <p className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[14px] leading-[21px] text-center">Reviews will appear here once mentees share their feedback.</p>
+            </div>
+          )}
+
+          {activeTab === "Mentee review" && menteeReviews.length > 0 && (
             <div className="flex flex-col gap-[24px] py-[20px]">
               <MentorshipInsights
                 insights={[
                   {
                     title: "Patient teaching",
                     description:
-                      "Mentees value Sanya's patient teaching style and clear explanations of complex concepts.",
+                      "Never rushes explanations; adapts method to ensure genuine understanding every session.",
                   },
                   {
                     title: "Genuine investment",
                     description:
-                      "Shows genuine care for mentees' success and provides personalized guidance.",
+                      "Tracks progress, tailors guidance, and stays available when critical decisions arise.",
                   },
                   {
                     title: "Career transformation",
                     description:
-                      "Many credit her mentorship as transformative for their design careers and skill development.",
+                      "Mentees leave with confidence, clarity, and a creative identity that defines their practice.",
                   },
                 ]}
               />
@@ -745,19 +776,21 @@ export function ProfilePage() {
                 }
               />
 
-              <div className="border-t border-[#f0ecf7] pt-[20px]">
+              <div className="w-full border-t border-[#f0ecf7] pt-[20px]">
                 <DesignersYouMayKnow />
               </div>
             </div>
           )}
 
           {activeTab === "Mentee FAQ" && (
-            <div className="flex flex-col gap-[16px] py-[20px]">
-              {faqs.slice(0, visibleFAQCount).map((faq, i) => {
-                const isExpanded = expandedFAQs.has(i);
-                return (
-                  <div key={i} className="border-b border-[#e2d9ef] pb-[16px]">
+            <div className="py-[20px] flex flex-col gap-[16px] items-center">
+              {/* faq-list */}
+              <div className="flex flex-col gap-[4px] self-stretch">
+                {faqs.slice(0, visibleFAQCount).map((faq, i) => {
+                  const isExpanded = expandedFAQs.has(i);
+                  return (
                     <button
+                      key={i}
                       onClick={() => {
                         const newSet = new Set(expandedFAQs);
                         if (isExpanded) {
@@ -767,33 +800,49 @@ export function ProfilePage() {
                         }
                         setExpandedFAQs(newSet);
                       }}
-                      className="flex items-start justify-between w-full gap-[12px] cursor-pointer"
+                      className="flex flex-col gap-[8px] items-start py-[12px] self-stretch cursor-pointer text-left"
                     >
-                      <p className="flex-1 font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] text-left">
-                        {faq.question}
-                      </p>
-                      <div className="shrink-0 flex items-center justify-center h-[25px]">
-                        {isExpanded ? (
-                          <CaretUp size={20} color="#6B5F7A" />
-                        ) : (
-                          <CaretDown size={20} color="#6B5F7A" />
-                        )}
+                      {/* Question Row */}
+                      <div className="flex gap-[8px] items-center self-stretch">
+                        <div className="flex-1 min-w-px font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px]">
+                          {faq.question}
+                        </div>
+                        <div className="overflow-clip relative shrink-0 size-[24px]">
+                          <div className="absolute inset-[34.37%_15.62%_28.12%_15.62%]">
+                            <svg
+                              className={`absolute block inset-0 size-full transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                              fill="none"
+                              preserveAspectRatio="none"
+                              viewBox="0 0 16.5008 9.00101"
+                            >
+                              <path
+                                d="M16.281 1.28104L8.78104 8.78104C8.71139 8.85077 8.62867 8.90609 8.53762 8.94384C8.44657 8.98158 8.34898 9.00101 8.25042 9.00101C8.15186 9.00101 8.05426 8.98158 7.96321 8.94384C7.87216 8.90609 7.78945 8.85077 7.71979 8.78104L0.219792 1.28104C0.0790615 1.14031 0 0.94944 0 0.750417C0 0.551394 0.0790615 0.360522 0.219792 0.219792C0.360523 0.0790612 0.551394 0 0.750417 0C0.94944 0 1.14031 0.0790612 1.28104 0.219792L8.25042 7.1901L15.2198 0.219792C15.2895 0.150109 15.3722 0.0948337 15.4632 0.0571218C15.5543 0.0194098 15.6519 0 15.7504 0C15.849 0 15.9465 0.0194098 16.0376 0.0571218C16.1286 0.0948337 16.2114 0.150109 16.281 0.219792C16.3507 0.289474 16.406 0.3722 16.4437 0.463245C16.4814 0.554289 16.5008 0.651871 16.5008 0.750417C16.5008 0.848963 16.4814 0.946545 16.4437 1.03759C16.406 1.12863 16.3507 1.21136 16.281 1.28104Z"
+                                fill="#6B5F7A"
+                              />
+                            </svg>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* Answer (expandable) */}
+                      {isExpanded && (
+                        <div className="inline-flex gap-[12px] items-stretch self-stretch">
+                          <div className="w-[2px] self-stretch bg-[#E2D9EF] rounded-[200px] shrink-0" />
+                          <div className="flex-1 min-w-px font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] break-words">
+                            {faq.answer}
+                          </div>
+                        </div>
+                      )}
                     </button>
-                    {isExpanded && (
-                      <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px] mt-[12px]">
-                        {faq.answer}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
 
               {visibleFAQCount < faqs.length && (
                 <ViewMoreButton onClick={() => setVisibleFAQCount(faqs.length)} />
               )}
 
-              <div className="border-t border-[#f0ecf7] pt-[20px]">
+              <div className="w-full border-t border-[#f0ecf7] pt-[20px]">
                 <DesignersYouMayKnow />
               </div>
             </div>

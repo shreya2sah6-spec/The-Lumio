@@ -28,9 +28,9 @@ const buttonVariants = cva(
     "[&_svg]:text-current",
     "[&_svg]:stroke-current",
 
-    // FOCUS
+    // FOCUS — Lumio purple ring, consistent with keyboard.css :focus-visible rule
     "focus-visible:ring-2",
-    "focus-visible:ring-ring/50",
+    "focus-visible:ring-[#7d3aea]/40",
   ].join(" "),
   {
     variants: {

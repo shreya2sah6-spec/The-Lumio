@@ -57,7 +57,7 @@ function SelectContent({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Content>) {
   return (
-    <SelectPrimitive.Portal>
+    <SelectPrimitive.Portal data-slot="select-portal">
       <SelectPrimitive.Content
         data-slot="select-content"
         className={cn(

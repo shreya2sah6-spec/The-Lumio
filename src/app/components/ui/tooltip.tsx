@@ -41,7 +41,7 @@ function TooltipContent({
   ...props
 }: React.ComponentProps<typeof TooltipPrimitive.Content>) {
   return (
-    <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Portal data-slot="tooltip-portal">
       <TooltipPrimitive.Content
         data-slot="tooltip-content"
         sideOffset={sideOffset}

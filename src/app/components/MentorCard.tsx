@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import { SaveButton } from "./SaveButton";
 
 const starPath =
@@ -18,12 +19,13 @@ export interface Mentor {
   isTopMentor?: boolean;
 }
 
-export function MentorCard({ mentor }: { mentor: Mentor }) {
+export const MentorCard = React.memo(function MentorCard({ mentor }: { mentor: Mentor }) {
   const navigate = useNavigate();
 
   return (
     <div
       onClick={() => navigate("/mentor-profile", { state: { mentor } })}
+      data-card="interactive"
       className="bg-white border border-[#e2d9ef] rounded-[8px] max-w-[340px] min-w-[158px] justify-self-stretch self-start cursor-pointer"
     >
       <div className="flex flex-col gap-2 items-start px-4 py-3">
@@ -37,6 +39,8 @@ export function MentorCard({ mentor }: { mentor: Mentor }) {
                   alt={mentor.name}
                   className="absolute inset-0 size-full object-cover"
                   src={mentor.avatar}
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div
@@ -117,4 +121,4 @@ export function MentorCard({ mentor }: { mentor: Mentor }) {
       </div>
     </div>
   );
-}
+});

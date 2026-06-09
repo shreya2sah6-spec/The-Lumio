@@ -1,5 +1,7 @@
-﻿import { useState } from "react";
-import { useNavigate, useLocation } from "react-router";
+﻿import { useState, useRef, useEffect } from "react";
+import { truncateAiBulletItem } from "../utils/aiSummary";
+import { useEscKey } from "../hooks/useEscKey";
+import { useNavigate, useLocation } from "react-router-dom";
 import { BookingReviewPage } from "./BookingReviewPage";
 import {
   Star,
@@ -10,8 +12,6 @@ import {
   CaretRight,
   CaretDown,
   CaretUp,
-  Clock,
-  CalendarBlank,
   CalendarDots,
   Check,
   Lock,
@@ -20,90 +20,95 @@ import {
 import { MentorCard, type Mentor } from "../components/MentorCard";
 import { Button } from "../components/ui/button";
 import { SaveButton } from "../components/SaveButton";
+import { StatusBar } from "../components/StatusBar";
+import { BottomSafeArea } from "../components/BottomSafeArea";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 
 import { PageHeader } from "../components/PageHeader";
 
 // ─── Images ──────────────────────────────────────────────────────────────────
 
-import imgMentor from "@/imports/MentorsListing-1/256d9888e94601d5c3ad0b35893b712ad1983479.png";
-import imgWebinar from "@/imports/MentorsListing-1/200308a276b1feba2bec4e28e27dda4b6aaab137.png";
-import imgAbout from "@/imports/MentorsListing-1/9aecea038a5eba6222a77595fc22c0549d614720.png";
-import imgProject1 from "@/imports/MentorsListing-1/af1c850daadb743337a79569abbde7a01ce4354c.png";
-import imgProject2 from "@/imports/MentorsListing-1/9e04564b5d619027fe26e99798384a89ec7dbd7e.png";
-import imgProject3 from "@/imports/MentorsListing-1/a21445b6a5efdaefec15a6540ac50ce7fe9c4bf8.png";
-import imgRelated1 from "@/imports/MentorsListing-1/4a29d0654aaab6716cd873400f7020bd2faded80.png";
-import imgRelated2 from "@/imports/MentorsListing-1/44f0132e097541fab04aec7d33348dc2876131fb.png";
+import imgAbout    from "@/imports/MentorsListing-1/9aecea038a5eba6222a77595fc22c0549d614720.png";
+import { rv, rvAnon } from "@/app/data/reviewIdentities";
+// About-section + webinar images — sourced from the centralized registry above
+import imgRp770  from "@/imports/mentors-recent-post/image-770.png";
+import imgRp771  from "@/imports/mentors-recent-post/image-771.png";
+import imgRp772  from "@/imports/mentors-recent-post/image-772.png";
+import imgRp773  from "@/imports/mentors-recent-post/image-773.png";
+import imgRp774  from "@/imports/mentors-recent-post/image-774.png";
+import imgRp775  from "@/imports/mentors-recent-post/image-775.png";
+import imgRp776  from "@/imports/mentors-recent-post/image-776.png";
+import imgRp777  from "@/imports/mentors-recent-post/image-777.png";
+import imgRp778  from "@/imports/mentors-recent-post/image-778.png";
+import imgRp779  from "@/imports/mentors-recent-post/image-779.png";
+import imgRp780  from "@/imports/mentors-recent-post/image-780.png";
+import imgRp781  from "@/imports/mentors-recent-post/image-781.png";
+import imgRp782  from "@/imports/mentors-recent-post/image-782.png";
+import imgRpA    from "@/imports/mentors-recent-post/image-a.png";
+import imgRpB    from "@/imports/mentors-recent-post/image-b.png";
+import imgRpC    from "@/imports/mentors-recent-post/post-image-01.png";
+import imgRpD    from "@/imports/mentors-recent-post/post-image-01-1.png";
+
+// ─── Company logos — sourced from the centralized registry ───────────────────
+import {
+  logoMyntra,
+  logoFabIndia,
+  logoNIFT,
+  logoNID,
+  logoAnitaDongre,
+  logoRohitBal,
+  logoMAX,
+  logoZara,
+  logoPantaloons,
+  logoPearl,
+  logoHM,
+  logoPuma,
+  logoSymbiosis,
+  logoMango,
+  logoBiba,
+  logoForever21,
+  logoNykaaFashion,
+  logoWForWoman,
+  logoRelianceTrend,
+  logoAurelia,
+  logoShein,
+  logoINIFD,
+  logoWestside,
+  logoAnokhi,
+  logoShoppersStop,
+  logoCentral,
+  logoArvind,
+  logoGoodEarth,
+  logoAbrahamThakore,
+} from "../data/companyLogos";
+
+// ─── Mentor avatar + media images — sourced from the centralized registry ─────
+import {
+  MENTOR_AVATARS,
+  MENTOR_ABOUT,
+  MENTOR_WEBINAR,
+} from "../data/mentorImages";
 
 // ─── Review avatar URLs (face-cropped, Indian-presenting, 20–40, professional) ─
 
-const ANON_AVATAR =
-  "https://tse1.explicit.bing.net/th/id/OIP.0CZd1ESLnyWIHdO38nyJDAHaGF?r=0&cb=thfvnextfalcon&rs=1&pid=ImgDetMain&o=7&rm=3";
-const PF1 = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&h=200&fit=crop&crop=face&auto=format";
-const PF2 = "https://images.unsplash.com/photo-1548142813-c348350df52b?w=200&h=200&fit=crop&crop=face&auto=format";
-const PF3 = "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=200&h=200&fit=crop&crop=face&auto=format";
-const PF4 = "https://images.unsplash.com/photo-1530785602389-07594beb8b73?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM1 = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM2 = "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM3 = "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=face&auto=format";
-const PM4 = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=face&auto=format";
+// Avatar constants removed — all review identities now come from reviewIdentities.ts
 
 // ─── Types & Data ─────────────────────────────────────────────────────────────
 
 type Tab = "Overview" | "Reviews" | "Mentee FAQ";
 
-const otherHighestRatedMentors: Mentor[] = [
-  {
-    id: "m2",
-    name: "Priya Mehta",
-    title: "Sr. Fashion Designer",
-    company: "MAX",
-    avatar: imgRelated1,
-    experience: "7 yrs exp • EX - Fab India",
-    rating: 4.7,
-    reviews: 120,
-    originalPrice: 600,
-    discountedPrice: 400,
-    isTopMentor: true,
-  },
-  {
-    id: "m3",
-    name: "Ravi Kumar",
-    title: "Lead Designer",
-    company: "Myntra",
-    avatar: imgRelated2,
-    experience: "8 yrs exp • EX - H&M",
-    rating: 4.8,
-    reviews: 120,
-    originalPrice: 550,
-    discountedPrice: 350,
-    isTopMentor: true,
-  },
-  {
-    id: "m4",
-    name: "Sneha Patel",
-    title: "Lead Fashion Designer",
-    company: "Anita Dongre",
-    avatar: imgAbout,
-    experience: "10 yrs exp • EX - Mango",
-    rating: 4.6,
-    reviews: 75,
-    originalPrice: 580,
-    discountedPrice: 250,
-    isTopMentor: true,
-  },
-];
 
+// Pool A — m1 (Shruti Jain). Identities: F01 F02 F03 F04 M01 M02 M03 M04 + ANON
 const mentorReviews = [
-  { avatar: PF1, name: "Neha Agarwal", role: "Fashion Design Student", rating: 5, title: "Transformative mentorship", text: "Shruti's mentorship completely transformed my approach to fashion design. Her insights on pattern making and fabric selection were invaluable. She takes time to understand your goals and provides actionable feedback that accelerates your growth." },
-  { avatar: PM1, name: "Varun Shetty", role: "Jr. Fashion Designer", rating: 5, title: "Career-defining sessions", text: "Every session with Shruti gave me concrete tools I could apply immediately. Her industry knowledge is exceptional and she has a rare ability to see exactly where you are in your journey and what you need next." },
-  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Genuinely invested in your success", text: "The mentorship sessions with Shruti were the best investment I made in my design career. She helped me refine my aesthetic, build confidence, and understand the business side of fashion. Her industry connections are also invaluable." },
-  { avatar: PF2, name: "Simran Kaur", role: "Design Intern", rating: 4, title: "Practical real-world insights", text: "Shruti brings authentic real-world experience to every session. Her advice on garment construction and navigating production challenges was eye-opening. She never gives generic advice — everything is grounded in her actual industry experience." },
-  { avatar: PM2, name: "Krish Malviya", role: "Fashion Graduate", rating: 5, title: "Best investment in my career", text: "I came to Shruti at a pivotal moment in my career and she helped me see opportunities I had completely missed. Her guidance on portfolio positioning and building industry relationships directly led to my first design role." },
-  { avatar: PF3, name: "Tanya Arora", role: "Textile Design Student", rating: 5, title: "Excellent technical guidance", text: "Shruti's technical knowledge is exceptional. She taught me advanced draping techniques and how to approach difficult fabrics with confidence. Her feedback is always constructive and immediately actionable." },
-  { avatar: PM3, name: "Harsh Vardhan", role: "Associate Designer", rating: 4, title: "Helped me land my first role", text: "Shruti worked with me intensively on my portfolio and interview preparation. The way she coached me to articulate my design thinking made a real difference. I landed my first design role within two months of our sessions." },
-  { avatar: PF4, name: "Ritika Bose", role: "Design Intern", rating: 5, title: "Exceptional portfolio coaching", text: "Shruti has a sharp eye for what makes a portfolio stand out and she articulates it clearly. She helped me restructure and rethink how I was presenting my work, and the response from studios improved immediately." },
-  { avatar: PM4, name: "Mohit Saxena", role: "Jr. Designer", rating: 4, title: "Deep industry knowledge", text: "The depth of Shruti's industry knowledge is remarkable. She understands both the creative and commercial dimensions of fashion and helps you see how they connect. A mentor who genuinely cares about your long-term development." },
+  { ...rv("F01"), rating: 5, title: "Transformative mentorship",      text: "Shruti's mentorship completely transformed my approach to fashion design. Her insights on pattern making and fabric selection were invaluable. She takes time to understand your goals and provides actionable feedback that accelerates your growth." },
+  { ...rv("M01"), rating: 5, title: "Career-defining sessions",        text: "Every session with Shruti gave me concrete tools I could apply immediately. Her industry knowledge is exceptional and she has a rare ability to see exactly where you are in your journey and what you need next." },
+  { ...rvAnon(),  rating: 4, title: "Genuinely invested in your success", text: "The mentorship sessions with Shruti were the best investment I made in my design career. She helped me refine my aesthetic, build confidence, and understand the business side of fashion. Her industry connections are also invaluable." },
+  { ...rv("F02"), rating: 4, title: "Practical real-world insights",   text: "Shruti brings authentic real-world experience to every session. Her advice on garment construction and navigating production challenges was eye-opening. She never gives generic advice — everything is grounded in her actual industry experience." },
+  { ...rv("M02"), rating: 5, title: "Best investment in my career",    text: "I came to Shruti at a pivotal moment in my career and she helped me see opportunities I had completely missed. Her guidance on portfolio positioning and building industry relationships directly led to my first design role." },
+  { ...rv("F03"), rating: 5, title: "Excellent technical guidance",    text: "Shruti's technical knowledge is exceptional. She taught me advanced draping techniques and how to approach difficult fabrics with confidence. Her feedback is always constructive and immediately actionable." },
+  { ...rv("M03"), rating: 4, title: "Helped me land my first role",    text: "Shruti worked with me intensively on my portfolio and interview preparation. The way she coached me to articulate my design thinking made a real difference. I landed my first design role within two months of our sessions." },
+  { ...rv("F04"), rating: 5, title: "Exceptional portfolio coaching",  text: "Shruti has a sharp eye for what makes a portfolio stand out and she articulates it clearly. She helped me restructure and rethink how I was presenting my work, and the response from studios improved immediately." },
+  { ...rv("M04"), rating: 4, title: "Deep industry knowledge",         text: "The depth of Shruti's industry knowledge is remarkable. She understands both the creative and commercial dimensions of fashion and helps you see how they connect. A mentor who genuinely cares about your long-term development." },
 ];
 
 const mentorFAQs = [
@@ -141,8 +146,8 @@ const mentorFAQs = [
 // ─── Per-mentor profile content ───────────────────────────────────────────────
 
 interface ReviewEntry { avatar: string; name: string; role: string; rating: number; title: string; text: string; }
-interface ExperienceEntry { company: string; letter: string; role: string; start: string; end: string; }
-interface EducationEntry { school: string; letter: string; degree: string; start: string; end: string; }
+interface ExperienceEntry { company: string; letter: string; logo?: string; color?: string; role: string; start: string; end: string; }
+interface EducationEntry { school: string; letter: string; logo?: string; color?: string; degree: string; start: string; end: string; }
 interface MentorData {
   trainedCount: string;
   aboutMode: "image" | "text" | "hidden";
@@ -150,6 +155,7 @@ interface MentorData {
   aboutImage?: string;
   aboutImageText?: string;
   showWebinar: boolean;
+  webinarImage?: string;
   showResponseTime: boolean;
   experience: ExperienceEntry[];
   education: EducationEntry;
@@ -157,78 +163,90 @@ interface MentorData {
   faqs: { question: string; answer: string }[];
   insights: { label: string; text: string }[];
   reviews: ReviewEntry[];
+  availableDates: string[];
+  timeSlots: string[];
 }
 
-// Additional review pools with fresh names from the curated pool
+// Pool B — m2 (Priya Mehta), m3 (Ravi Kumar). Identities: F05 F06 F07 F08 M05 M06 M07 M08 + ANON
 const reviewsB: ReviewEntry[] = [
-  { avatar: PF1, name: "Sonal Kapoor", role: "Fashion Design Student", rating: 5, title: "Exceptional depth of knowledge", text: "The sessions were incredibly rich in content. The guidance on understanding fabric behaviour and how it translates into garment silhouettes gave me a level of technical clarity I had been missing throughout my formal education." },
-  { avatar: PM1, name: "Chirag Arora", role: "Jr. Designer", rating: 5, title: "A mentor who truly invests in you", text: "What sets this mentorship apart is the genuine investment in your long-term development. Every session builds on the last and the feedback is specific, honest, and always directed at helping you grow into a more capable designer." },
-  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Strong real-world perspective", text: "The insights on navigating the commercial pressures of fashion design while staying creatively authentic are ones I keep coming back to. The practical wisdom shared is something no design school can fully teach you." },
-  { avatar: PF2, name: "Gayatri Naidu", role: "Design Intern", rating: 4, title: "Clarity and confidence", text: "I came into these sessions unsure about my direction and left with a much clearer sense of what I want to build in my career and how to get there. The mentorship style is warm but direct and exactly what I needed." },
-  { avatar: PM2, name: "Tarun Khanna", role: "Fashion Graduate", rating: 5, title: "Portfolio transformed", text: "My portfolio went from being a collection of work I was uncertain about to a cohesive story that I present with confidence. The guidance on how to frame your work and communicate your design thinking made a visible difference." },
-  { avatar: PF3, name: "Muskaan Bedi", role: "Textile Design Student", rating: 5, title: "Technical mastery shared generously", text: "The technical depth in these sessions is remarkable. Advanced construction methods, draping solutions, and how to work with unconventional materials — all explained with patience and a real understanding of how designers learn." },
-  { avatar: PM3, name: "Tejas Pawar", role: "Associate Designer", rating: 4, title: "Grounded in industry reality", text: "One of the most valuable things about this mentorship is how grounded it is in how the industry actually works. The advice on studio culture, career progression, and professional relationships is genuinely useful and honest." },
-  { avatar: PF4, name: "Zara Mirza", role: "Design Intern", rating: 5, title: "Highly recommended for any designer", text: "Whether you are just starting out or are a few years into your career, this mentorship offers something meaningful. The ability to meet you exactly where you are and help you move forward is a rare skill in a mentor." },
-  { avatar: PM4, name: "Amarjeet Gill", role: "Jr. Designer", rating: 4, title: "Career direction and clarity", text: "I had been drifting in my career without a clear strategy. These sessions helped me understand my strengths, identify opportunities that suit my profile, and build a focused plan for the next stage of my development." },
+  { ...rv("F05"), rating: 5, title: "Exceptional depth of knowledge",        text: "The sessions were incredibly rich in content. The guidance on understanding fabric behaviour and how it translates into garment silhouettes gave me a level of technical clarity I had been missing throughout my formal education." },
+  { ...rv("M05"), rating: 5, title: "A mentor who truly invests in you",     text: "What sets this mentorship apart is the genuine investment in your long-term development. Every session builds on the last and the feedback is specific, honest, and always directed at helping you grow into a more capable designer." },
+  { ...rvAnon(),  rating: 4, title: "Strong real-world perspective",          text: "The insights on navigating the commercial pressures of fashion design while staying creatively authentic are ones I keep coming back to. The practical wisdom shared is something no design school can fully teach you." },
+  { ...rv("F06"), rating: 4, title: "Clarity and confidence",                text: "I came into these sessions unsure about my direction and left with a much clearer sense of what I want to build in my career and how to get there. The mentorship style is warm but direct and exactly what I needed." },
+  { ...rv("M06"), rating: 5, title: "Portfolio transformed",                  text: "My portfolio went from being a collection of work I was uncertain about to a cohesive story that I present with confidence. The guidance on how to frame your work and communicate your design thinking made a visible difference." },
+  { ...rv("F07"), rating: 5, title: "Technical mastery shared generously",   text: "The technical depth in these sessions is remarkable. Advanced construction methods, draping solutions, and how to work with unconventional materials — all explained with patience and a real understanding of how designers learn." },
+  { ...rv("M07"), rating: 4, title: "Grounded in industry reality",          text: "One of the most valuable things about this mentorship is how grounded it is in how the industry actually works. The advice on studio culture, career progression, and professional relationships is genuinely useful and honest." },
+  { ...rv("F08"), rating: 5, title: "Highly recommended for any designer",   text: "Whether you are just starting out or are a few years into your career, this mentorship offers something meaningful. The ability to meet you exactly where you are and help you move forward is a rare skill in a mentor." },
+  { ...rv("M08"), rating: 4, title: "Career direction and clarity",          text: "I had been drifting in my career without a clear strategy. These sessions helped me understand my strengths, identify opportunities that suit my profile, and build a focused plan for the next stage of my development." },
 ];
 
+// Pool C — m4 (Sneha Patel). Identities: F09 F10 F11 F12 M09 M10 M11 M12 + ANON
 const reviewsC: ReviewEntry[] = [
-  { avatar: PF1, name: "Heena Qureshi", role: "Fashion Design Student", rating: 5, title: "Practical, honest, impactful", text: "Every session was filled with practical advice that I could apply immediately. No vague encouragement — just specific, honest guidance on what to improve, what to keep, and how to think about the next step in my design journey." },
-  { avatar: PM1, name: "Rohit Parmar", role: "Jr. Fashion Designer", rating: 5, title: "The mentor I needed at this stage", text: "At my stage of career, finding someone who understood exactly what I was facing and could give me relevant, specific advice was invaluable. The sessions gave me both technical improvements and a stronger sense of professional direction." },
-  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Clear and structured guidance", text: "The structured approach to each session made the mentorship feel focused and purposeful. We worked through real challenges I was facing, and by the end of each session I had concrete next steps to work on. Very effective format." },
-  { avatar: PF2, name: "Lavanya Krishnan", role: "Textile Design Student", rating: 5, title: "Transformed how I see garment design", text: "My understanding of how a garment comes together — the relationship between design intent, fabric choice, and construction — was fundamentally transformed through these sessions. This is knowledge that will stay with me throughout my career." },
-  { avatar: PM2, name: "Ayush Srivastava", role: "Design Intern", rating: 4, title: "Great for building industry confidence", text: "The mentorship helped me understand the unwritten rules of the fashion industry — how to communicate with studios, how to handle feedback, how to present work. These things are rarely taught formally but matter enormously." },
-  { avatar: PF3, name: "Monica Dutta", role: "Sr. Design Student", rating: 5, title: "A mentor who understands growth", text: "What I valued most was the long-term perspective on career development. Rather than just addressing immediate concerns, the mentorship helped me think about where I want to be in 5 years and what choices will help me get there." },
-  { avatar: PM3, name: "Dhruv Kulshreshtha", role: "Fashion Graduate", rating: 4, title: "Sharp technical eye", text: "The technical feedback in these sessions is precise and actionable. Each critique comes with a clear explanation of why something works or doesn't, which builds genuine understanding rather than just implementing corrections." },
-  { avatar: PF4, name: "Farah Siddiqui", role: "Jr. Designer", rating: 5, title: "Invaluable industry knowledge", text: "The insider knowledge about how different types of fashion companies work, what they look for in junior designers, and how to position yourself effectively in the market is something you genuinely cannot get anywhere else." },
-  { avatar: PM4, name: "Vinayak Sawant", role: "Associate Designer", rating: 4, title: "Accelerated my development", text: "I made more progress in three months of mentorship than I had in the previous year on my own. The combination of technical guidance, career coaching, and honest feedback accelerated my development in a way I did not expect." },
+  { ...rv("F09"), rating: 5, title: "Practical, honest, impactful",           text: "Every session was filled with practical advice that I could apply immediately. No vague encouragement — just specific, honest guidance on what to improve, what to keep, and how to think about the next step in my design journey." },
+  { ...rv("M09"), rating: 5, title: "The mentor I needed at this stage",      text: "At my stage of career, finding someone who understood exactly what I was facing and could give me relevant, specific advice was invaluable. The sessions gave me both technical improvements and a stronger sense of professional direction." },
+  { ...rvAnon(),  rating: 4, title: "Clear and structured guidance",          text: "The structured approach to each session made the mentorship feel focused and purposeful. We worked through real challenges I was facing, and by the end of each session I had concrete next steps to work on. Very effective format." },
+  { ...rv("F10"), rating: 5, title: "Transformed how I see garment design",   text: "My understanding of how a garment comes together — the relationship between design intent, fabric choice, and construction — was fundamentally transformed through these sessions. This is knowledge that will stay with me throughout my career." },
+  { ...rv("M10"), rating: 4, title: "Great for building industry confidence", text: "The mentorship helped me understand the unwritten rules of the fashion industry — how to communicate with studios, how to handle feedback, how to present work. These things are rarely taught formally but matter enormously." },
+  { ...rv("F11"), rating: 5, title: "A mentor who understands growth",        text: "What I valued most was the long-term perspective on career development. Rather than just addressing immediate concerns, the mentorship helped me think about where I want to be in 5 years and what choices will help me get there." },
+  { ...rv("M11"), rating: 4, title: "Sharp technical eye",                    text: "The technical feedback in these sessions is precise and actionable. Each critique comes with a clear explanation of why something works or doesn't, which builds genuine understanding rather than just implementing corrections." },
+  { ...rv("F12"), rating: 5, title: "Invaluable industry knowledge",          text: "The insider knowledge about how different types of fashion companies work, what they look for in junior designers, and how to position yourself effectively in the market is something you genuinely cannot get anywhere else." },
+  { ...rv("M12"), rating: 4, title: "Accelerated my development",             text: "I made more progress in three months of mentorship than I had in the previous year on my own. The combination of technical guidance, career coaching, and honest feedback accelerated my development in a way I did not expect." },
 ];
 
+// Pool D — m7–m10. Identities: F08 M12 F05 M05 F06 M07 F10 F12 M11 + ANON
+// Deliberately avoids Pool A identities (F01–F04, M01–M04) so users who viewed
+// m1 (Shruti Jain) do not see the same reviewer faces on m7–m10 profiles.
 const reviewsD: ReviewEntry[] = [
-  { avatar: PF1, name: "Preeti Sood", role: "Fashion Design Student", rating: 5, title: "Opened my eyes to the industry", text: "This mentorship gave me a realistic and inspiring picture of what a design career can look like. The honesty about both the challenges and the opportunities helped me set expectations and approach my career with real confidence." },
-  { avatar: PM1, name: "Gaurav Sehgal", role: "Jr. Designer", rating: 4, title: "Focused and effective", text: "The sessions are structured and focused, which makes every minute feel useful. I came with specific questions and left with clear answers and a deeper understanding of the issues I was working through. Very efficient mentorship." },
-  { avatar: ANON_AVATAR, name: "Anonymous", role: "", rating: 4, title: "Real-world wisdom", text: "The mentorship brings real-world wisdom to every conversation. Understanding how studios actually operate, how decisions are made, and what matters to hiring managers gave me knowledge that changed how I approach my career." },
-  { avatar: PF2, name: "Sanjana Rao", role: "Design Intern", rating: 5, title: "Patient and thorough", text: "I appreciated how thoroughly each of my questions and concerns was addressed. Nothing felt rushed. The patience with which complex topics were explained helped me build genuine understanding rather than surface-level knowledge." },
-  { avatar: PM2, name: "Lakshay Oberoi", role: "Fashion Graduate", rating: 5, title: "Helped me think like a professional", text: "The shift from thinking like a student to thinking like a professional designer happened through these sessions. The perspective on how to evaluate your own work, engage with clients, and take ownership of your practice was transformative." },
-  { avatar: PF3, name: "Radhika Menon", role: "Textile Design Student", rating: 4, title: "Great for early-career designers", text: "If you are at the beginning of your design career and feeling uncertain about where to go next, this mentorship will give you clarity and direction. The guidance is specific to where you actually are, not generic career advice." },
-  { avatar: PM3, name: "Pankaj Tyagi", role: "Associate Designer", rating: 5, title: "Builds real capability", text: "The mentorship does not just give you answers — it builds your ability to find better answers yourself. The frameworks and perspectives shared have become part of how I think about design problems and career decisions every day." },
-  { avatar: PF4, name: "Sakshi Batra", role: "Jr. Designer", rating: 4, title: "Consistent quality and care", text: "Every session maintained a high standard of quality and genuine care for my development. The consistency made the mentorship feel trustworthy and made me confident that I was investing my time in something genuinely valuable." },
-  { avatar: PM4, name: "Uday Chawla", role: "Design Graduate", rating: 5, title: "Worth every rupee", text: "The investment in this mentorship paid off many times over within the first few months. The combination of technical skill building, career guidance, and the confidence that comes from having an experienced mentor in your corner is priceless." },
+  { ...rv("F08"), rating: 5, title: "Opened my eyes to the industry",      text: "This mentorship gave me a realistic and inspiring picture of what a design career can look like. The honesty about both the challenges and the opportunities helped me set expectations and approach my career with real confidence." },
+  { ...rv("M12"), rating: 4, title: "Focused and effective",               text: "The sessions are structured and focused, which makes every minute feel useful. I came with specific questions and left with clear answers and a deeper understanding of the issues I was working through. Very efficient mentorship." },
+  { ...rvAnon(),  rating: 4, title: "Real-world wisdom",                   text: "The mentorship brings real-world wisdom to every conversation. Understanding how studios actually operate, how decisions are made, and what matters to hiring managers gave me knowledge that changed how I approach my career." },
+  { ...rv("F12"), rating: 5, title: "Patient and thorough",                text: "I appreciated how thoroughly each of my questions and concerns was addressed. Nothing felt rushed. The patience with which complex topics were explained helped me build genuine understanding rather than surface-level knowledge." },
+  { ...rv("M05"), rating: 5, title: "Helped me think like a professional", text: "The shift from thinking like a student to thinking like a professional designer happened through these sessions. The perspective on how to evaluate your own work, engage with clients, and take ownership of your practice was transformative." },
+  { ...rv("F06"), rating: 4, title: "Great for early-career designers",    text: "If you are at the beginning of your design career and feeling uncertain about where to go next, this mentorship will give you clarity and direction. The guidance is specific to where you actually are, not generic career advice." },
+  { ...rv("M07"), rating: 5, title: "Builds real capability",              text: "The mentorship does not just give you answers — it builds your ability to find better answers yourself. The frameworks and perspectives shared have become part of how I think about design problems and career decisions every day." },
+  { ...rv("F10"), rating: 4, title: "Consistent quality and care",         text: "Every session maintained a high standard of quality and genuine care for my development. The consistency made the mentorship feel trustworthy and made me confident that I was investing my time in something genuinely valuable." },
+  { ...rv("M11"), rating: 5, title: "Worth every rupee",                   text: "The investment in this mentorship paid off many times over within the first few months. The combination of technical skill building, career guidance, and the confidence that comes from having an experienced mentor in your corner is priceless." },
 ];
 
 const MENTOR_DATA: Record<string, MentorData> = {
   m1: {
     trainedCount: "500+",
     aboutMode: "image",
-    aboutImage: imgAbout,
+    aboutImage: MENTOR_ABOUT.shrutiJain,
     aboutImageText: "Passionate about craft, I design collections rooted in Indian heritage and contemporary sensibility. Every stitch tells a story of tradition meeting the modern wardrobe.",
     showWebinar: true,
+    webinarImage: MENTOR_WEBINAR.shrutiJain,
     showResponseTime: true,
     experience: [
-      { company: "MAX Fashion", letter: "M", role: "Sr. Fashion Designer", start: "2020", end: "Present" },
-      { company: "Zara", letter: "Z", role: "Junior Fashion Designer", start: "2018", end: "2020" },
+      { company: "MAX Fashion", letter: "M", logo: logoMAX,        role: "Sr. Fashion Designer",    start: "2020", end: "Present" },
+      { company: "Zara India",  letter: "Z", logo: logoZara,       role: "Junior Fashion Designer", start: "2018", end: "2020"    },
+      { company: "Pantaloons",  letter: "P", logo: logoPantaloons, role: "Design Trainee",          start: "2016", end: "2018"    },
     ],
-    education: { school: "Pearl Academy", letter: "P", degree: "B.Des in Fashion Design", start: "2014", end: "2018" },
+    education: { school: "Pearl Academy", letter: "P", logo: logoPearl, degree: "B.Des in Fashion Design", start: "2014", end: "2018" },
     skills: ["Pattern Making", "Fabric Knowledge", "Garment Construction", "Fit Analysis", "Color Theory", "Trend Forecasting", "Technical Sketching", "Draping"],
     faqs: mentorFAQs,
     insights: [
-      { label: "Expert guidance", text: "Shruti provides personalised mentorship with real-world fashion industry expertise from 7 years across top Indian and global brands." },
-      { label: "Career acceleration", text: "Mentees report significant improvements in skills and career opportunities within months of their first session." },
-      { label: "Supportive approach", text: "Patient, encouraging teaching style with actionable feedback focused on continuous, measurable growth." },
+      { label: "Expert guidance",    text: "7 years across top Indian and global brands; every session is tailored to your career stage." },
+      { label: "Career acceleration", text: "Mentees advance quickly — she pinpoints exactly where you're stuck and what to do next." },
+      { label: "Supportive approach", text: "Patient, honest feedback delivered in a safe environment genuinely built for growth." },
     ],
     reviews: mentorReviews,
+    availableDates: ["30 Jul", "31 Jul", "3 Aug", "5 Aug", "8 Aug"],
+    timeSlots: ["9:00 - 10:00 AM", "11:00 AM - 12:00 PM", "2:00 - 3:00 PM", "4:00 - 5:00 PM", "6:00 - 7:00 PM", "8:00 - 9:00 PM"],
   },
   m2: {
     trainedCount: "350+",
     aboutMode: "text",
     aboutText: "I have spent seven years building fashion collections that balance commercial relevance with genuine creative vision. At MAX Fashion, I lead a design team focused on accessible, trend-forward womenswear that resonates with Indian consumers across price points and seasons. My background in sustainable design practices informs everything from fabric sourcing to construction decisions. I believe mentorship is about giving younger designers the industry perspective they need to make confident, strategic choices in their careers.",
     showWebinar: true,
+    webinarImage: MENTOR_WEBINAR.priyaMehta,
     showResponseTime: true,
     experience: [
-      { company: "MAX Fashion", letter: "M", role: "Sr. Fashion Designer", start: "2019", end: "Present" },
-      { company: "Fab India", letter: "F", role: "Designer", start: "2017", end: "2019" },
+      { company: "MAX Fashion",           letter: "M", logo: logoMAX,      role: "Sr. Fashion Designer", start: "2019", end: "Present" },
+      { company: "Marks & Spencer India", letter: "M", color: "#309B48", role: "Designer",             start: "2017", end: "2019"    },
+      { company: "Global Desi",           letter: "G", color: "#C4922A", role: "Jr. Designer",         start: "2015", end: "2017"    },
     ],
-    education: { school: "NIFT Delhi", letter: "N", degree: "B.Des in Fashion Technology", start: "2013", end: "2017" },
+    education: { school: "NIFT Delhi", letter: "N", logo: logoNIFT, degree: "B.Des in Fashion Technology", start: "2013", end: "2017" },
     skills: ["Womenswear Design", "Sustainable Fashion", "Fabric Sourcing", "Range Planning", "Visual Merchandising", "Team Leadership", "Trend Analysis", "CAD / Illustrator"],
     faqs: [
       { question: "How do I break into sustainable fashion design?", answer: "Start by learning about natural fibres, low-impact dyes, and zero-waste pattern cutting. Build relationships with ethical fabric suppliers and document your process — brands now want transparency as much as creativity." },
@@ -238,22 +256,26 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "What separates good junior designers from great ones?", answer: "Curiosity and reliability in equal measure. Great juniors ask intelligent questions, take feedback without ego, and follow through on every detail. Technical skills can be taught; attitude and work ethic are what studios hire for." },
     ],
     insights: [
-      { label: "Range intelligence", text: "Priya brings deep expertise in commercial range planning — how to balance trend-driven pieces with core staples across a seasonal collection." },
-      { label: "Sustainable practice", text: "With a background in ethical sourcing, she guides mentees on building careers that are both commercially relevant and environmentally conscious." },
-      { label: "Clear communication", text: "Known for her ability to explain complex industry dynamics in plain language that junior designers can apply immediately to their own situations." },
+      { label: "Range intelligence",  text: "Balances trend-driven and core staples with commercial category coherence across a season." },
+      { label: "Sustainable practice", text: "Makes sustainability practical — responsible sourcing decisions aligned with commercial success." },
+      { label: "Clear communication", text: "Explains buying calendars and negotiations in plain, immediately applicable language." },
     ],
     reviews: reviewsB,
+    availableDates: ["1 Aug", "2 Aug", "6 Aug", "9 Aug"],
+    timeSlots: ["10:00 - 11:00 AM", "12:00 - 1:00 PM", "3:00 - 4:00 PM", "5:00 - 6:00 PM"],
   },
   m3: {
     trainedCount: "420+",
     aboutMode: "hidden",
     showWebinar: true,
+    webinarImage: MENTOR_WEBINAR.raviKumar,
     showResponseTime: true,
     experience: [
-      { company: "Myntra", letter: "M", role: "Sr. Fashion Designer", start: "2018", end: "Present" },
-      { company: "H&M India", letter: "H", role: "Associate Designer", start: "2016", end: "2018" },
+      { company: "Myntra",     letter: "M", logo: logoMyntra, role: "Sr. Fashion Designer", start: "2018", end: "Present" },
+      { company: "H&M India",  letter: "H", logo: logoHM,         role: "Associate Designer",   start: "2016", end: "2018"    },
+      { company: "Puma India", letter: "P", logo: logoPuma,        role: "Jr. Apparel Designer", start: "2014", end: "2016"    },
     ],
-    education: { school: "Symbiosis Institute of Design", letter: "S", degree: "B.Des in Fashion Design", start: "2012", end: "2016" },
+    education: { school: "Symbiosis Institute of Design", letter: "S", logo: logoSymbiosis, degree: "B.Des in Fashion Design", start: "2012", end: "2016" },
     skills: ["E-commerce Design", "Digital Trend Research", "Photo Direction", "Technical Packs", "Fast Fashion", "Menswear", "Category Management", "Supplier Coordination"],
     faqs: [
       { question: "How do I design for e-commerce vs physical retail?", answer: "E-commerce demands that garments photograph well from multiple angles and communicate fabric quality visually. Think about how your design reads as a thumbnail. Physical retail allows more texture and drape experimentation." },
@@ -263,24 +285,28 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "What should I prioritise in my first design role?", answer: "Learning to execute well. Show up with curiosity, ask intelligent questions, and take every brief seriously — even the simple ones. The best junior designers are the ones who make their seniors' jobs easier while learning everything they can." },
     ],
     insights: [
-      { label: "E-commerce expertise", text: "Ravi brings rare insight into designing for digital-first fashion — how garments need to communicate quality and appeal in a thumbnail-sized image." },
-      { label: "Speed and precision", text: "His experience in fast fashion has honed an ability to develop commercially strong designs quickly and accurately, a skill he passes directly to mentees." },
-      { label: "Category breadth", text: "Working across womenswear, menswear, and accessories at Myntra gives him a broad perspective that helps mentees think beyond single-category careers." },
+      { label: "E-commerce expertise", text: "Designs for thumbnails: quality, inclusivity, and data-led creative decisions at scale." },
+      { label: "Speed and precision",  text: "Fast-fashion rigour: brief reading, tech-pack discipline, and rapid iteration skills." },
+      { label: "Category breadth",     text: "Womenswear, menswear, accessories — a broad view of category trade-offs and career strategy." },
     ],
     reviews: reviewsB,
+    availableDates: ["30 Jul", "2 Aug", "4 Aug", "7 Aug", "10 Aug"],
+    timeSlots: ["9:00 - 10:00 AM", "1:00 - 2:00 PM", "4:00 - 5:00 PM", "7:00 - 8:00 PM", "8:00 - 9:00 PM"],
   },
   m4: {
     trainedCount: "280+",
     aboutMode: "image",
-    aboutImage: imgProject1,
+    aboutImage: MENTOR_ABOUT.snehaPatel,
     aboutImageText: "Leading design at Anita Dongre means working at the intersection of Indian craft traditions and contemporary luxury. My work is grounded in a deep respect for artisan communities and the slow, intentional craft they preserve.",
     showWebinar: true,
+    webinarImage: MENTOR_WEBINAR.snehaPatel,
     showResponseTime: true,
     experience: [
-      { company: "Anita Dongre", letter: "A", role: "Lead Fashion Designer", start: "2016", end: "Present" },
-      { company: "Mango India", letter: "M", role: "Senior Designer", start: "2014", end: "2016" },
+      { company: "Anita Dongre", letter: "A", logo: logoAnitaDongre, role: "Lead Fashion Designer", start: "2016", end: "Present" },
+      { company: "Mango India",  letter: "M", logo: logoMango,          role: "Senior Designer",       start: "2014", end: "2016"    },
+      { company: "Rohit Bal",    letter: "R", logo: logoRohitBal,       role: "Fashion Designer",      start: "2012", end: "2014"    },
     ],
-    education: { school: "NIFT Mumbai", letter: "N", degree: "M.Des in Fashion Design", start: "2012", end: "2014" },
+    education: { school: "NIFT Mumbai", letter: "N", logo: logoNIFT, degree: "M.Des in Fashion Design", start: "2012", end: "2014" },
     skills: ["Luxury Design", "Craft Collaboration", "Artisan Partnership", "Bridal Design", "Hand Embroidery Direction", "Heritage Textiles", "Sustainable Luxury", "Studio Management"],
     faqs: [
       { question: "How do I break into luxury or couture fashion design?", answer: "Build a portfolio that demonstrates craft sensibility, technical depth, and an understanding of the client at this price point. Internships at premium studios are invaluable — and be patient, as luxury moves slower and hires carefully." },
@@ -290,22 +316,26 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "What skills do fashion schools underteach that really matter in practice?", answer: "Studio management, artisan communication, cost awareness, and the commercial realities of running a design business. Also, resilience — the ability to handle creative rejection, iterate quickly, and maintain your vision under pressure." },
     ],
     insights: [
-      { label: "Luxury craft expertise", text: "Sneha's experience at Anita Dongre gives mentees rare insight into how world-class Indian luxury fashion is conceived, crafted, and brought to market." },
-      { label: "Artisan collaboration", text: "She guides designers on building authentic, respectful relationships with artisan communities — the foundation of India's strongest design houses." },
-      { label: "Heritage with modernity", text: "Her mentorship helps designers understand how to draw on traditional craft traditions without appropriating them, creating work that feels both rooted and contemporary." },
+      { label: "Luxury craft expertise",  text: "Full arc from design intent to artisan briefing and final garment quality at every detail." },
+      { label: "Artisan collaboration",   text: "Teaches the etiquette, economics, and accountability that make craft partnerships sustainable." },
+      { label: "Heritage with modernity", text: "Draws on tradition without appropriating — rooted work that reads as genuinely contemporary." },
     ],
     reviews: reviewsC,
+    availableDates: ["31 Jul", "1 Aug", "5 Aug", "9 Aug"],
+    timeSlots: ["10:00 - 11:00 AM", "2:00 - 3:00 PM", "5:00 - 6:00 PM"],
   },
   m5: {
     trainedCount: "190+",
     aboutMode: "hidden",
     showWebinar: true,
+    webinarImage: MENTOR_WEBINAR.amitSharma,
     showResponseTime: true,
     experience: [
-      { company: "Biba", letter: "B", role: "Mid-Level Designer", start: "2021", end: "Present" },
-      { company: "Forever 21 India", letter: "F", role: "Jr. Designer", start: "2019", end: "2021" },
+      { company: "Biba",             letter: "B", logo: logoBiba,         role: "Mid-Level Designer", start: "2021", end: "Present" },
+      { company: "Forever 21 India", letter: "F", logo: logoForever21,    role: "Jr. Designer",       start: "2019", end: "2021"    },
+      { company: "Nykaa Fashion",    letter: "N", logo: logoNykaaFashion, role: "Design Intern",      start: "2018", end: "2019"    },
     ],
-    education: { school: "Pearl Academy Bangalore", letter: "P", degree: "B.Des in Fashion Design", start: "2015", end: "2019" },
+    education: { school: "Pearl Academy Bangalore", letter: "P", logo: logoPearl, degree: "B.Des in Fashion Design", start: "2015", end: "2019" },
     skills: ["Indian Ethnic Wear", "Kurta Design", "Salwar Kameez", "Print Development", "Block Printing", "Embellishment", "Market Research", "Trend Adaption"],
     faqs: [
       { question: "How do I design for the Indian ethnic wear market specifically?", answer: "Understand regional preferences — what sells in Rajasthan differs from what sells in Bengal. Study craft traditions relevant to your category. Work on fit standards for Indian body types, which are often underserved by global design education." },
@@ -315,23 +345,26 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "What should I focus on as a mid-level designer trying to move to a senior role?", answer: "Take ownership of projects end to end. Demonstrate that you can deliver without constant guidance, manage suppliers independently, and make commercial decisions. Show leadership by mentoring juniors and contributing ideas at the brief stage." },
     ],
     insights: [
-      { label: "Indian ethnic wear focus", text: "Amit's deep knowledge of the Indian ethnic wear market helps mentees understand a segment that is commercially huge but underrepresented in formal design education." },
-      { label: "Market-driven thinking", text: "His commercial training at both fast fashion and ethnic wear brands gives mentees a strong grounding in how to design for real consumers with specific cultural needs." },
-      { label: "Print and craft expertise", text: "With hands-on experience in block printing and print development, he guides mentees through the technical and creative aspects of surface design for the Indian market." },
+      { label: "Indian ethnic wear focus",  text: "Deep knowledge of a festival-driven, regionally diverse design segment rarely taught formally." },
+      { label: "Market-driven thinking",    text: "Designs for real Indian consumers with specific cultural needs and occasion motivations." },
+      { label: "Print and craft expertise", text: "Block printing: sourcing clusters, briefing printers, and scaling craft to production." },
     ],
     reviews: reviewsC,
+    availableDates: ["30 Jul", "4 Aug", "6 Aug", "11 Aug"],
+    timeSlots: ["9:00 - 10:00 AM", "11:00 AM - 12:00 PM", "3:00 - 4:00 PM", "6:00 - 7:00 PM"],
   },
   m6: {
     trainedCount: "230+",
     aboutMode: "text",
-    aboutText: "Six years into a career spanning two of India's strongest mid-market womenswear brands, I have built expertise in designing collections that balance trend relevance with deep cultural understanding of the Indian woman consumer. My work at W for Woman taught me how to make fashion feel simultaneously aspirational and genuinely wearable. Before that, a formative stint at Lifestyle brand gave me strong foundations in commercial range planning and supplier development. I mentor designers who want to build meaningful careers in India's domestic fashion market — a space that is growing rapidly and where great designers are genuinely needed.",
+    aboutText: "Six years into a career spanning India's dynamic mid-market womenswear segment, I have built expertise in designing collections that balance trend relevance with deep cultural understanding of the Indian woman consumer. My work at W for Woman taught me how to make fashion feel simultaneously aspirational and genuinely wearable. Before that, a formative stint at Reliance Trends gave me strong foundations in commercial range planning and supplier development. I mentor designers who want to build meaningful careers in India's domestic fashion market — a space that is growing rapidly and where great designers are genuinely needed.",
     showWebinar: false,
     showResponseTime: true,
     experience: [
-      { company: "W for Woman", letter: "W", role: "Fashion Designer", start: "2020", end: "Present" },
-      { company: "Lifestyle Brand", letter: "L", role: "Jr. Designer", start: "2018", end: "2020" },
+      { company: "W for Woman",      letter: "W", logo: logoWForWoman,      role: "Fashion Designer", start: "2020", end: "Present" },
+      { company: "Reliance Trends",  letter: "R", logo: logoRelianceTrend, role: "Jr. Designer",      start: "2018", end: "2020"    },
+      { company: "Aurelia",          letter: "A", logo: logoAurelia,       role: "Design Intern",     start: "2016", end: "2018"    },
     ],
-    education: { school: "NIFT Hyderabad", letter: "N", degree: "B.Des in Apparel Design", start: "2014", end: "2018" },
+    education: { school: "NIFT Hyderabad", letter: "N", logo: logoNIFT, degree: "B.Des in Apparel Design", start: "2014", end: "2018" },
     skills: ["Womenswear", "Indian Consumer Research", "Commercial Range Building", "Colour Palette Development", "Fabric Selection", "Work Wear Design", "Weekend Wear", "Occasion Dressing"],
     faqs: [
       { question: "How do I design for working Indian women specifically?", answer: "Understand the dual demands of professionalism and cultural sensitivity. The modern Indian woman wants clothes that work in a meeting and a family gathering. Study silhouettes, fabrics, and colour palettes that serve both contexts without compromise." },
@@ -341,11 +374,13 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "How do I make a collection feel cohesive when working to a commercial brief?", answer: "Start with a strong colour story and a single clear point of view on proportion. Let the brief define the commercial guardrails and then find the creative direction within them. Cohesion comes from a clear lens, not from matching everything." },
     ],
     insights: [
-      { label: "Consumer clarity", text: "Neha's deep understanding of the Indian woman consumer gives mentees a powerful framework for designing work that is both culturally resonant and commercially viable." },
-      { label: "Range-building expertise", text: "Her experience building seasonal ranges at W for Woman teaches mentees the commercial architecture behind fashion collections that sell consistently." },
-      { label: "Domestic market focus", text: "She is a strong advocate for building careers in India's domestic fashion market and provides mentees with a realistic, optimistic view of the opportunities available." },
+      { label: "Consumer clarity",        text: "Framework for designing work that is culturally resonant and commercially viable for real women." },
+      { label: "Range-building expertise", text: "Price architecture, fabric mix, occasion mapping, and hero vs volume balance — all covered." },
+      { label: "Domestic market focus",   text: "Argues persuasively that India's most interesting design decade is happening right now." },
     ],
     reviews: reviewsC,
+    availableDates: ["1 Aug", "3 Aug", "7 Aug", "10 Aug"],
+    timeSlots: ["10:00 - 11:00 AM", "1:00 - 2:00 PM", "4:00 - 5:00 PM", "7:00 - 8:00 PM", "8:00 - 9:00 PM"],
   },
   m7: {
     trainedCount: "120+",
@@ -354,10 +389,11 @@ const MENTOR_DATA: Record<string, MentorData> = {
     showWebinar: false,
     showResponseTime: false,
     experience: [
-      { company: "Biba", letter: "B", role: "Mid-Level Designer", start: "2023", end: "Present" },
-      { company: "Shein India", letter: "S", role: "Jr. Designer", start: "2021", end: "2023" },
+      { company: "Biba",        letter: "B", logo: logoBiba,  role: "Mid-Level Designer", start: "2023", end: "Present" },
+      { company: "Shein India", letter: "S", logo: logoShein, role: "Jr. Designer",       start: "2021", end: "2023"    },
+      { company: "Virgio",      letter: "V", color: "#5C3D8F", role: "Design Intern",      start: "2020", end: "2021"    },
     ],
-    education: { school: "INIFD Pune", letter: "I", degree: "Diploma in Fashion Design", start: "2019", end: "2021" },
+    education: { school: "INIFD Pune", letter: "I", logo: logoINIFD, degree: "Diploma in Fashion Design", start: "2019", end: "2021" },
     skills: ["Fast Fashion Execution", "Ethnic Fusion Design", "Technical Spec Writing", "Trend Adoption", "Vendor Communication", "CAD Basics", "Print Selection", "Cost-Conscious Design"],
     faqs: [
       { question: "How do I deal with imposter syndrome as a new designer?", answer: "Almost every designer feels it, especially in the first two years. The antidote is doing the work — consistently, carefully, and without waiting to feel ready. Confidence follows action, not the other way around." },
@@ -367,24 +403,27 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "How do I make the most of an internship in a design studio?", answer: "Be early, be enthusiastic, and say yes to everything. Observe more than you speak. Ask thoughtful questions at the right moments. Build relationships — internships are as much about proving your attitude as your skills. The best interns get offered jobs." },
     ],
     insights: [
-      { label: "Early-career expertise", text: "Vikram specialises in mentoring designers at the very start of their careers — helping them navigate the transition from design school to professional practice with confidence." },
-      { label: "Fast fashion knowledge", text: "His experience in fast-cycle design gives mentees practical knowledge of execution speed, commercial judgment, and the technical discipline required at high-volume studios." },
-      { label: "Peer-level honesty", text: "As a designer earlier in his own career, Vikram offers a peer-level honesty about the challenges, doubts, and learning curves of early professional life that more senior mentors cannot replicate." },
+      { label: "Early-career expertise", text: "Navigating school-to-studio transition with practical, peer-level honest guidance." },
+      { label: "Fast fashion knowledge", text: "Execution speed, commercial judgment, and discipline for high-volume studio environments." },
+      { label: "Peer-level honesty",     text: "Proximity to early-career reality makes his guidance unusually credible and relatable." },
     ],
     reviews: reviewsD,
+    availableDates: ["31 Jul", "5 Aug", "12 Aug"],
+    timeSlots: ["9:00 - 10:00 AM", "2:00 - 3:00 PM"],
   },
   m8: {
     trainedCount: "160+",
     aboutMode: "image",
-    aboutImage: imgProject2,
+    aboutImage: MENTOR_ABOUT.anjaliNair,
     aboutImageText: "At Fabindia I design across handloom and craft-based categories, working directly with artisan communities to translate traditional weaves into contemporary garments. Craft and commerce in honest conversation.",
     showWebinar: false,
     showResponseTime: true,
     experience: [
-      { company: "Fabindia", letter: "F", role: "Fashion Designer", start: "2022", end: "Present" },
-      { company: "Westside", letter: "W", role: "Jr. Designer", start: "2020", end: "2022" },
+      { company: "Fabindia", letter: "F", logo: logoFabIndia, role: "Fashion Designer", start: "2022", end: "Present" },
+      { company: "Westside", letter: "W", logo: logoWestside, role: "Jr. Designer",  start: "2020", end: "2022"    },
+      { company: "Anokhi",   letter: "A", logo: logoAnokhi,   role: "Design Intern", start: "2019", end: "2020"    },
     ],
-    education: { school: "NIFT Chennai", letter: "N", degree: "B.Des in Textile Design", start: "2016", end: "2020" },
+    education: { school: "NIFT Chennai", letter: "N", logo: logoNIFT, degree: "B.Des in Textile Design", start: "2016", end: "2020" },
     skills: ["Handloom Design", "Craft Collaboration", "Natural Fibres", "Woven Textiles", "Artisan Communication", "Surface Design", "Sustainable Sourcing", "Block Printing"],
     faqs: [
       { question: "How do I build a career in handloom and craft-based fashion?", answer: "Immerse yourself in the craft traditions. Visit weaving clusters, study regional textile histories, and learn to communicate with artisans in their language — literally and metaphorically. The design knowledge is secondary; the relationship and respect come first." },
@@ -394,24 +433,28 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "Is a textile design background more useful than fashion design for a handloom career?", answer: "Both are valuable. Textile design gives you deeper material knowledge. Fashion design gives you stronger garment construction and commercial sense. The ideal is developing both — take every opportunity to learn across disciplines." },
     ],
     insights: [
-      { label: "Craft-based design", text: "Anjali's work at Fabindia positions her as an expert in craft-based fashion — the growing intersection of artisan tradition, sustainability, and contemporary design that defines India's strongest design identity." },
-      { label: "Natural material mastery", text: "Her deep knowledge of handloom textiles and natural fibres helps mentees understand materials at a level that transforms how they approach every design decision." },
-      { label: "Artisan partnership", text: "She teaches the art of building genuine, respectful partnerships with artisan communities — an essential skill for any designer who wants to work at this end of the fashion spectrum." },
+      { label: "Craft-based design",      text: "Expert at artisan tradition meeting sustainability and contemporary Indian design identity." },
+      { label: "Natural material mastery", text: "Understands materials culturally, aesthetically, and environmentally — transforms design decisions." },
+      { label: "Artisan partnership",     text: "Teaches trust, economics, and creative negotiation with craft communities over the long term." },
     ],
     reviews: reviewsD,
+    availableDates: ["2 Aug", "4 Aug", "8 Aug"],
+    timeSlots: ["11:00 AM - 12:00 PM", "3:00 - 4:00 PM", "6:00 - 7:00 PM"],
   },
   m9: {
     trainedCount: "390+",
     aboutMode: "image",
-    aboutImage: imgProject3,
+    aboutImage: MENTOR_ABOUT.rajeshPatel,
     aboutImageText: "Nine years of designing for some of India's largest retail fashion brands has taught me that great design is as much about understanding business as it is about creativity. My work at Lifestyle and Shoppers Stop shaped my commercial instincts and gave me the breadth of category knowledge I now bring to mentorship.",
     showWebinar: false,
     showResponseTime: true,
     experience: [
-      { company: "Lifestyle Brand", letter: "L", role: "Sr. Fashion Designer", start: "2019", end: "Present" },
-      { company: "Shoppers Stop", letter: "S", role: "Designer", start: "2017", end: "2019" },
+      { company: "Lifestyle Brand", letter: "L", color: "#374151",     role: "Sr. Fashion Designer", start: "2019", end: "Present" },
+      { company: "Shoppers Stop",   letter: "S", logo: logoShoppersStop, role: "Designer",             start: "2017", end: "2019"    },
+      { company: "Central",         letter: "C", logo: logoCentral,      role: "Jr. Designer",          start: "2015", end: "2017"    },
+      { company: "Arvind Brands",   letter: "A", logo: logoArvind,       role: "Design Trainee",        start: "2013", end: "2015"    },
     ],
-    education: { school: "Pearl Academy Jaipur", letter: "P", degree: "B.Des in Fashion Design", start: "2013", end: "2017" },
+    education: { school: "Pearl Academy Jaipur", letter: "P", logo: logoPearl, degree: "B.Des in Fashion Design", start: "2013", end: "2017" },
     skills: ["Multi-Category Design", "Private Label Development", "Buying & Merchandising", "Retail Fashion", "Value Fashion", "Category Strategy", "Colour Story Development", "Visual Merchandising"],
     faqs: [
       { question: "How do I transition from design into buying or merchandising?", answer: "Start by understanding the commercial language — sell-through rates, margin, markdown cycles. Shadow buyers where possible. Your design eye is an asset in buying but you need to complement it with strong quantitative thinking and supplier management skills." },
@@ -421,11 +464,13 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "What are the key differences between designing for a department store vs a brand?", answer: "Department stores require range breadth and category versatility. Brands allow deeper aesthetic focus and stronger identity. Both demand commercial competence, but in different forms. Department store experience builds range planning muscle; brand experience builds identity and consistency." },
     ],
     insights: [
-      { label: "Retail and commercial expertise", text: "Rajesh's nine years across India's largest retail fashion organisations give mentees unparalleled insight into how commercial fashion actually works at scale." },
-      { label: "Private label mastery", text: "His experience developing private labels for major retailers teaches designers how to build distinct brand identities within large commercial organisations." },
-      { label: "Category breadth", text: "With experience across multiple fashion categories, he helps mentees think about career choices strategically — understanding the trade-offs and opportunities across different design paths." },
+      { label: "Retail and commercial expertise", text: "Nine years at major retailers: buying cycles, range architecture, margin management." },
+      { label: "Private label mastery",           text: "Builds brand identities within large organisations where vision meets commercial reality." },
+      { label: "Category breadth",                text: "Multi-category experience for strategic, clear thinking across all design career paths." },
     ],
     reviews: reviewsD,
+    availableDates: ["30 Jul", "3 Aug", "6 Aug", "9 Aug"],
+    timeSlots: ["9:00 - 10:00 AM", "12:00 - 1:00 PM", "3:00 - 4:00 PM", "5:00 - 6:00 PM", "7:00 - 8:00 PM"],
   },
   m10: {
     trainedCount: "310+",
@@ -434,10 +479,12 @@ const MENTOR_DATA: Record<string, MentorData> = {
     showWebinar: false,
     showResponseTime: true,
     experience: [
-      { company: "FabIndia", letter: "F", role: "Lead Designer", start: "2018", end: "Present" },
-      { company: "Good Earth", letter: "G", role: "Sr. Designer", start: "2015", end: "2018" },
+      { company: "FabIndia",          letter: "F", logo: logoFabIndia,       role: "Lead Designer",    start: "2018", end: "Present" },
+      { company: "Good Earth",        letter: "G", logo: logoGoodEarth,      role: "Sr. Designer",     start: "2015", end: "2018"    },
+      { company: "Abraham & Thakore", letter: "A", logo: logoAbrahamThakore, role: "Fashion Designer", start: "2012", end: "2015"    },
+      { company: "Nicobar",           letter: "N", color: "#4A6741",      role: "Jr. Designer",     start: "2011", end: "2012"    },
     ],
-    education: { school: "NIFT Kolkata", letter: "N", degree: "B.Des in Leather Design & Accessories", start: "2011", end: "2015" },
+    education: { school: "NIFT Kolkata", letter: "N", logo: logoNIFT, degree: "B.Des in Leather Design & Accessories", start: "2011", end: "2015" },
     skills: ["Craft Heritage Design", "Multi-Category Leadership", "Lifestyle Brand Design", "Handcraft Direction", "Artisan Network Development", "Category Expansion", "Brand Identity", "Design Leadership"],
     faqs: [
       { question: "How do I build a career at the intersection of heritage craft and contemporary design?", answer: "Develop your craft knowledge as rigorously as your design knowledge. Travel to craft clusters. Study both the tradition and the business of craft. The designers who do this well are rare and consistently in demand." },
@@ -447,87 +494,105 @@ const MENTOR_DATA: Record<string, MentorData> = {
       { question: "What is the difference between designing for a lifestyle brand vs a pure fashion brand?", answer: "Lifestyle brands require a broader sensibility — you are designing for a way of living, not just a way of dressing. Home, accessories, and apparel need to speak a coherent visual language. It demands range breadth and a consistent aesthetic point of view across categories." },
     ],
     insights: [
-      { label: "Cultural design intelligence", text: "Kavita's eleven years navigating India's craft-heritage fashion space give mentees a rare depth of cultural intelligence that goes far beyond what formal design education provides." },
-      { label: "Design leadership", text: "As a team leader at FabIndia, she offers mentees genuine insight into what design leadership looks like in practice — the creative, commercial, and interpersonal dimensions of the role." },
-      { label: "Long-term career thinking", text: "Her ability to think strategically about design careers over a decade-long horizon helps mentees make choices today that will position them well for where the industry is heading." },
+      { label: "Cultural design intelligence", text: "Eleven years of craft vocabulary, artisan economics, and cultural resonance in Indian fashion." },
+      { label: "Design leadership",            text: "Creative, commercial, and interpersonal insight into real studio team leadership." },
+      { label: "Long-term career thinking",    text: "Decade-horizon thinking on craft-based, sustainable, heritage-informed design careers." },
     ],
     reviews: reviewsD,
+    availableDates: ["1 Aug", "5 Aug", "7 Aug", "11 Aug"],
+    timeSlots: ["10:00 - 11:00 AM", "2:00 - 3:00 PM", "4:00 - 5:00 PM", "8:00 - 9:00 PM"],
   },
 };
 
 // Default data for unknown mentor IDs
 const defaultMentorData: MentorData = MENTOR_DATA["m1"];
 
-// Mentor IDs where About Me is hidden (m3, m5)
-// Mentor IDs where Webinar is hidden (m7, m8, m9, m10) — stored in the data map
+// ─── Recent posts — per-mentor, unique dedicated images, zero repeats ────────
+//
+//  17 images distributed across 17 total cards (3+2+3+2+1+3+3).
+//  m3 / m5 / m8 → empty array → section fully hidden.
 
-const statusBarPaths = {
-  signalBars:
-    "M3.26916 9.60239C3.8002 9.60239 4.23107 10.0333 4.23107 10.5643V12.4872C4.23107 13.0182 3.8002 13.4491 3.26916 13.4491H2.30724C1.77641 13.4488 1.3463 13.018 1.3463 12.4872V10.5643C1.3463 10.0334 1.77641 9.60263 2.30724 9.60239H3.26916ZM7.75646 7.67954C8.28748 7.67956 8.71837 8.11043 8.71837 8.64145V12.4872C8.71837 13.0182 8.28748 13.449 7.75646 13.4491H6.79455C6.26365 13.4489 5.83361 13.0181 5.83361 12.4872V8.64145C5.83361 8.11052 6.26365 7.67971 6.79455 7.67954H7.75646ZM12.2438 5.43637C12.7747 5.43647 13.2046 5.86638 13.2047 6.39731V12.4872C13.2047 13.0181 12.7747 13.449 12.2438 13.4491H11.2819C10.7509 13.449 10.3209 13.0181 10.3209 12.4872V6.39731C10.321 5.86639 10.7509 5.43648 11.2819 5.43637H12.2438ZM16.7311 3.19223C17.262 3.1924 17.692 3.6232 17.692 4.15415V12.4872C17.692 13.0181 17.262 13.4489 16.7311 13.4491H15.7692C15.2381 13.449 14.8072 13.0182 14.8072 12.4872V4.15415C14.8072 3.62313 15.2381 3.19227 15.7692 3.19223H16.7311Z",
-  wifi: "M5.86291 11.2694C7.08941 10.2323 8.88553 10.2321 10.1119 11.2694C10.1736 11.3252 10.2098 11.404 10.2115 11.4872C10.2132 11.5703 10.1801 11.6506 10.1207 11.7088L8.19982 13.6473C8.14355 13.7041 8.06686 13.7362 7.98693 13.7362C7.90698 13.7361 7.83028 13.7041 7.77404 13.6473L5.85314 11.7088C5.79385 11.6505 5.76154 11.5703 5.7633 11.4872C5.76508 11.404 5.80118 11.3251 5.86291 11.2694ZM3.29943 8.68442C5.94193 6.22636 10.0349 6.22636 12.6774 8.68442C12.7367 8.74203 12.7703 8.82142 12.7711 8.90415C12.7718 8.98686 12.7395 9.06614 12.6813 9.12485L11.5709 10.2469C11.4566 10.3613 11.2723 10.364 11.1549 10.2528C10.2871 9.46701 9.15759 9.03201 7.98693 9.03208C6.81713 9.03263 5.68901 9.46758 4.82189 10.2528C4.70455 10.364 4.52022 10.3613 4.40587 10.2469L3.29552 9.12485C3.23716 9.06621 3.20403 8.98688 3.2047 8.90415C3.20548 8.82134 3.23996 8.74203 3.29943 8.68442ZM0.736929 6.10532C4.78991 2.22126 11.184 2.22118 15.2369 6.10532C15.2956 6.16301 15.3282 6.24181 15.3287 6.32407C15.3292 6.40622 15.2977 6.48544 15.2399 6.5438L14.1276 7.66587C14.0131 7.78071 13.8278 7.78193 13.7115 7.6688C12.1674 6.20072 10.1176 5.38178 7.98693 5.38169C5.85613 5.38174 3.80665 6.20067 2.26232 7.6688C2.14611 7.7823 1.95977 7.78115 1.84533 7.66587L0.733999 6.5438C0.676061 6.48537 0.643616 6.40635 0.644156 6.32407C0.644697 6.24178 0.678219 6.16298 0.736929 6.10532Z",
-  batteryOutline:
-    "M3.02599 2.71124H19.0514C20.2019 2.71129 21.1344 3.64466 21.1344 4.79522V10.5638C21.1344 11.7143 20.2019 12.6477 19.0514 12.6478H3.02599C1.8754 12.6478 0.942008 11.7144 0.942008 10.5638V4.79522C0.942008 3.64463 1.8754 2.71124 3.02599 2.71124Z",
-  batteryTip:
-    "M22.5769 5.75643V9.60258C23.3507 9.27684 23.8539 8.51906 23.8539 7.67951C23.8539 6.83996 23.3507 6.08218 22.5769 5.75643",
-  batteryFill:
-    "M2.38462 5.4359C2.38462 4.72784 2.95861 4.15385 3.66667 4.15385H18.4103C19.1183 4.15385 19.6923 4.72784 19.6923 5.4359V9.92308C19.6923 10.6311 19.1183 11.2051 18.4103 11.2051H3.66667C2.95861 11.2051 2.38462 10.6311 2.38462 9.92308V5.4359Z",
+type RecentPost = { img: string; date: string };
+
+const MENTOR_RECENT_POSTS: Record<string, RecentPost[]> = {
+  m1:  [                                           // Shruti Jain  — 3 cards
+    { img: imgRp770, date: "18 May"     },
+    { img: imgRp771, date: "3 April"    },
+    { img: imgRp772, date: "14 March"   },
+  ],
+  m2:  [                                           // Priya Mehta  — 2 cards
+    { img: imgRp773, date: "22 May"     },
+    { img: imgRp774, date: "8 April"    },
+  ],
+  m3:  [],                                         // Ravi Kumar   — 0 (hidden)
+  m4:  [                                           // Sneha Patel  — 3 cards
+    { img: imgRp775, date: "27 April"   },
+    { img: imgRp776, date: "11 March"   },
+    { img: imgRp777, date: "2 February" },
+  ],
+  m5:  [],                                         // Amit Sharma  — 0 (hidden)
+  m6:  [                                           // Neha Verma   — 2 cards
+    { img: imgRp778, date: "15 May"     },
+    { img: imgRp779, date: "29 March"   },
+  ],
+  m7:  [                                           // Vikram Singh — 1 card
+    { img: imgRp780, date: "6 May"      },
+  ],
+  m8:  [],                                         // Anjali Nair  — 0 (hidden)
+  m9:  [                                           // Rajesh Patel — 3 cards
+    { img: imgRp781, date: "20 May"     },
+    { img: imgRp782, date: "4 April"    },
+    { img: imgRpA,   date: "17 March"   },
+  ],
+  m10: [                                           // Kavita Reddy — 3 cards
+    { img: imgRpB,   date: "12 May"     },
+    { img: imgRpC,   date: "25 March"   },
+    { img: imgRpD,   date: "7 February" },
+  ],
 };
 
-// ─── Status bar ───────────────────────────────────────────────────────────────
+// ─── Full mentor pool for Similar Mentors logic ───────────────────────────────
 
-function StatusBar() {
-  return (
-    <div className="w-full bg-[#fffeff] flex h-[44px] items-center justify-between px-4 py-2 shrink-0">
-      <p className="font-['Roboto',sans-serif] font-normal text-[14.423px] leading-[20.192px] text-[#1a1128] tracking-[-0.3077px]">
-        9:41
-      </p>
-      <div className="flex gap-[2px] items-center shrink-0">
-        <div className="h-[15.385px] relative w-[19.231px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 19.2308 15.3846"
-          >
-            <path d={statusBarPaths.signalBars} fill="#1A1128" />
-          </svg>
-        </div>
-        <div className="relative size-[15.385px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 15.3846 15.3846"
-          >
-            <path d={statusBarPaths.wifi} fill="#1A1128" />
-          </svg>
-        </div>
-        <div className="h-[15.385px] relative w-[24.038px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 24.0385 15.3846"
-          >
-            <path
-              d={statusBarPaths.batteryOutline}
-              opacity="0.35"
-              stroke="#9D94AA"
-              strokeOpacity="0.4"
-              strokeWidth="0.961538"
-              fill="none"
-            />
-            <path d={statusBarPaths.batteryTip} fill="#1A1128" opacity="0.4" />
-            <path d={statusBarPaths.batteryFill} fill="#1A1128" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
+const ALL_MENTORS: Mentor[] = [
+  { id: "m1", name: "Shruti Jain",  title: "Sr. Fashion Designer",   company: "MAX",          avatar: MENTOR_AVATARS.shrutiJain,  experience: "7 yrs exp • EX - ZARA",          rating: 4.9, reviews: 120, originalPrice: 600, discountedPrice: 300, isTopMentor: true },
+  { id: "m2", name: "Priya Mehta",  title: "Sr. Fashion Designer",   company: "MAX",          avatar: MENTOR_AVATARS.priyaMehta,  experience: "7 yrs exp • EX - M&S India",     rating: 4.7, reviews: 120, originalPrice: 600, discountedPrice: 400, isTopMentor: true },
+  { id: "m3", name: "Ravi Kumar",   title: "Lead Designer",          company: "Myntra",       avatar: MENTOR_AVATARS.raviKumar,   experience: "8 yrs exp • EX - H&M",           rating: 4.8, reviews: 120, originalPrice: 550, discountedPrice: 350, isTopMentor: true },
+  { id: "m4", name: "Sneha Patel",  title: "Lead Fashion Designer",  company: "Anita Dongre", avatar: MENTOR_AVATARS.snehaPatel,      experience: "10 yrs exp • EX - Mango",        rating: 4.6, reviews: 75,  originalPrice: 580, discountedPrice: 250, isTopMentor: true },
+  { id: "m5", name: "Amit Sharma",  title: "Mid-Level Designer",     company: "Biba",         avatar: MENTOR_AVATARS.amitSharma,  experience: "5 yrs exp • EX - Forever 21",    rating: 4.4, reviews: 95,  originalPrice: 520, discountedPrice: 350 },
+  { id: "m6", name: "Neha Verma",   title: "Fashion Designer",       company: "W for Woman",  avatar: MENTOR_AVATARS.nehaVerma,   experience: "6 yrs exp • EX - Reliance Trends", rating: 4.5, reviews: 88, originalPrice: 480, discountedPrice: 320 },
+  { id: "m7", name: "Vikram Singh", title: "Mid-Level Designer",     company: "Biba",         avatar: MENTOR_AVATARS.vikramSingh, experience: "3 yrs exp • EX - Shein",         rating: 4.2, reviews: 80,  originalPrice: 100, discountedPrice: "Free" },
+  { id: "m8", name: "Anjali Nair",  title: "Fashion Designer",       company: "Fabindia",     avatar: MENTOR_AVATARS.anjaliNair,  experience: "4 yrs exp • EX - Westside",      rating: 4.3, reviews: 65,  originalPrice: 450, discountedPrice: 280 },
+  { id: "m9", name: "Rajesh Patel", title: "Sr. Fashion Designer", company: "Lifestyle", avatar: MENTOR_AVATARS.rajeshPatel, experience: "9 yrs exp • EX - Shoppers Stop", rating: 4.8, reviews: 110, originalPrice: 650, discountedPrice: 400 },
+  { id: "m10", name: "Kavita Reddy", title: "Lead Designer", company: "FabIndia", avatar: MENTOR_AVATARS.kavitaReddy, experience: "11 yrs exp • EX - Good Earth", rating: 4.7, reviews: 98, originalPrice: 700, discountedPrice: 450 },
+];
+
+function getSimilarMentors(activeMentor: Mentor): Mentor[] {
+  const activeId = activeMentor.id;
+  const isFreeM = activeMentor.discountedPrice === "Free";
+  const isTop = activeMentor.isTopMentor === true;
+
+  if (isFreeM) {
+    const freeOthers = ALL_MENTORS.filter(m => m.id !== activeId && m.discountedPrice === "Free");
+    const paidNonTop = ALL_MENTORS.filter(m => m.id !== activeId && m.discountedPrice !== "Free" && !m.isTopMentor);
+    return [...freeOthers.slice(0, 1), ...paidNonTop].slice(0, 3);
+  }
+
+  if (isTop) {
+    return ALL_MENTORS.filter(m => m.id !== activeId && m.isTopMentor === true).slice(0, 3);
+  }
+
+  return ALL_MENTORS.filter(m => m.id !== activeId && m.discountedPrice !== "Free" && !m.isTopMentor).slice(0, 3);
 }
 
-// ─── Bottom nav ───────────────────────────────────────────────────────────────
+// Helper to compute day-of-week label from a date string like "30 Jul"
+function parseDateLabel(label: string): Date {
+  const [day, month] = label.split(" ");
+  const months: Record<string, number> = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+  return new Date(2026, months[month], parseInt(day));
+}
 
+// Mentor IDs where About Me is hidden (m3, m5)
+// Mentor IDs where Webinar is hidden (m7, m8, m9, m10) — stored in the data map
 
 // ─── Review card ──────────────────────────────────────────────────────────────
 
@@ -546,9 +611,6 @@ function ReviewCard({
   title: string;
   text: string;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const preview = text.slice(0, 110);
-  const hasMore = text.length > 110;
   return (
     <div className="flex flex-col gap-[8px] items-start w-full border-b border-[#e2d9ef] pb-[16px]">
       <div className="flex gap-[12px] items-center w-full">
@@ -557,6 +619,8 @@ function ReviewCard({
             alt=""
             className="absolute inset-0 w-full h-full object-cover"
             src={avatar}
+            loading="lazy"
+            decoding="async"
           />
         </div>
         <div className="flex flex-col flex-1 min-w-px">
@@ -581,25 +645,54 @@ function ReviewCard({
           </span>
         </div>
       </div>
+      {/* Full review text — no truncation, no ellipsis, no expand/collapse */}
       <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
-        {expanded ? text : hasMore ? `${preview}…` : text}
+        {text}
       </p>
-      {hasMore && (
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="flex gap-[6px] items-center cursor-pointer"
-        >
-          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
-            {expanded ? "Read less" : "Read more"}
-          </span>
-          {expanded ? (
-            <CaretUp size={14} color="#6B5F7A" />
-          ) : (
-            <CaretDown size={14} color="#6B5F7A" />
-          )}
-        </button>
-      )}
     </div>
+  );
+}
+
+// ─── LogoImg ──────────────────────────────────────────────────────────────────
+// Tiny stateful component — shows logo image when it loads, falls back to the
+// initials letter when the URL is absent or the image fails to load.
+
+function LogoImg({
+  src,
+  alt,
+  letter,
+  color = "#433059",
+}: {
+  src?: string;
+  alt: string;
+  letter: string;
+  color?: string;
+}) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) {
+    return (
+      <div
+        className="w-full h-full flex items-center justify-center"
+        style={{ backgroundColor: color }}
+      >
+        <span
+          className="font-['Manrope',sans-serif] font-bold text-white select-none"
+          style={{ fontSize: 12, lineHeight: 1 }}
+        >
+          {letter}
+        </span>
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="w-full h-full object-contain object-center"
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+    />
   );
 }
 
@@ -613,17 +706,33 @@ export function MentorProfilePage() {
   const passedMentor = (location.state as { mentor?: Mentor } | null)?.mentor;
   const mentor: Mentor = passedMentor ?? {
     id: "m1", name: "Shruti Jain", title: "Sr. Fashion Designer", company: "MAX",
-    avatar: imgMentor, experience: "7 yrs exp • EX - ZARA",
+    avatar: MENTOR_AVATARS.shrutiJain, experience: "7 yrs exp • EX - ZARA",
     rating: 4.9, reviews: 120, originalPrice: 600, discountedPrice: 300, isTopMentor: true,
   };
   const pd = MENTOR_DATA[mentor.id] ?? defaultMentorData;
+
+  // Derive current role + company from the "Present" experience entry in MENTOR_DATA
+  // so the profile header is always in sync with the experience section.
+  const mentorCurrentExp = pd.experience.find((e) => e.end === "Present") ?? pd.experience[0];
+  const mentorDisplayTitle   = mentorCurrentExp.role;
+  const mentorDisplayCompany = mentorCurrentExp.company;
   const isFree = mentor.discountedPrice === "Free";
+  const similarMentors = getSimilarMentors(mentor);
+
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    window.scrollTo(0, 0);
+  }, [mentor.id]);
 
   const [showBookingReview, setShowBookingReview] = useState(false);
+
+  // Keyboard: Esc dismisses the booking review overlay
+  useEscKey(() => setShowBookingReview(false), showBookingReview);
+
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   const [selectedDateIdx, setSelectedDateIdx] = useState(0);
-  const [weekOffset, setWeekOffset] = useState(0);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>(pd.timeSlots[0]);
   const [saved, setSaved] = useState(false);
   const [followed, setFollowed] = useState(false);
   const [showAllSkills, setShowAllSkills] = useState(false);
@@ -631,81 +740,14 @@ export function MentorProfilePage() {
   const [expandedFAQs, setExpandedFAQs] = useState<Set<number>>(new Set([0])); // First FAQ expanded by default
   const [visibleFAQCount, setVisibleFAQCount] = useState(3);
 
-  const BASE_DATE = new Date(2026, 4, 25); // Monday May 25 2026
-  const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const MONTH_NAMES = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const selectedDateLabel = pd.availableDates[selectedDateIdx] ?? pd.availableDates[0];
+  const selectedDayName = (() => {
+    const d = parseDateLabel(selectedDateLabel);
+    return `${DAY_NAMES[d.getDay()]} · ${selectedDateLabel}`;
+  })();
 
-  const dates = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(BASE_DATE);
-    d.setDate(BASE_DATE.getDate() + weekOffset * 7 + i);
-    return {
-      day: WEEKDAY_NAMES[d.getDay()],
-      date: d.getDate(),
-      month: MONTH_NAMES[d.getMonth()],
-      fullDate: d,
-    };
-  });
-
-  const selectedFullDate = dates[selectedDateIdx];
-  const selectedDayName = selectedFullDate
-    ? `${["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][selectedFullDate.fullDate.getDay()]} - ${selectedFullDate.date} ${selectedFullDate.month}`
-    : "";
-
-  // Dynamic time slots based on selected date
-  const getTimeSlotsForDate = (dateIdx: number) => {
-    const allSlots = [
-      "9:00 - 10:00 AM",
-      "10:00 - 11:00 AM",
-      "11:00 AM - 12:00 PM",
-      "12:00 - 1:00 PM",
-      "1:00 - 2:00 PM",
-      "2:00 - 3:00 PM",
-      "3:00 - 4:00 PM",
-      "4:00 - 5:00 PM",
-      "5:00 - 6:00 PM",
-      "6:00 - 7:00 PM",
-    ];
-
-    // Return exactly 6 slots per day
-    const dayOfWeek = dates[dateIdx]?.fullDate.getDay();
-
-    // Weekend: different 6 slots
-    if (dayOfWeek === 0 || dayOfWeek === 6) {
-      return [
-        allSlots[0],
-        allSlots[2],
-        allSlots[4],
-        allSlots[5],
-        allSlots[7],
-        allSlots[9],
-      ];
-    }
-
-    // Weekday: 6 slots (skip lunch hour)
-    return [
-      allSlots[0],
-      allSlots[1],
-      allSlots[2],
-      allSlots[4],
-      allSlots[6],
-      allSlots[8],
-    ];
-  };
-
-  const timeSlots = getTimeSlotsForDate(selectedDateIdx);
+  const timeSlots = pd.timeSlots;
 
   const skills = pd.skills;
   const displayedSkills = showAllSkills ? skills : skills.slice(0, 4);
@@ -713,7 +755,13 @@ export function MentorProfilePage() {
   const footerHeight = 178; // Footer height for proper scroll padding
 
   if (showBookingReview) {
-    return <BookingReviewPage onBack={() => setShowBookingReview(false)} />;
+    return (
+      <BookingReviewPage
+        onBack={() => setShowBookingReview(false)}
+        mentor={mentor}
+        bookingType="session"
+      />
+    );
   }
 
   return (
@@ -733,16 +781,19 @@ export function MentorProfilePage() {
           shadow
         />
 
-        <div className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           {/* Mentor Hero Section */}
           <div className="bg-[#fffeff] px-4 pt-5 pb-3">
             {/* Image and Action Buttons Row */}
             <div className="flex justify-between items-center mb-3">
-              <div className="relative shrink-0 size-[72px] rounded-full overflow-hidden border-2 border-[#e2d9ef]">
+              <div className="relative shrink-0 size-[72px] rounded-full overflow-hidden border-2 border-[#e2d9ef] bg-[#f5f0ff]">
                 <img
                   src={mentor.avatar}
                   alt={mentor.name}
                   className="absolute inset-0 size-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  {...({ fetchpriority: "high" } as Record<string, string>)}
                 />
               </div>
               <div className="flex gap-2 items-center">
@@ -765,7 +816,7 @@ export function MentorProfilePage() {
                   className="bg-[#fffeff] border border-[#e2d9ef] rounded-[8px] transition-all active:scale-95"
                 />
                 <button className="h-[40px] w-[40px] bg-[#fffeff] border border-[#e2d9ef] rounded-[8px] flex items-center justify-center transition-all active:scale-95">
-                  <DotsThreeVertical size={18} color="#6B5F7A" />
+                  <DotsThreeVertical size={18} color="#6B5F7A" weight="bold" />
                 </button>
               </div>
             </div>
@@ -795,8 +846,9 @@ export function MentorProfilePage() {
                   )}
                 </div>
               </div>
-              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px] mb-1">
-                {mentor.title} @ {mentor.company}
+              {/* Role · @Company — derived from Present experience entry, never stale */}
+              <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[14px] leading-[21px] tracking-[0.14px] mb-1">
+                {mentorDisplayTitle} · @{mentorDisplayCompany}
               </p>
               <div className="flex flex-wrap gap-1.5 text-[12px] text-[#6b5f7a] font-['Manrope',sans-serif] mb-1">
                 <span>{mentor.experience.split(" • ")[0]}</span>
@@ -817,15 +869,15 @@ export function MentorProfilePage() {
             </div>
 
             <div className="rounded-[8px] p-[0px]">
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-[6px]">
                 <span className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[14px] line-through">
                   ₹{mentor.originalPrice}
                 </span>
-                <span className="inline-block font-['Roboto_Serif',serif] font-semibold leading-[36px] text-[16px] text-[#1a1128]">
+                <span className="type-h4 text-[#1a1128]">
                   {isFree ? "Free" : `₹${mentor.discountedPrice}`}
                 </span>
                 {!isFree && (
-                  <div className="flex items-baseline gap-1">
+                  <div className="flex items-baseline gap-[4px]">
                     <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px]">
                       /hr
                     </span>
@@ -851,27 +903,39 @@ export function MentorProfilePage() {
                 color="#1A1128"
                 className="mr-2 flex-shrink-0"
               />
-              <span className="font-['Manrope',sans-serif] text-[15px] font-semibold text-[#1a1128]">
+              <span className="font-['Manrope',sans-serif] text-[15px] font-semibold text-[#1a1128] flex-1">
                 {selectedDayName}
               </span>
-              <div className="ml-auto flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
-                    setWeekOffset((w) => w - 1);
-                    setSelectedDateIdx(0);
-                    setSelectedTime(null);
+                    if (selectedDateIdx > 0) {
+                      setSelectedDateIdx(selectedDateIdx - 1);
+                      setSelectedTime(pd.timeSlots[0]);
+                    }
                   }}
-                  className="w-8 h-8 rounded-full border border-[#C8BBDA] flex items-center justify-center hover:bg-[#f5f0ff] active:bg-[#ede5ff] transition-colors disabled:opacity-40"
+                  disabled={selectedDateIdx === 0}
+                  className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
+                    selectedDateIdx === 0
+                      ? "border-[#e2d9ef] opacity-40 cursor-not-allowed"
+                      : "border-[#C8BBDA] hover:bg-[#f5f0ff] active:bg-[#ede5ff] cursor-pointer"
+                  }`}
                 >
                   <CaretLeft size={16} color="#6B5F7A" />
                 </button>
                 <button
                   onClick={() => {
-                    setWeekOffset((w) => w + 1);
-                    setSelectedDateIdx(0);
-                    setSelectedTime(null);
+                    if (selectedDateIdx < pd.availableDates.length - 1) {
+                      setSelectedDateIdx(selectedDateIdx + 1);
+                      setSelectedTime(pd.timeSlots[0]);
+                    }
                   }}
-                  className="w-8 h-8 rounded-full border border-[#C8BBDA] flex items-center justify-center hover:bg-[#f5f0ff] active:bg-[#ede5ff] transition-colors"
+                  disabled={selectedDateIdx >= pd.availableDates.length - 1}
+                  className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
+                    selectedDateIdx >= pd.availableDates.length - 1
+                      ? "border-[#e2d9ef] opacity-40 cursor-not-allowed"
+                      : "border-[#C8BBDA] hover:bg-[#f5f0ff] active:bg-[#ede5ff] cursor-pointer"
+                  }`}
                 >
                   <CaretRight size={16} color="#6B5F7A" />
                 </button>
@@ -904,16 +968,18 @@ export function MentorProfilePage() {
               </h3>
               <div className="rounded-[12px] overflow-hidden mb-3">
                 <img
-                  src={imgWebinar}
+                  src={pd.webinarImage}
                   alt="Webinar"
                   className="w-full h-[268px] object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
           )}
 
           {/* Sticky Tabs */}
-          <div className="sticky top-[60px] z-10 w-full border-b border-[#e2d9ef] bg-[#fffeff]">
+          <div className="w-full border-b border-[#e2d9ef] bg-[#fffeff]">
             <div className="flex gap-3 px-4">
               {(["Overview", "Reviews", "Mentee FAQ"] as Tab[]).map((tab) => (
                 <button
@@ -922,7 +988,7 @@ export function MentorProfilePage() {
                   className="flex-1 h-[44px] px-1 relative transition-all"
                 >
                   <span
-                    className={`font-['Manrope',sans-serif] text-[15px] whitespace-nowrap transition-all ${
+                    className={`type-tab whitespace-nowrap transition-all ${
                       activeTab === tab
                         ? "font-semibold text-[#1a1128]"
                         : "font-normal text-[#6b5f7a]"
@@ -938,9 +1004,11 @@ export function MentorProfilePage() {
             </div>
           </div>
 
-          {/* Tab Content */}
+          {/* Tab Content — CSS-hidden, never unmounted.
+               All three tabs stay in the DOM so images decoded on first visit
+               are reused instantly on every subsequent tab switch. */}
           <div style={{ paddingBottom: `${footerHeight}px` }}>
-            {activeTab === "Overview" && (
+            <div className={activeTab === "Overview" ? undefined : "hidden"}>
               <>
                 {/* About Me — hidden for m3/m5; text-only for m2/m6/m7/m10; image+text for rest */}
                 {pd.aboutMode !== "hidden" && (
@@ -954,6 +1022,8 @@ export function MentorProfilePage() {
                           src={pd.aboutImage}
                           alt="About"
                           className="w-full h-[200px] object-cover rounded-[8px]"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px] mt-[12px]">
                           {pd.aboutImageText}
@@ -967,50 +1037,35 @@ export function MentorProfilePage() {
                   </div>
                 )}
 
-                {/* Recent Projects */}
-                <div className="bg-[#fffeff] py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
-                    Recent projects
-                  </h3>
-                  <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide snap-x snap-mandatory">
-                    {[
-                      {
-                        img: imgProject1,
-                        title: "Spring Collection 2024",
-                        category: "Fashion Design",
-                        date: "Dec 2024",
-                      },
-                      {
-                        img: imgProject2,
-                        title: "Sustainable Textiles",
-                        category: "R&D Project",
-                        date: "Nov 2024",
-                      },
-                      {
-                        img: imgProject3,
-                        title: "Minimalist Wardrobe",
-                        category: "Capsule Collection",
-                        date: "Oct 2024",
-                      },
-                    ].map((project, i) => (
-                      <div
-                        key={i}
-                        className="shrink-0 w-[200px] snap-center bg-white rounded-[8px] border border-[rgba(157,148,170,0.4)] overflow-hidden"
-                      >
-                        <img
-                          src={project.img}
-                          alt={project.title}
-                          className="w-full h-[120px] object-cover"
-                        />
-                        <div className="px-[12px] py-[10px] flex flex-col gap-[4px]">
-                          <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
-                            {project.date}
-                          </p>
+                {/* Recent Posts — per-mentor images from dedicated asset folder */}
+                {(MENTOR_RECENT_POSTS[mentor.id] ?? []).length > 0 && (
+                  <div className="bg-[#fffeff] py-3 mt-1">
+                    <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                      Recent projects
+                    </h3>
+                    <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide snap-x snap-mandatory">
+                      {(MENTOR_RECENT_POSTS[mentor.id] ?? []).map((post, i) => (
+                        <div
+                          key={i}
+                          className="shrink-0 w-[200px] snap-center bg-white rounded-[8px] border border-[rgba(157,148,170,0.4)] overflow-hidden"
+                        >
+                          <img
+                            src={post.img}
+                            alt={`Recent post ${i + 1}`}
+                            className="w-full h-[120px] object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                          <div className="px-[12px] py-[10px] flex flex-col gap-[4px]">
+                            <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+                              {post.date}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Experience */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
@@ -1022,16 +1077,18 @@ export function MentorProfilePage() {
                       <div key={i}>
                         {i > 0 && <div className="h-px bg-[#e2d9ef] mb-4" />}
                         <div className="flex gap-3 items-center">
-                          <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                            <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">{exp.letter}</span>
+                          <div className="size-[30px] rounded-[8px] shrink-0 overflow-hidden border border-[#e2d9ef] bg-white flex items-center justify-center">
+                            <LogoImg src={exp.logo} alt={exp.company} letter={exp.letter} color={exp.color} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">{exp.company}</h4>
                             <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">{exp.role}</p>
                           </div>
-                          <span className="shrink-0 bg-[#f7f4fa] px-[12px] py-[8px] rounded-[4px] font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[16px]">
-                            {exp.start} – {exp.end}
-                          </span>
+                          <div className="shrink-0 inline-flex items-center justify-center rounded-[4px] bg-[#F7F4FA] p-[8px]">
+                            <span className="font-['Manrope',sans-serif] font-medium text-[#6B5F7A] text-[12px] leading-[18px] tracking-[0.24px]">
+                              {exp.start} – {exp.end}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1044,16 +1101,18 @@ export function MentorProfilePage() {
                     Education
                   </h3>
                   <div className="flex gap-3 items-center">
-                    <div className="size-[30px] bg-[#f5f0ff] rounded-[8px] flex items-center justify-center shrink-0">
-                      <span className="font-['Roboto_Serif',serif] font-bold text-[#7d3aea] text-[16px]">{pd.education.letter}</span>
+                    <div className="size-[30px] rounded-[8px] shrink-0 overflow-hidden border border-[#e2d9ef] bg-white flex items-center justify-center">
+                      <LogoImg src={pd.education.logo} alt={pd.education.school} letter={pd.education.letter} color={pd.education.color} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[16px] leading-[24px]">{pd.education.school}</h4>
                       <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[20px]">{pd.education.degree}</p>
                     </div>
-                    <span className="shrink-0 bg-[#f7f4fa] px-[12px] py-[8px] rounded-[4px] font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[16px]">
-                      {pd.education.start} – {pd.education.end}
-                    </span>
+                    <div className="shrink-0 inline-flex items-center justify-center rounded-[4px] bg-[#F7F4FA] p-[8px]">
+                      <span className="font-['Manrope',sans-serif] font-medium text-[#6B5F7A] text-[12px] leading-[18px] tracking-[0.24px]">
+                        {pd.education.start} – {pd.education.end}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -1085,30 +1144,43 @@ export function MentorProfilePage() {
                   )}
                 </div>
 
-                {/* Other Highest Rated Mentors */}
+                {/* Similar Mentors */}
                 <div className="bg-[#fffeff] py-3 mt-1 mb-2">
                   <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
-                    Other highest rated mentors
+                    Similar mentors
                   </h3>
                   <div
                     className="flex gap-3 overflow-x-auto px-4 scrollbar-hide snap-x snap-mandatory scroll-smooth"
                     style={{ scrollSnapType: "x mandatory" }}
                   >
-                    {otherHighestRatedMentors.map((mentor) => (
+                    {similarMentors.map((m) => (
                       <div
-                        key={mentor.id}
+                        key={m.id}
                         className="shrink-0 snap-center w-[180px]"
                       >
-                        <MentorCard mentor={mentor} />
+                        <MentorCard mentor={m} />
                       </div>
                     ))}
                   </div>
                 </div>
               </>
-            )}
+            </div>
 
-            {activeTab === "Reviews" && (
-              <div className="flex flex-col gap-[24px] items-center pb-[20px] pt-[16px] px-[16px]">
+            <div className={activeTab === "Reviews" ? undefined : "hidden"}>
+              {pd.reviews.length === 0 ? (
+                <div className="px-4 py-16 flex flex-col items-center gap-2">
+                  <p className="font-['Manrope',sans-serif] font-semibold text-[#6b5f7a] text-[16px] leading-[24px] text-center">
+                    No reviews available yet.
+                  </p>
+                  <p className="font-['Manrope',sans-serif] font-normal text-[#9d90ad] text-[14px] leading-[21px] text-center">
+                    Reviews will appear here once mentees share their experience.
+                  </p>
+                </div>
+              ) : (
+              <div
+                className="flex flex-col gap-[24px] items-center pb-[20px] pt-[16px] px-[16px]"
+                style={{ contentVisibility: "auto", containIntrinsicSize: "0 600px" }}
+              >
                 {/* Mentorship insights */}
                 <div className="drop-shadow-[0px_1px_2px_rgba(132,111,132,0.12)] flex flex-col items-start w-full">
                   <div
@@ -1134,7 +1206,7 @@ export function MentorProfilePage() {
                               {ins.label}:{" "}
                             </span>
                             <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                              {ins.text}
+                              {truncateAiBulletItem(ins.text, pd.insights.length)}
                             </span>
                           </li>
                         ))}
@@ -1158,32 +1230,33 @@ export function MentorProfilePage() {
                   }
                 />
 
-                {/* Other Highest Rated Mentors */}
+                {/* Similar Mentors */}
                 <div className="flex flex-col gap-[16px] items-start w-full border-t border-[#f0ecf7] pt-[20px]">
                   <p className="font-['Roboto_Serif',serif] font-semibold text-[#2d2040] text-[20px] leading-[28px] w-full">
-                    Other highest rated mentors
+                    Similar mentors
                   </p>
                   <div
                     className="flex gap-3 overflow-x-auto w-full scrollbar-hide snap-x snap-mandatory scroll-smooth"
                     style={{ scrollSnapType: "x mandatory" }}
                   >
-                    {otherHighestRatedMentors.map((mentor) => (
+                    {similarMentors.map((m) => (
                       <div
-                        key={mentor.id}
+                        key={m.id}
                         className="shrink-0 snap-center w-[180px]"
                       >
-                        <MentorCard mentor={mentor} />
+                        <MentorCard mentor={m} />
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-            )}
+              )}
+            </div>
 
-            {activeTab === "Mentee FAQ" && (
-              <div className="bg-[#fffeff] px-4 py-12">
-                {/* FAQ List */}
-                <div className="flex flex-col gap-[4px] items-start w-full">
+            <div className={activeTab === "Mentee FAQ" ? undefined : "hidden"}>
+              <div className="bg-[#fffeff] px-[16px] py-[20px] flex flex-col gap-[16px] items-center">
+                {/* faq-list */}
+                <div className="flex flex-col gap-[4px] self-stretch">
                   {pd.faqs.slice(0, visibleFAQCount).map((faq, index) => {
                     const isExpanded = expandedFAQs.has(index);
                     return (
@@ -1198,10 +1271,10 @@ export function MentorProfilePage() {
                           }
                           setExpandedFAQs(newExpanded);
                         }}
-                        className="flex flex-col gap-[8px] items-start py-[12px] w-full cursor-pointer text-left"
+                        className="flex flex-col gap-[8px] items-start py-[12px] self-stretch cursor-pointer text-left"
                       >
                         {/* Question Row */}
-                        <div className="flex gap-[8px] items-center w-full">
+                        <div className="flex gap-[8px] items-center self-stretch">
                           <div className="flex-1 min-w-px font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px]">
                             {index + 1}. {faq.question}
                           </div>
@@ -1224,20 +1297,9 @@ export function MentorProfilePage() {
 
                         {/* Answer (expandable) */}
                         {isExpanded && (
-                          <div className="flex gap-[12px] items-center w-full">
-                            <div className="h-full relative shrink-0 w-0">
-                              <div className="absolute inset-[0_-0.5px]">
-                                <svg
-                                  className="block size-full"
-                                  fill="none"
-                                  preserveAspectRatio="none"
-                                  viewBox="0 0 1 63"
-                                >
-                                  <path d="M0.5 0V63" stroke="#E2D9EF" />
-                                </svg>
-                              </div>
-                            </div>
-                            <div className="flex-1 min-w-px font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                          <div className="inline-flex gap-[12px] items-stretch self-stretch">
+                            <div className="w-[2px] self-stretch bg-[#E2D9EF] rounded-[200px] shrink-0" />
+                            <div className="flex-1 min-w-px font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] break-words">
                               {faq.answer}
                             </div>
                           </div>
@@ -1248,35 +1310,34 @@ export function MentorProfilePage() {
                 </div>
 
                 {/* View More Button */}
-                {visibleFAQCount < mentorFAQs.length && (
+                {visibleFAQCount < pd.faqs.length && (
                   <ViewMoreButton
-                    onClick={() => setVisibleFAQCount(mentorFAQs.length)}
-                    label={`View ${mentorFAQs.length - visibleFAQCount} More`}
-                    className="mt-[16px]"
+                    onClick={() => setVisibleFAQCount(pd.faqs.length)}
+                    label={`View ${pd.faqs.length - visibleFAQCount} More`}
                   />
                 )}
 
-                {/* Other Highest Rated Mentors */}
+                {/* Similar Mentors */}
                 <div className="mt-6 -mx-4">
                   <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
-                    Other highest rated mentors
+                    Similar mentors
                   </h3>
                   <div
                     className="flex gap-3 overflow-x-auto px-4 scrollbar-hide snap-x snap-mandatory scroll-smooth"
                     style={{ scrollSnapType: "x mandatory" }}
                   >
-                    {otherHighestRatedMentors.map((mentor) => (
+                    {similarMentors.map((m) => (
                       <div
-                        key={mentor.id}
+                        key={m.id}
                         className="shrink-0 snap-center w-[180px]"
                       >
-                        <MentorCard mentor={mentor} />
+                        <MentorCard mentor={m} />
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
@@ -1286,7 +1347,7 @@ export function MentorProfilePage() {
             {/* Unlock Chat Banner */}
             <div className="bg-[#f5f0ff] px-4 py-3 rounded-t-[8px]">
               <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[14px] leading-[20px] text-center">
-                {isFree ? "Chat will be unlocked in 99 rs" : "Chat will be unlocked after the call is booked."}
+                {isFree ? "Chat will be unlocked for just ₹99." : "Chat will be unlocked after the call is booked."}
               </p>
             </div>
 
@@ -1296,6 +1357,11 @@ export function MentorProfilePage() {
                 variant="outline"
                 size="lg"
                 className="h-[44px] px-6 font-[Manrope] gap-2 text-[#7d3aea]"
+                onClick={
+                  isFree
+                    ? () => navigate("/messaging/chat-locked", { state: { mentor } })
+                    : undefined
+                }
               >
                 <div className="w-[24px] h-[24px] flex items-center justify-center shrink-0">
                   <Lock width={18} height={20} color="#7D3AEA" />
@@ -1313,9 +1379,7 @@ export function MentorProfilePage() {
             </div>
 
             {/* Safe Area */}
-            <div className="h-[46px] w-full bg-[#fffeff] flex items-end justify-center pb-[7.69px]">
-              <div className="bg-[#1a1128] h-[4.808px] rounded-[200px] w-[128.846px]" />
-            </div>
+            <BottomSafeArea />
           </div>
         </div>
       </div>

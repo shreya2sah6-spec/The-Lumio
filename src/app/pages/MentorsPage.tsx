@@ -1,41 +1,27 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { Funnel, VideoCamera } from "@phosphor-icons/react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Funnel, VideoCamera, Check } from "@phosphor-icons/react";
 import { BottomNav } from "../components/BottomNav";
+import { StatusBar } from "../components/StatusBar";
+import { BottomSafeArea } from "../components/BottomSafeArea";
 import { MentorCard, type Mentor } from "../components/MentorCard";
 import { SearchBar } from "../components/SearchBar";
 import { ViewMoreButton } from "../components/ViewMoreButton";
+import { Button } from "../components/ui/button";
+import imgNotFound from "@/imports/SharedNotFound/460b6c9e17511d97e9e5c7a1875505fb0de17812.png";
 
 // ─── Images ──────────────────────────────────────────────────────────────────
 
-import imgMentor1 from "@/imports/MentorsListing-1/256d9888e94601d5c3ad0b35893b712ad1983479.png";
-import imgMentor2 from "@/imports/MentorsListing-1/200308a276b1feba2bec4e28e27dda4b6aaab137.png";
-import imgMentor3 from "@/imports/MentorsListing-1/9aecea038a5eba6222a77595fc22c0549d614720.png";
-import imgMentor4 from "@/imports/MentorsListing-1/af1c850daadb743337a79569abbde7a01ce4354c.png";
-import imgMentor5 from "@/imports/MentorsListing-1/9e04564b5d619027fe26e99798384a89ec7dbd7e.png";
-import imgMentor6 from "@/imports/MentorsListing-1/a21445b6a5efdaefec15a6540ac50ce7fe9c4bf8.png";
-import imgMentor7 from "@/imports/MentorsListing-1/4a29d0654aaab6716cd873400f7020bd2faded80.png";
-import imgMentor8 from "@/imports/MentorsListing-1/44f0132e097541fab04aec7d33348dc2876131fb.png";
-import imgSession1 from "@/imports/MentorsSession1On1-1/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
-import imgSession2 from "@/imports/MentorsSessionWebinar-1/a48c218009c1c155a805b916c3fd6110ae050ef3.png";
 import imgProfileNav from "@/imports/MentorsListing-1/bb5b0e0896cc0396e3c8e2b6811f344da7f15455.png";
+// Session images for non-canonical session participants (Riya Raj, Ankita K)
+
+// ─── Mentor avatars + webinar hosts — sourced from the centralized registry ───
+import { MENTOR_AVATARS, WEBINAR_HOSTS } from "../data/mentorImages";
 
 // ─── SVG paths ────────────────────────────────────────────────────────────────
 
 const videoCameraPath =
   "M18.75 3.75V8.25C18.75 8.44891 18.829 8.63968 18.9697 8.78033C19.1103 8.92098 19.3011 9 19.5 9C19.6989 9 19.8897 8.92098 20.0303 8.78033C20.171 8.63968 20.25 8.44891 20.25 8.25V3.75C20.25 3.55109 20.171 3.36032 20.0303 3.21967C19.8897 3.07902 19.6989 3 19.5 3C19.3011 3 19.1103 3.07902 18.9697 3.21967C18.829 3.36032 18.75 3.55109 18.75 3.75ZM15.75 2.25H3C2.20435 2.25 1.44129 2.56607 0.87868 3.12868C0.316071 3.69129 0 4.45435 0 5.25V6.75C0 7.54565 0.316071 8.30871 0.87868 8.87132C1.44129 9.43393 2.20435 9.75 3 9.75H15.75C16.5456 9.75 17.3087 9.43393 17.8713 8.87132C18.4339 8.30871 18.75 7.54565 18.75 6.75V5.25C18.75 4.45435 18.4339 3.69129 17.8713 3.12868C17.3087 2.56607 16.5456 2.25 15.75 2.25ZM17.25 6.75C17.25 7.14782 17.092 7.52936 16.8107 7.81066C16.5294 8.09196 16.1478 8.25 15.75 8.25H3C2.60218 8.25 2.22064 8.09196 1.93934 7.81066C1.65804 7.52936 1.5 7.14782 1.5 6.75V5.25C1.5 4.85218 1.65804 4.47064 1.93934 4.18934C2.22064 3.90804 2.60218 3.75 3 3.75H15.75C16.1478 3.75 16.5294 3.90804 16.8107 4.18934C17.092 4.47064 17.25 4.85218 17.25 5.25V6.75Z";
-
-const statusBarPaths = {
-  signalBars:
-    "M3.26916 9.60239C3.8002 9.60239 4.23107 10.0333 4.23107 10.5643V12.4872C4.23107 13.0182 3.8002 13.4491 3.26916 13.4491H2.30724C1.77641 13.4488 1.3463 13.018 1.3463 12.4872V10.5643C1.3463 10.0334 1.77641 9.60263 2.30724 9.60239H3.26916ZM7.75646 7.67954C8.28748 7.67956 8.71837 8.11043 8.71837 8.64145V12.4872C8.71837 13.0182 8.28748 13.449 7.75646 13.4491H6.79455C6.26365 13.4489 5.83361 13.0181 5.83361 12.4872V8.64145C5.83361 8.11052 6.26365 7.67971 6.79455 7.67954H7.75646ZM12.2438 5.43637C12.7747 5.43647 13.2046 5.86638 13.2047 6.39731V12.4872C13.2047 13.0181 12.7747 13.449 12.2438 13.4491H11.2819C10.7509 13.449 10.3209 13.0181 10.3209 12.4872V6.39731C10.321 5.86639 10.7509 5.43648 11.2819 5.43637H12.2438ZM16.7311 3.19223C17.262 3.1924 17.692 3.6232 17.692 4.15415V12.4872C17.692 13.0181 17.262 13.4489 16.7311 13.4491H15.7692C15.2381 13.449 14.8072 13.0182 14.8072 12.4872V4.15415C14.8072 3.62313 15.2381 3.19227 15.7692 3.19223H16.7311Z",
-  wifi: "M5.86291 11.2694C7.08941 10.2323 8.88553 10.2321 10.1119 11.2694C10.1736 11.3252 10.2098 11.404 10.2115 11.4872C10.2132 11.5703 10.1801 11.6506 10.1207 11.7088L8.19982 13.6473C8.14355 13.7041 8.06686 13.7362 7.98693 13.7362C7.90698 13.7361 7.83028 13.7041 7.77404 13.6473L5.85314 11.7088C5.79385 11.6505 5.76154 11.5703 5.7633 11.4872C5.76508 11.404 5.80118 11.3251 5.86291 11.2694ZM3.29943 8.68442C5.94193 6.22636 10.0349 6.22636 12.6774 8.68442C12.7367 8.74203 12.7703 8.82142 12.7711 8.90415C12.7718 8.98686 12.7395 9.06614 12.6813 9.12485L11.5709 10.2469C11.4566 10.3613 11.2723 10.364 11.1549 10.2528C10.2871 9.46701 9.15759 9.03201 7.98693 9.03208C6.81713 9.03263 5.68901 9.46758 4.82189 10.2528C4.70455 10.364 4.52022 10.3613 4.40587 10.2469L3.29552 9.12485C3.23716 9.06621 3.20403 8.98688 3.2047 8.90415C3.20548 8.82134 3.23996 8.74203 3.29943 8.68442ZM0.736929 6.10532C4.78991 2.22126 11.184 2.22118 15.2369 6.10532C15.2956 6.16301 15.3282 6.24181 15.3287 6.32407C15.3292 6.40622 15.2977 6.48544 15.2399 6.5438L14.1276 7.66587C14.0131 7.78071 13.8278 7.78193 13.7115 7.6688C12.1674 6.20072 10.1176 5.38178 7.98693 5.38169C5.85613 5.38174 3.80665 6.20067 2.26232 7.6688C2.14611 7.7823 1.95977 7.78115 1.84533 7.66587L0.733999 6.5438C0.676061 6.48537 0.643616 6.40635 0.644156 6.32407C0.644697 6.24178 0.678219 6.16298 0.736929 6.10532Z",
-  batteryOutline:
-    "M3.02599 2.71124H19.0514C20.2019 2.71129 21.1344 3.64466 21.1344 4.79522V10.5638C21.1344 11.7143 20.2019 12.6477 19.0514 12.6478H3.02599C1.8754 12.6478 0.942008 11.7144 0.942008 10.5638V4.79522C0.942008 3.64463 1.8754 2.71124 3.02599 2.71124Z",
-  batteryTip:
-    "M22.5769 5.75643V9.60258C23.3507 9.27684 23.8539 8.51906 23.8539 7.67951C23.8539 6.83996 23.3507 6.08218 22.5769 5.75643",
-  batteryFill:
-    "M2.38462 5.4359C2.38462 4.72784 2.95861 4.15385 3.66667 4.15385H18.4103C19.1183 4.15385 19.6923 4.72784 19.6923 5.4359V9.92308C19.6923 10.6311 19.1183 11.2051 18.4103 11.2051H3.66667C2.95861 11.2051 2.38462 10.6311 2.38462 9.92308V5.4359Z",
-};
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -66,7 +52,7 @@ const topRatedMentors: Mentor[] = [
     name: "Shruti Jain",
     title: "Sr. Fashion Designer",
     company: "MAX",
-    avatar: imgMentor1,
+    avatar: MENTOR_AVATARS.shrutiJain,
     experience: "7 yrs exp • EX - ZARA",
     rating: 4.9,
     reviews: 120,
@@ -79,7 +65,7 @@ const topRatedMentors: Mentor[] = [
     name: "Priya Mehta",
     title: "Sr. Fashion Designer",
     company: "MAX",
-    avatar: imgMentor2,
+    avatar: MENTOR_AVATARS.priyaMehta,
     experience: "7 yrs exp • EX - Fab India",
     rating: 4.7,
     reviews: 120,
@@ -92,7 +78,7 @@ const topRatedMentors: Mentor[] = [
     name: "Ravi Kumar",
     title: "Sr. Fashion Designer",
     company: "Myntra",
-    avatar: imgMentor3,
+    avatar: MENTOR_AVATARS.raviKumar,
     experience: "8 yrs exp • EX - H&M",
     rating: 4.7,
     reviews: 120,
@@ -105,7 +91,7 @@ const topRatedMentors: Mentor[] = [
     name: "Sneha Patel",
     title: "Lead Fashion Designer",
     company: "Anita Dongre",
-    avatar: imgMentor4,
+    avatar: MENTOR_AVATARS.snehaPatel,
     experience: "10 yrs exp • EX - Mango",
     rating: 4.6,
     reviews: 75,
@@ -121,7 +107,7 @@ const pickedForYouMentors: Mentor[] = [
     name: "Amit Sharma",
     title: "Mid-Level Designer",
     company: "Biba",
-    avatar: imgMentor5,
+    avatar: MENTOR_AVATARS.amitSharma,
     experience: "5 yrs exp • EX - Forever 21",
     rating: 4.4,
     reviews: 95,
@@ -133,7 +119,7 @@ const pickedForYouMentors: Mentor[] = [
     name: "Neha Verma",
     title: "Fashion Designer",
     company: "W for Woman",
-    avatar: imgMentor6,
+    avatar: MENTOR_AVATARS.nehaVerma,
     experience: "6 yrs exp • EX - Lifestyle",
     rating: 4.5,
     reviews: 88,
@@ -145,7 +131,7 @@ const pickedForYouMentors: Mentor[] = [
     name: "Vikram Singh",
     title: "Mid-Level Designer",
     company: "Biba",
-    avatar: imgMentor7,
+    avatar: MENTOR_AVATARS.vikramSingh,
     experience: "3 yrs exp • EX - Shein",
     rating: 4.2,
     reviews: 80,
@@ -157,7 +143,7 @@ const pickedForYouMentors: Mentor[] = [
     name: "Anjali Nair",
     title: "Fashion Designer",
     company: "Fabindia",
-    avatar: imgMentor8,
+    avatar: MENTOR_AVATARS.anjaliNair,
     experience: "4 yrs exp • EX - Westside",
     rating: 4.3,
     reviews: 65,
@@ -172,7 +158,7 @@ const additionalMentors: Mentor[] = [
     name: "Rajesh Patel",
     title: "Sr. Fashion Designer",
     company: "Lifestyle",
-    avatar: imgMentor1,
+    avatar: MENTOR_AVATARS.rajeshPatel,
     experience: "9 yrs exp • EX - Shoppers Stop",
     rating: 4.8,
     reviews: 110,
@@ -184,7 +170,7 @@ const additionalMentors: Mentor[] = [
     name: "Kavita Reddy",
     title: "Lead Designer",
     company: "FabIndia",
-    avatar: imgMentor2,
+    avatar: MENTOR_AVATARS.kavitaReddy,
     experience: "11 yrs exp • EX - Good Earth",
     rating: 4.7,
     reviews: 98,
@@ -200,7 +186,7 @@ const sessionsData: Session[] = [
     mentor: "Shruti Jain",
     mentorTitle: "Sr. Fashion Designer",
     mentorCompany: "Max Fashion",
-    mentorAvatar: imgSession1,
+    mentorAvatar: MENTOR_AVATARS.shrutiJain,
     date: "Sat · 30 July",
     time: "6:00 PM – 7:00 PM",
     duration: 60,
@@ -211,10 +197,11 @@ const sessionsData: Session[] = [
   {
     id: "s2",
     type: "1:1",
-    mentor: "Riya Raj",
-    mentorTitle: "Sr. Fashion Designer",
-    mentorCompany: "Max Fashion",
-    mentorAvatar: imgSession1,
+    mentor: "Kiya Rathi",
+    mentorTitle: "Intern",
+    mentorCompany: "Nykaa Fashion",
+    // Local bundled avatar — avoids runtime hotlink to Unsplash CDN
+    mentorAvatar: MENTOR_AVATARS.nehaVerma,
     date: "Mon · 5 August",
     time: "4:00 PM – 5:00 PM",
     duration: 60,
@@ -227,10 +214,10 @@ const sessionsData: Session[] = [
     mentor: "Shruti Jain, Riya Raj, Ankita K",
     mentorTitle: "Sr. Fashion Designer",
     mentorCompany: "Max Fashion",
-    mentorAvatar: imgSession1,
+    mentorAvatar: WEBINAR_HOSTS.main,
     coMentors: [
-      { name: "Riya Raj", avatar: imgSession2 },
-      { name: "Ankita K", avatar: imgSession2 },
+      { name: "Riya Raj", avatar: WEBINAR_HOSTS.alt1 },
+      { name: "Ankita K", avatar: WEBINAR_HOSTS.alt2 },
     ],
     date: "Sat · 20 July",
     time: "9:00 AM – 2:00 PM",
@@ -241,57 +228,6 @@ const sessionsData: Session[] = [
 ];
 
 // ─── Status bar ───────────────────────────────────────────────────────────────
-
-function StatusBar() {
-  return (
-    <div className="w-full bg-[#fffeff] flex h-[44px] items-center justify-between px-4 py-2 shrink-0">
-      <p className="font-['Roboto',sans-serif] font-normal text-[14.423px] leading-[20.192px] text-[#1a1128] tracking-[-0.3077px]">
-        9:41
-      </p>
-      <div className="flex gap-[2px] items-center shrink-0">
-        <div className="h-[15.385px] relative w-[19.231px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 19.2308 15.3846"
-          >
-            <path d={statusBarPaths.signalBars} fill="#1A1128" />
-          </svg>
-        </div>
-        <div className="relative size-[15.385px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 15.3846 15.3846"
-          >
-            <path d={statusBarPaths.wifi} fill="#1A1128" />
-          </svg>
-        </div>
-        <div className="h-[15.385px] relative w-[24.038px]">
-          <svg
-            className="absolute block inset-0 size-full"
-            fill="none"
-            preserveAspectRatio="none"
-            viewBox="0 0 24.0385 15.3846"
-          >
-            <path
-              d={statusBarPaths.batteryOutline}
-              opacity="0.35"
-              stroke="#9D94AA"
-              strokeOpacity="0.4"
-              strokeWidth="0.961538"
-              fill="none"
-            />
-            <path d={statusBarPaths.batteryTip} fill="#1A1128" opacity="0.4" />
-            <path d={statusBarPaths.batteryFill} fill="#1A1128" />
-          </svg>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── Top bar ──────────────────────────────────────────────────────────────────
 
@@ -440,7 +376,7 @@ function SessionCard1On1({
           >
             <div className="flex flex-col gap-2 items-start flex-1">
               <div
-                className={`flex items-center justify-center px-2 py-2 rounded-[2px] ${
+                className={`flex items-center justify-center px-2 py-1 rounded-[2px] ${
                   session.category === "Learning"
                     ? "bg-[#f4f7ff]"
                     : "bg-[#d6f5dd]"
@@ -516,7 +452,7 @@ function SessionCard1On1({
         >
           <div className="flex flex-col gap-2 items-start flex-1">
             <div
-              className={`flex items-center justify-center px-2 py-2 rounded-[2px] ${
+              className={`flex items-center justify-center px-2 py-1 rounded-[2px] ${
                 session.category === "Learning"
                   ? "bg-[#f4f7ff]"
                   : "bg-[#d6f5dd]"
@@ -527,7 +463,7 @@ function SessionCard1On1({
               </span>
             </div>
             <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
-              Session in 5 days
+              {isImminent ? "Session in 10 mins" : "Session in 5 days"}
             </p>
           </div>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -565,7 +501,7 @@ function SessionCardWebinar({
             className="flex gap-2 items-center w-full cursor-pointer"
           >
             <div className="flex flex-col gap-2 items-start flex-1">
-              <div className="bg-[#fef0d2] flex items-center justify-center px-2 py-2 rounded-[2px]">
+              <div className="bg-[#fef0d2] flex items-center justify-center px-2 py-1 rounded-[2px]">
                 <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
                   {session.category}
                 </span>
@@ -587,13 +523,13 @@ function SessionCardWebinar({
 
           <div className="flex flex-col gap-3 items-start w-full">
             <div className="flex gap-3 items-center w-full">
-              <div className="flex items-center shrink-0 pointer-events-none shadow-[-2px_0px_2px_rgba(200,192,212,0.6)]">
-                <div className="mr-[-12px] relative rounded-[24px] shrink-0 size-12">
+              <div className="flex items-center shrink-0 pointer-events-none pr-3">
+                <div className="mr-[-12px] relative rounded-[24px] shrink-0 size-12 shadow-[-2px_0px_2px_rgba(200,192,212,0.6)]">
                   <div className="absolute inset-0 overflow-hidden rounded-[24px]">
                     <img
                       alt=""
                       className="absolute inset-0 size-full object-cover"
-                      src={imgSession1}
+                      src={WEBINAR_HOSTS.main}
                     />
                   </div>
                   <div
@@ -601,12 +537,12 @@ function SessionCardWebinar({
                     className="absolute border border-[#e2d9ef] border-solid inset-0 rounded-[24px]"
                   />
                 </div>
-                <div className="mr-[-12px] relative rounded-[200px] shrink-0 size-12">
+                <div className="mr-[-12px] relative rounded-[200px] shrink-0 size-12 shadow-[-2px_0px_2px_rgba(200,192,212,0.6)]">
                   <div className="absolute inset-0 overflow-hidden rounded-[200px]">
                     <img
                       alt=""
                       className="absolute inset-0 size-full object-cover"
-                      src={imgSession2}
+                      src={WEBINAR_HOSTS.alt1}
                     />
                   </div>
                   <div
@@ -614,12 +550,12 @@ function SessionCardWebinar({
                     className="absolute border border-[#e2d9ef] border-solid inset-0 rounded-[200px]"
                   />
                 </div>
-                <div className="relative rounded-[200px] shrink-0 size-12">
+                <div className="relative rounded-[200px] shrink-0 size-12 shadow-[-2px_0px_2px_rgba(200,192,212,0.6)]">
                   <div className="absolute inset-0 overflow-hidden rounded-[200px]">
                     <img
                       alt=""
                       className="absolute inset-0 size-full object-cover"
-                      src={imgSession2}
+                      src={WEBINAR_HOSTS.alt2}
                     />
                   </div>
                   <div
@@ -666,7 +602,7 @@ function SessionCardWebinar({
           className="flex gap-2 items-center px-4 py-3 w-full cursor-pointer"
         >
           <div className="flex flex-col gap-2 items-start flex-1">
-            <div className="bg-[#fef0d2] flex items-center justify-center px-2 py-2 rounded-[2px]">
+            <div className="bg-[#fef0d2] flex items-center justify-center px-2 py-1 rounded-[2px]">
               <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
                 {session.category}
               </span>
@@ -690,6 +626,477 @@ function SessionCardWebinar({
   );
 }
 
+// ─── Filter types & data ─────────────────────────────────────────────────────
+
+type MentorFilterCategory =
+  | "Experience"
+  | "Specialization"
+  | "Company"
+  | "Price"
+  | "Availability"
+  | "Gender"
+  | "Language";
+
+type SessionFilterCategory =
+  | "Attending"
+  | "Hosting"
+  | "Mentoring"
+  | "Learning"
+  | "Industry";
+
+const MENTOR_FILTER_CATEGORIES: MentorFilterCategory[] = [
+  "Experience",
+  "Specialization",
+  "Company",
+  "Price",
+  "Availability",
+  "Gender",
+  "Language",
+];
+
+const MENTOR_FILTER_OPTIONS: Record<MentorFilterCategory, string[]> = {
+  Experience: ["0–2 yrs", "2–5 yrs", "5–10 yrs", "10–15 yrs", "15+ yrs"],
+  Specialization: [
+    "Fashion Design",
+    "Textile Design",
+    "Fashion Styling",
+    "Fashion Communication",
+    "Product Development",
+    "Merchandising",
+    "Luxury Fashion",
+    "Sustainable Fashion",
+  ],
+  Company: [
+    "Design House",
+    "Export House",
+    "International Brand",
+    "Own Label",
+    "Retail / Mass Market",
+    "Film & Costume",
+    "Academia / NIFT",
+    "Craft / NGO",
+  ],
+  Price: ["Under ₹300/hr", "₹300–600/hr", "₹600+/hr"],
+  Availability: [
+    "Available this week",
+    "Weekdays",
+    "Weekends",
+    "Evening slots",
+  ],
+  Gender: ["No preference", "Female", "Male", "Non-binary"],
+  Language: ["English", "Hindi", "Marathi", "Tamil", "Bengali", "Gujarati"],
+};
+
+const SESSION_FILTER_CATEGORIES: SessionFilterCategory[] = [
+  "Attending",
+  "Hosting",
+  "Mentoring",
+  "Learning",
+  "Industry",
+];
+
+const SESSION_FILTER_OPTIONS: Record<SessionFilterCategory, string[]> = {
+  Attending: ["Webinar", "Workshop", "Panel Talk", "Networking Event", "Live Session"],
+  Hosting: ["Hosted Webinar", "AMA Session", "Portfolio Review", "Brand Talk", "Masterclass"],
+  Mentoring: ["Career Guidance", "Portfolio Review", "Business Mentorship", "Design Feedback", "Startup Advice"],
+  Learning: ["Beginner Guidance", "Skill Building", "Career Switch", "Internship Help", "Industry Insights"],
+  Industry: [],
+};
+
+function initMentorSel(): Record<MentorFilterCategory, Set<string>> {
+  return Object.fromEntries(
+    MENTOR_FILTER_CATEGORIES.map((c) => [c, new Set<string>()])
+  ) as Record<MentorFilterCategory, Set<string>>;
+}
+
+function initSessionSel(): Record<SessionFilterCategory, Set<string>> {
+  return Object.fromEntries(
+    SESSION_FILTER_CATEGORIES.map((c) => [c, new Set<string>()])
+  ) as Record<SessionFilterCategory, Set<string>>;
+}
+
+function hasActiveSelections(sel: Record<string, Set<string>>): boolean {
+  return Object.values(sel).some((s) => s.size > 0);
+}
+
+// ─── Filter chip ──────────────────────────────────────────────────────────────
+
+function FilterChip({
+  label,
+  selected,
+  onClick,
+}: {
+  label: string;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex gap-[8px] items-center justify-center min-h-[44px] px-[16px] py-[10px] rounded-[8px] cursor-pointer border whitespace-nowrap ${
+        selected ? "bg-white border-[#7d3aea]" : "bg-white border-[#e2d9ef]"
+      }`}
+    >
+      {selected && <Check size={14} color="#7D3AEA" weight="bold" />}
+      <span
+        className={`font-['Manrope',sans-serif] text-[16px] leading-[25px] tracking-[0.16px] ${
+          selected ? "font-medium text-[#1a1128]" : "font-normal text-[#6b5f7a]"
+        }`}
+      >
+        {label}
+      </span>
+    </button>
+  );
+}
+
+// ─── Empty states ─────────────────────────────────────────────────────────────
+
+function MentorsEmptyState({ mentors }: { mentors: Mentor[] }) {
+  return (
+    <div className="flex flex-col w-full pb-[20px]">
+      {/* Illustration + heading */}
+      <div className="flex flex-col gap-[12px] items-center px-[16px] py-[12px]">
+        <div className="h-[319px] mix-blend-darken relative w-full shrink-0">
+          <img
+            alt=""
+            className="absolute inset-0 max-w-none object-bottom size-full pointer-events-none"
+            src={imgNotFound}
+          />
+        </div>
+        <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] text-center w-full">
+          No mentors found
+        </p>
+      </div>
+
+      {/* Similar Mentors */}
+      {mentors.length > 0 && (
+        <div className="flex flex-col gap-[16px] px-[16px] pt-[16px]">
+          <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+            Similar Mentors
+          </p>
+          <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full">
+            {mentors.map((mentor) => (
+              <MentorCard key={mentor.id} mentor={mentor} />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SessionsEmptyState({ sessions }: { sessions: Session[] }) {
+  const [expandedSession, setExpandedSession] = useState<string | null>(
+    sessions[0]?.id ?? null
+  );
+
+  return (
+    <div className="flex flex-col w-full pb-[20px]">
+      {/* Illustration + heading */}
+      <div className="flex flex-col gap-[12px] items-center px-[16px] py-[12px]">
+        <div className="h-[319px] mix-blend-darken relative w-full shrink-0">
+          <img
+            alt=""
+            className="absolute inset-0 max-w-none object-bottom size-full pointer-events-none"
+            src={imgNotFound}
+          />
+        </div>
+        <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] text-center w-full">
+          No sessions found
+        </p>
+      </div>
+
+      {/* Upcoming Sessions */}
+      {sessions.length > 0 && (
+        <div className="flex flex-col gap-[12px] px-[16px] pt-[16px]">
+          <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+            Upcoming Sessions
+          </p>
+          <div className="flex flex-col gap-3">
+            {sessions.map((session) =>
+              session.type === "1:1" ? (
+                <SessionCard1On1
+                  key={session.id}
+                  session={session}
+                  isExpanded={expandedSession === session.id}
+                  onToggle={() =>
+                    setExpandedSession(
+                      expandedSession === session.id ? null : session.id
+                    )
+                  }
+                />
+              ) : (
+                <SessionCardWebinar
+                  key={session.id}
+                  session={session}
+                  isExpanded={expandedSession === session.id}
+                  onToggle={() =>
+                    setExpandedSession(
+                      expandedSession === session.id ? null : session.id
+                    )
+                  }
+                />
+              )
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Mentor filter sheet ──────────────────────────────────────────────────────
+
+function MentorFilterSheet({
+  onClose,
+  onShowResults,
+}: {
+  onClose: () => void;
+  onShowResults: (hasFilters: boolean) => void;
+}) {
+  const [activeCategory, setActiveCategory] =
+    useState<MentorFilterCategory>("Experience");
+  const [sel, setSel] = useState<Record<MentorFilterCategory, Set<string>>>(
+    initMentorSel()
+  );
+
+  function toggle(opt: string) {
+    setSel((prev) => {
+      const next = new Set(prev[activeCategory]);
+      if (next.has(opt)) next.delete(opt);
+      else next.add(opt);
+      return { ...prev, [activeCategory]: next };
+    });
+  }
+
+  function clearAll() {
+    setSel(initMentorSel());
+  }
+
+  function handleShowResults() {
+    onShowResults(hasActiveSelections(sel));
+    onClose();
+  }
+
+  const currentOpts = MENTOR_FILTER_OPTIONS[activeCategory];
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
+        onClick={onClose}
+      />
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+        {/* Handle */}
+        <div className="flex flex-col items-center p-[16px] w-full">
+          <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
+        </div>
+        {/* Title */}
+        <div className="flex items-center px-[16px] pb-[12px] w-full">
+          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">
+            Filter
+          </p>
+        </div>
+        {/* Primary category tabs */}
+        <div className="w-full border-b border-[#e2d9ef]">
+          <div
+            className="flex gap-[8px] items-center px-[16px] pb-[12px] overflow-x-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {MENTOR_FILTER_CATEGORIES.map((cat) => {
+              const isActive = cat === activeCategory;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`flex h-[40px] items-center justify-center px-[16px] py-[10px] rounded-[12px] shrink-0 cursor-pointer border whitespace-nowrap ${
+                    isActive
+                      ? "bg-[#b090ef] border-[#7d3aea]"
+                      : "bg-white border-[#e2d9ef]"
+                  }`}
+                >
+                  <span
+                    className={`type-tab ${
+                      isActive
+                        ? "font-medium text-[#2d2040]"
+                        : "font-normal text-[#433059]"
+                    }`}
+                  >
+                    {cat}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {/* Secondary options */}
+        <div className="w-full overflow-y-auto max-h-[260px]">
+          {currentOpts.length > 0 ? (
+            <div className="flex flex-wrap gap-[12px] px-[16px] pt-[20px] pb-[20px] w-full">
+              {currentOpts.map((opt) => (
+                <FilterChip
+                  key={opt}
+                  label={opt}
+                  selected={sel[activeCategory].has(opt)}
+                  onClick={() => toggle(opt)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="px-[16px] pt-[20px] pb-[20px]">
+              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                No sub-filters for this category.
+              </p>
+            </div>
+          )}
+        </div>
+        {/* Footer CTAs */}
+        <div className="flex gap-[16px] items-center pt-[12px] pb-[24px] px-[16px] w-full border-t border-[#f0ecf7]">
+          <Button
+  variant="ghost"
+  size="lg"
+  onClick={clearAll}
+  className="shrink-0 !text-[#7D3AEA]"
+>
+            Clear All
+          </Button>
+          <Button variant="gradient" size="lg" onClick={handleShowResults} className="flex-1">
+            Show Results
+          </Button>
+        </div>
+        {/* Safe area */}
+        <BottomSafeArea />
+      </div>
+    </>
+  );
+}
+
+// ─── Session filter sheet ─────────────────────────────────────────────────────
+
+function SessionFilterSheet({
+  onClose,
+  onShowResults,
+}: {
+  onClose: () => void;
+  onShowResults: (hasFilters: boolean) => void;
+}) {
+  const [activeCategory, setActiveCategory] =
+    useState<SessionFilterCategory>("Attending");
+  const [sel, setSel] = useState<Record<SessionFilterCategory, Set<string>>>(
+    initSessionSel()
+  );
+
+  function toggle(opt: string) {
+    setSel((prev) => {
+      const next = new Set(prev[activeCategory]);
+      if (next.has(opt)) next.delete(opt);
+      else next.add(opt);
+      return { ...prev, [activeCategory]: next };
+    });
+  }
+
+  function clearAll() {
+    setSel(initSessionSel());
+  }
+
+  function handleShowResults() {
+    onShowResults(hasActiveSelections(sel));
+    onClose();
+  }
+
+  const currentOpts = SESSION_FILTER_OPTIONS[activeCategory];
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
+        onClick={onClose}
+      />
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+        {/* Handle */}
+        <div className="flex flex-col items-center p-[16px] w-full">
+          <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
+        </div>
+        {/* Title */}
+        <div className="flex items-center px-[16px] pb-[12px] w-full">
+          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">
+            Filter
+          </p>
+        </div>
+        {/* Primary category tabs */}
+        <div className="w-full border-b border-[#e2d9ef]">
+          <div
+            className="flex gap-[8px] items-center px-[16px] pb-[12px] overflow-x-auto"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {SESSION_FILTER_CATEGORIES.map((cat) => {
+              const isActive = cat === activeCategory;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`flex h-[40px] items-center justify-center px-[16px] py-[10px] rounded-[12px] shrink-0 cursor-pointer border whitespace-nowrap ${
+                    isActive
+                      ? "bg-[#b090ef] border-[#7d3aea]"
+                      : "bg-white border-[#e2d9ef]"
+                  }`}
+                >
+                  <span
+                    className={`type-tab ${
+                      isActive
+                        ? "font-medium text-[#2d2040]"
+                        : "font-normal text-[#433059]"
+                    }`}
+                  >
+                    {cat}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+        {/* Secondary options */}
+        <div className="w-full overflow-y-auto max-h-[260px]">
+          {currentOpts.length > 0 ? (
+            <div className="flex flex-wrap gap-[12px] px-[16px] pt-[20px] pb-[20px] w-full">
+              {currentOpts.map((opt) => (
+                <FilterChip
+                  key={opt}
+                  label={opt}
+                  selected={sel[activeCategory].has(opt)}
+                  onClick={() => toggle(opt)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="px-[16px] pt-[20px] pb-[20px]">
+              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                Select a category to see filters.
+              </p>
+            </div>
+          )}
+        </div>
+        {/* Footer CTAs */}
+        <div className="flex gap-[16px] items-center pt-[12px] pb-[24px] px-[16px] w-full border-t border-[#f0ecf7]">
+          <Button
+  variant="ghost"
+  size="lg"
+  onClick={clearAll}
+  className="shrink-0 !text-[#7D3AEA]"
+>
+            Clear All
+          </Button>
+          <Button variant="gradient" size="lg" onClick={handleShowResults} className="flex-1">
+            Show Results
+          </Button>
+        </div>
+        {/* Safe area */}
+        <BottomSafeArea />
+      </div>
+    </>
+  );
+}
+
 // ─── Bottom nav ───────────────────────────────────────────────────────────────
 
 
@@ -700,6 +1107,29 @@ export function MentorsPage() {
   const [sessionTab, setSessionTab] = useState<SessionTab>("1:1 Sessions");
   const [expandedSession, setExpandedSession] = useState<string | null>("s1");
   const [showMore, setShowMore] = useState(false);
+  const [showMentorFilter, setShowMentorFilter] = useState(false);
+  const [showSessionFilter, setShowSessionFilter] = useState(false);
+  const [mentorFiltersActive, setMentorFiltersActive] = useState(false);
+  const [sessionFiltersActive, setSessionFiltersActive] = useState(false);
+
+  // Close mentor filters/sheets when navigation occurs elsewhere in the app.
+  useEffect(() => {
+    function onNavigate() {
+      setShowMentorFilter(false);
+      setShowSessionFilter(false);
+      setShowMore(false);
+    }
+    window.addEventListener("lumio:navigate", onNavigate as EventListener);
+    return () => window.removeEventListener("lumio:navigate", onNavigate as EventListener);
+  }, []);
+
+  // Auto-expand the first session whenever the session sub-tab changes.
+  useEffect(() => {
+    const first = sessionsData.find((s) =>
+      sessionTab === "1:1 Sessions" ? s.type === "1:1" : s.type === "webinar"
+    );
+    setExpandedSession(first?.id ?? null);
+  }, [sessionTab]);
 
   const filteredSessions = sessionsData.filter((s) =>
     sessionTab === "1:1 Sessions" ? s.type === "1:1" : s.type === "webinar"
@@ -709,11 +1139,16 @@ export function MentorsPage() {
     ? [...pickedForYouMentors, ...additionalMentors]
     : pickedForYouMentors;
 
+  function handleFilterClick() {
+    if (mainTab === "Discover") setShowMentorFilter(true);
+    else setShowSessionFilter(true);
+  }
+
   return (
     <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
         <TopBar
-          onFilterClick={() => {}}
+          onFilterClick={handleFilterClick}
           searchPlaceholder={
             mainTab === "Discover"
               ? "Search mentors, skills, domain"
@@ -725,69 +1160,97 @@ export function MentorsPage() {
           <MainTabs activeTab={mainTab} onTabChange={setMainTab} />
 
           {mainTab === "Discover" && (
-            <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
-              <div className="flex flex-col gap-4 items-start w-full">
-                <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
-                  Top rated mentors
+            mentorFiltersActive ? (
+              <MentorsEmptyState mentors={[...topRatedMentors, ...pickedForYouMentors].slice(0, 4)} />
+            ) : (
+              <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
+                <div className="flex flex-col gap-4 items-start w-full">
+                  <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                    Top rated mentors
+                  </div>
+                  <div
+                    className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
+                    style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
+                  >
+                    {topRatedMentors.map((mentor) => (
+                      <MentorCard key={mentor.id} mentor={mentor} />
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full">
-                  {topRatedMentors.map((mentor) => (
-                    <MentorCard key={mentor.id} mentor={mentor} />
-                  ))}
-                </div>
-              </div>
 
-              <div className="flex flex-col gap-4 items-start w-full">
-                <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
-                  Picked for you
+                <div className="flex flex-col gap-4 items-start w-full">
+                  <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                    Picked for you
+                  </div>
+                  <div
+                    className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
+                    style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
+                  >
+                    {displayedPickedMentors.map((mentor) => (
+                      <MentorCard key={mentor.id} mentor={mentor} />
+                    ))}
+                  </div>
+                  {!showMore && (
+                    <ViewMoreButton onClick={() => setShowMore(true)} />
+                  )}
                 </div>
-                <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full">
-                  {displayedPickedMentors.map((mentor) => (
-                    <MentorCard key={mentor.id} mentor={mentor} />
-                  ))}
-                </div>
-                {!showMore && (
-                  <ViewMoreButton onClick={() => setShowMore(true)} />
-                )}
               </div>
-            </div>
+            )
           )}
 
           {mainTab === "Upcoming Sessions" && (
             <>
               <SessionTabs activeTab={sessionTab} onTabChange={setSessionTab} />
-              <div className="flex flex-col gap-3 px-4 py-6">
-                {filteredSessions.map((session) =>
-                  session.type === "1:1" ? (
-                    <SessionCard1On1
-                      key={session.id}
-                      session={session}
-                      isExpanded={expandedSession === session.id}
-                      onToggle={() =>
-                        setExpandedSession(
-                          expandedSession === session.id ? null : session.id
-                        )
-                      }
-                    />
-                  ) : (
-                    <SessionCardWebinar
-                      key={session.id}
-                      session={session}
-                      isExpanded={expandedSession === session.id}
-                      onToggle={() =>
-                        setExpandedSession(
-                          expandedSession === session.id ? null : session.id
-                        )
-                      }
-                    />
-                  )
-                )}
-              </div>
+              {sessionFiltersActive || filteredSessions.length === 0 ? (
+                <SessionsEmptyState sessions={sessionsData} />
+              ) : (
+                <div className="flex flex-col gap-3 px-4 py-6">
+                  {filteredSessions.map((session) =>
+                    session.type === "1:1" ? (
+                      <SessionCard1On1
+                        key={session.id}
+                        session={session}
+                        isExpanded={expandedSession === session.id}
+                        onToggle={() =>
+                          setExpandedSession(
+                            expandedSession === session.id ? null : session.id
+                          )
+                        }
+                      />
+                    ) : (
+                      <SessionCardWebinar
+                        key={session.id}
+                        session={session}
+                        isExpanded={expandedSession === session.id}
+                        onToggle={() =>
+                          setExpandedSession(
+                            expandedSession === session.id ? null : session.id
+                          )
+                        }
+                      />
+                    )
+                  )}
+                </div>
+              )}
             </>
           )}
         </div>
 
         <BottomNav active="mentors" profileNavImg={imgProfileNav} />
+
+        {/* Filter sheets */}
+        {showMentorFilter && (
+          <MentorFilterSheet
+            onClose={() => setShowMentorFilter(false)}
+            onShowResults={(hasFilters) => setMentorFiltersActive(hasFilters)}
+          />
+        )}
+        {showSessionFilter && (
+          <SessionFilterSheet
+            onClose={() => setShowSessionFilter(false)}
+            onShowResults={(hasFilters) => setSessionFiltersActive(hasFilters)}
+          />
+        )}
       </div>
     </div>
   );
