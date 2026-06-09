@@ -133,10 +133,6 @@ function ReviewBottomSheet({
           </button>
         </div>
 
-        {/* Safe area */}
-        <div className="h-[34px] bg-white flex items-end justify-center pb-[8px]">
-          <div className="bg-[#1a1128] h-[4px] rounded-full w-[130px]" />
-        </div>
       </div>
     </>
   );
@@ -267,11 +263,6 @@ export function VideoCallPage() {
           <button className="w-[58px] h-[58px] bg-white/90 backdrop-blur-[4px] border border-white/60 rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform">
             <Screencast size={24} color="#1A1128" weight="regular" />
           </button>
-        </div>
-
-        {/* Safe area */}
-        <div className="absolute bottom-0 left-0 right-0 h-[46px] flex items-end justify-center pb-[8px] z-10 pointer-events-none">
-          <div className="bg-white/40 h-[4px] rounded-full w-[130px]" />
         </div>
 
         {/* Review bottom sheet */}

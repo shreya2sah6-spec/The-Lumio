@@ -26,6 +26,19 @@ const videoCameraPath =
 type MainTab = "Discover" | "Upcoming Sessions";
 type SessionTab = "1:1 Sessions" | "Webinars";
 
+// ─── Active mentor filters passed back from the filter sheet ──────────────────
+
+interface ActiveMentorFilters {
+  gender: string | null;   // "Female" | "Male" | "Non-binary" | null
+  category: string | null; // e.g. "Career" | "Startup" | null
+}
+
+// Extended mentor type with filter metadata (local to this page)
+interface MentorWithMeta extends Mentor {
+  gender?: "Female" | "Male" | "Non-binary";
+  tags?: string[];
+}
+
 interface Session {
   id: string;
   type: "1:1" | "webinar";
@@ -44,7 +57,7 @@ interface Session {
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
-const topRatedMentors: Mentor[] = [
+const topRatedMentors: MentorWithMeta[] = [
   {
     id: "m1",
     name: "Shruti Jain",
@@ -57,6 +70,8 @@ const topRatedMentors: Mentor[] = [
     originalPrice: 600,
     discountedPrice: 300,
     isTopMentor: true,
+    gender: "Female",
+    tags: ["Design", "Career", "Fashion"],
   },
   {
     id: "m2",
@@ -70,6 +85,8 @@ const topRatedMentors: Mentor[] = [
     originalPrice: 600,
     discountedPrice: 400,
     isTopMentor: true,
+    gender: "Female",
+    tags: ["Design", "Startup", "Marketing"],
   },
   {
     id: "m3",
@@ -83,6 +100,8 @@ const topRatedMentors: Mentor[] = [
     originalPrice: 550,
     discountedPrice: 300,
     isTopMentor: true,
+    gender: "Male",
+    tags: ["Tech", "Career", "Design"],
   },
   {
     id: "m4",
@@ -96,10 +115,12 @@ const topRatedMentors: Mentor[] = [
     originalPrice: 580,
     discountedPrice: 250,
     isTopMentor: true,
+    gender: "Female",
+    tags: ["Finance", "Design", "Wellness"],
   },
 ];
 
-const pickedForYouMentors: Mentor[] = [
+const pickedForYouMentors: MentorWithMeta[] = [
   {
     id: "m5",
     name: "Amit Sharma",
@@ -111,6 +132,8 @@ const pickedForYouMentors: Mentor[] = [
     reviews: 95,
     originalPrice: 520,
     discountedPrice: 350,
+    gender: "Male",
+    tags: ["Career", "Tech"],
   },
   {
     id: "m6",
@@ -123,6 +146,8 @@ const pickedForYouMentors: Mentor[] = [
     reviews: 88,
     originalPrice: 480,
     discountedPrice: 320,
+    gender: "Female",
+    tags: ["Marketing", "Career", "Startup"],
   },
   {
     id: "m7",
@@ -135,6 +160,8 @@ const pickedForYouMentors: Mentor[] = [
     reviews: 80,
     originalPrice: 100,
     discountedPrice: "Free",
+    gender: "Male",
+    tags: ["Tech", "Startup"],
   },
   {
     id: "m8",
@@ -147,10 +174,12 @@ const pickedForYouMentors: Mentor[] = [
     reviews: 65,
     originalPrice: 450,
     discountedPrice: 280,
+    gender: "Female",
+    tags: ["Wellness", "Design"],
   },
 ];
 
-const additionalMentors: Mentor[] = [
+const additionalMentors: MentorWithMeta[] = [
   {
     id: "m9",
     name: "Rajesh Patel",
@@ -162,6 +191,8 @@ const additionalMentors: Mentor[] = [
     reviews: 110,
     originalPrice: 650,
     discountedPrice: 400,
+    gender: "Male",
+    tags: ["Finance", "Career"],
   },
   {
     id: "m10",
@@ -174,6 +205,8 @@ const additionalMentors: Mentor[] = [
     reviews: 98,
     originalPrice: 700,
     discountedPrice: 450,
+    gender: "Female",
+    tags: ["Finance", "Startup", "Wellness"],
   },
 ];
 
@@ -849,7 +882,7 @@ function MentorFilterSheet({
   onShowResults,
 }: {
   onClose: () => void;
-  onShowResults: (hasFilters: boolean) => void;
+  onShowResults: (filters: ActiveMentorFilters) => void;
 }) {
   const [activeCategory, setActiveCategory] =
     useState<MentorFilterCategory>("Experience");
@@ -871,7 +904,26 @@ function MentorFilterSheet({
   }
 
   function handleShowResults() {
-    onShowResults(hasActiveSelections(sel));
+    // Extract gender selection (pick first if multiple selected)
+    const genderSel = [...sel["Gender"]].filter((g) => g !== "No preference");
+    const gender = genderSel.length > 0 ? genderSel[0] : null;
+
+    // Extract category from Specialization mapped to tag labels
+    const specSel = [...sel["Specialization"]];
+    // Map Specialization options to tag keywords used in mentor data
+    const SPEC_TO_TAG: Record<string, string> = {
+      "Fashion Design": "Design",
+      "Textile Design": "Design",
+      "Fashion Styling": "Design",
+      "Fashion Communication": "Marketing",
+      "Product Development": "Tech",
+      "Merchandising": "Career",
+      "Luxury Fashion": "Finance",
+      "Sustainable Fashion": "Wellness",
+    };
+    const category = specSel.length > 0 ? (SPEC_TO_TAG[specSel[0]] ?? null) : null;
+
+    onShowResults({ gender, category });
     onClose();
   }
 
@@ -1102,7 +1154,7 @@ export function MentorsPage() {
   const [showMore, setShowMore] = useState(false);
   const [showMentorFilter, setShowMentorFilter] = useState(false);
   const [showSessionFilter, setShowSessionFilter] = useState(false);
-  const [mentorFiltersActive, setMentorFiltersActive] = useState(false);
+  const [activeMentorFilters, setActiveMentorFilters] = useState<ActiveMentorFilters>({ gender: null, category: null });
   const [sessionFiltersActive, setSessionFiltersActive] = useState(false);
 
   // Close mentor filters/sheets when navigation occurs elsewhere in the app.
@@ -1111,6 +1163,7 @@ export function MentorsPage() {
       setShowMentorFilter(false);
       setShowSessionFilter(false);
       setShowMore(false);
+      setActiveMentorFilters({ gender: null, category: null });
     }
     window.addEventListener("lumio:navigate", onNavigate as EventListener);
     return () => window.removeEventListener("lumio:navigate", onNavigate as EventListener);
@@ -1131,6 +1184,28 @@ export function MentorsPage() {
   const displayedPickedMentors = showMore
     ? [...pickedForYouMentors, ...additionalMentors]
     : pickedForYouMentors;
+
+  const mentorFiltersActive = activeMentorFilters.gender !== null || activeMentorFilters.category !== null;
+
+  // Apply AND filter logic across all mentors
+  const allMentors: MentorWithMeta[] = [...topRatedMentors, ...pickedForYouMentors, ...additionalMentors];
+  const filteredMentors = mentorFiltersActive
+    ? allMentors.filter((m) => {
+        const genderMatch = !activeMentorFilters.gender || m.gender === activeMentorFilters.gender;
+        const categoryMatch = !activeMentorFilters.category || (m.tags ?? []).includes(activeMentorFilters.category);
+        return genderMatch && categoryMatch;
+      })
+    : [];
+
+  // Dynamic heading
+  function getFilterHeading(): string {
+    const { gender, category } = activeMentorFilters;
+    const parts: string[] = [];
+    if (gender) parts.push(gender);
+    if (category) parts.push(category);
+    if (parts.length === 0) return "Mentors";
+    return parts.join(" ") + " Mentors";
+  }
 
   function handleFilterClick() {
     if (mainTab === "Discover") setShowMentorFilter(true);
@@ -1154,7 +1229,28 @@ export function MentorsPage() {
 
           {mainTab === "Discover" && (
             mentorFiltersActive ? (
-              <MentorsEmptyState mentors={[...topRatedMentors, ...pickedForYouMentors].slice(0, 4)} />
+              filteredMentors.length === 0 ? (
+                <MentorsEmptyState mentors={[...topRatedMentors, ...pickedForYouMentors].slice(0, 4)} />
+              ) : (
+                <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
+                  <div className="flex flex-col gap-4 items-start w-full">
+                    <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                      {getFilterHeading()}
+                    </div>
+                    <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                      Showing {filteredMentors.length} Matching Mentor{filteredMentors.length !== 1 ? "s" : ""}
+                    </p>
+                    <div
+                      className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
+                      style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
+                    >
+                      {filteredMentors.map((mentor) => (
+                        <MentorCard key={mentor.id} mentor={mentor} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )
             ) : (
               <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
                 <div className="flex flex-col gap-4 items-start w-full">
@@ -1235,7 +1331,7 @@ export function MentorsPage() {
         {showMentorFilter && (
           <MentorFilterSheet
             onClose={() => setShowMentorFilter(false)}
-            onShowResults={(hasFilters) => setMentorFiltersActive(hasFilters)}
+            onShowResults={(filters) => setActiveMentorFilters(filters)}
           />
         )}
         {showSessionFilter && (
