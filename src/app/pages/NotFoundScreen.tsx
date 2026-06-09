@@ -1,7 +1,5 @@
 import { ArrowRight } from "@phosphor-icons/react";
 import { Button } from "../components/ui/button";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 
 interface NotFoundScreenProps {
   title?: string;
@@ -20,8 +18,6 @@ export function NotFoundScreen({
 }: NotFoundScreenProps) {
   return (
     <div className="min-h-screen bg-[#fffeff] flex flex-col">
-      {/* Status bar */}
-      <StatusBar />
 
       {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 gap-8">
@@ -54,8 +50,6 @@ export function NotFoundScreen({
         </div>
       </div>
 
-      {/* Home indicator */}
-      <BottomSafeArea />
     </div>
   );
 }

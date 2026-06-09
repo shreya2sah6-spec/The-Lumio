@@ -7,7 +7,6 @@ import {
   VideoCamera,
 } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import type { Mentor } from "../components/MentorCard";
 import svgPaths from "@/imports/MentorsBookingReview-2/svg-37p92hqhmy";
 import imgMentorAvatarFallback from "@/imports/MentorsBookingReview-2/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
@@ -298,7 +297,6 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
                 )}
               </button>
             </div>
-            <BottomSafeArea />
           </div>
         </div>
       </div>

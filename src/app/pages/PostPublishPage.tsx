@@ -2,9 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, WarningCircle, X } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
 import { PrimaryButton } from "../components/PrimaryButton";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import { usePostDraft } from "../stores/postDraftStore";
 import { postDraftStore } from "../stores/postDraftStore";
 import svgPaths from "@/imports/PostDetails/svg-qgafcdr1f2";
@@ -122,15 +120,14 @@ export function PostPublishPage() {
     navigate("/post/publishing", { replace: true });
   }
 
-  // Footer height: border(1) + pt-3(12) + button(52) + pb-2(8) + BottomSafeArea(34) ≈ 107px
-  const FOOTER_HEIGHT = 110;
+  // Footer height: border(1) + pt-3(12) + button(52) + pb-2(8) ≈ 73px
+  const FOOTER_HEIGHT = 76;
 
   return (
     <div className="bg-[#fffeff] min-h-screen">
 
-      {/* ── Sticky top: status bar + page header ───────────────────────────── */}
+      {/* ── Sticky top: page header ─────────────────────────────────────────── */}
       <div className="sticky top-0 z-20 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.25)]">
-        <StatusBar />
         <PageHeader
           title="New Project"
           onBack={() => navigate("/post/project-editor/preview")}
@@ -197,8 +194,6 @@ export function PostPublishPage() {
         >
           {posting ? "Publishing…" : "Post"}
         </PrimaryButton>
-
-        <BottomSafeArea />
       </div>
 
     </div>

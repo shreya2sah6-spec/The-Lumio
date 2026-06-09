@@ -1,7 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import type { Mentor } from "../components/MentorCard";
 
 export function MessagingChatLockedPage() {
@@ -12,8 +10,6 @@ export function MessagingChatLockedPage() {
   return (
     <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen relative">
-        <StatusBar />
-
         <PageHeader
           title={mentor?.name ?? "Chat"}
           onBack={() =>
@@ -146,8 +142,6 @@ export function MessagingChatLockedPage() {
           </div>
         </div>
 
-        {/* Bottom safe area */}
-        <BottomSafeArea />
       </div>
     </div>
   );

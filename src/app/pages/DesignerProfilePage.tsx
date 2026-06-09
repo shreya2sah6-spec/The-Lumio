@@ -14,8 +14,6 @@ import { Button } from "../components/ui/button";
 import { SaveButton } from "../components/SaveButton";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 
 import imgProject1 from "@/imports/MentorsListing-1/af1c850daadb743337a79569abbde7a01ce4354c.png";
 import { rv, rvAnon } from "@/app/data/reviewIdentities";
@@ -70,6 +68,9 @@ import {
   logoINIFD,
   logoPearl,
   logoSymbiosis,
+  logoLifestyle,
+  logoMarksSpencer,
+  logoGlobalDesi,
 } from "../data/companyLogos";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -212,24 +213,24 @@ const DESIGNER_CONFIGS: Record<string, DesignerConfig> = {
     id: "d3",
     name: "Akshit Verma",
     role: "Fashion Designer",
-    company: "",
+    company: "Marks & Spencer India",
     avatar: "https://images.unsplash.com/photo-1548142813-c348350df52b?w=300&h=300&fit=crop&crop=face&auto=format",
     experienceYears: "4 yrs exp",
     exCompany: "EX - Gaurav Gupta",
     tabs: ["Overview", "Mentor review"],
     experience: [
-      { letter: "I", color: "#433059",    company: "Independent",  role: "Fashion Designer", start: "2024", end: "Present" },
-      { letter: "G", logo: logoGauravGupta, company: "Gaurav Gupta", role: "Jr. Designer",     start: "2022", end: "2024"    },
-      { letter: "A", logo: logoAnavila, company: "Anavila",      role: "Design Assistant", start: "2021", end: "2022"    },
+      { letter: "M", logo: logoMarksSpencer, company: "Marks & Spencer India", role: "Fashion Designer", start: "2024", end: "Present" },
+      { letter: "G", logo: logoGauravGupta,  company: "Gaurav Gupta",          role: "Jr. Designer",     start: "2022", end: "2024"    },
+      { letter: "A", logo: logoAnavila,      company: "Anavila",               role: "Design Assistant", start: "2021", end: "2022"    },
     ],
     education: { letter: "N", logo: logoNIFT, school: "NIFT Mumbai", degree: "B.Des in Fashion Design", start: "2017", end: "2021" },
     showAboutMe: true,
-    bio: "I am a fashion designer based in Delhi, currently working independently on slow-fashion projects that draw from Indian tailoring traditions. My practice centres on natural fibres, hand-finishing, and collaborating with small artisan workshops to produce garments with genuine craft character. I believe the future of Indian fashion lies in depth — in knowing your materials, your makers, and your cultural references with real precision.",
+    bio: "I am a fashion designer based in Delhi, currently working at Marks & Spencer India on slow-fashion projects that draw from Indian tailoring traditions. My practice centres on natural fibres, hand-finishing, and collaborating with small artisan workshops to produce garments with genuine craft character. I believe the future of Indian fashion lies in depth — in knowing your materials, your makers, and your cultural references with real precision.",
     showRecentPosts: false,
     rating: 4.4,
     reviewCount: 28,
     insights: [
-      { label: "Independent practice",  text: "Honest model of slow-fashion reality: artisan sourcing, client-building, no institutional backing." },
+      { label: "Craft-led design practice", text: "Natural fibres, hand-finishing, and artisan sourcing — design built on material and maker knowledge." },
       { label: "Natural material focus", text: "Understands material realities of sustainable design practice, not just the aesthetic ideals." },
       { label: "Concept development",   text: "Sharp instincts for real potential vs merely interesting — one of the hardest skills to develop." },
     ],
@@ -381,6 +382,18 @@ const COMPANY_LOGO_MAP: Record<string, string> = {
   "Nykaa Fashion":        logoNykaaFashion,
   "Puma":                 logoPuma,
   "Puma India":           logoPuma,
+  // ── Department store chains ───────────────────────────────────────────────
+  "Lifestyle":            logoLifestyle,
+  "Lifestyle Brand":      logoLifestyle,
+  // ── International retail ──────────────────────────────────────────────────
+  "Marks & Spencer":      logoMarksSpencer,
+  logoGlobalDesi,
+  "Marks & Spencer India": logoMarksSpencer,
+  "M&S":                  logoMarksSpencer,
+  logoGlobalDesi,
+  "M&S India":            logoMarksSpencer,
+  "Global Desi":          logoGlobalDesi,
+  logoGlobalDesi,
 };
 
 // ─── Recent Posts (shared pool — used when showRecentPosts is true) ───────────
@@ -554,8 +567,6 @@ export function DesignerProfilePage() {
   return (
     <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-
-        <StatusBar />
 
         <PageHeader
           title="Designer Profile"
@@ -851,8 +862,6 @@ export function DesignerProfilePage() {
 
           </div>
 
-          {/* Bottom safe area */}
-          <BottomSafeArea />
         </div>
       </div>
     </div>

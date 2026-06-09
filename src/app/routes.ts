@@ -1,9 +1,9 @@
 // routes
 import { createBrowserRouter, redirect } from "react-router-dom";
+// NOTE: HomeProfileCompletionPage removed — onboarding flows directly to /home/feed
 import { OnboardingPage } from "./pages/OnboardingPage";
 import { AuthPage } from "./pages/AuthPage";
 import { HomePage } from "./pages/HomePage";
-import { HomeProfileCompletionPage } from "./pages/HomeProfileCompletionPage";
 import { NotificationsPage } from "./pages/NotificationsPage";
 import { MessagingPage } from "./pages/MessagingPage";
 import { JobsPage } from "./pages/JobsPage";
@@ -27,11 +27,6 @@ import { PostPublishingPage } from "./pages/PostPublishingPage";
 import { PostProjectDetailPage } from "./pages/PostProjectDetailPage";
 import { Root, HydrateFallback } from "./Root";
 
-function homeLoader() {
-  const done = localStorage.getItem("profileComplete") === "true";
-  return redirect(done ? "/home/feed" : "/home/profile-completion");
-}
-
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -52,11 +47,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "home",
-        loader: homeLoader,
-      },
-      {
-        path: "home/profile-completion",
-        Component: HomeProfileCompletionPage,
+        loader: () => redirect("/home/feed"),
       },
       {
         path: "home/feed",
@@ -170,6 +161,10 @@ export const router = createBrowserRouter([
       // ── Project Detail ─────────────────────────────────────────────────────
       {
         path: "profile/project-detail-screen",
+        Component: PostProjectDetailPage,
+      },
+      {
+        path: "post/detail",
         Component: PostProjectDetailPage,
       },
     ],

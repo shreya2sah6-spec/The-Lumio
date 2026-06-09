@@ -11,9 +11,10 @@ import {
   PaperPlaneTilt,
   CaretDown,
 } from "@phosphor-icons/react";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import { SaveButton } from "../components/SaveButton";
+import { postDraftStore } from "../stores/postDraftStore";
+import { toTitleCase } from "../utils/validation";
+import imgUserAvatar from "@/imports/ProfileOverview-2/bb5b0e0896cc0396e3c8e2b6811f344da7f15455.png";
 
 // ── Image imports ──────────────────────────────────────────────────────────────
 
@@ -836,11 +837,75 @@ function CreatorHeader({
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
+// ── User profile helpers ──────────────────────────────────────────────────────
+
+const DOMAIN_TO_ROLE: Record<string, string> = {
+  Fashion: "Fashion Designer",
+  Textile: "Textile Designer",
+  Jewelry: "Jewelry Designer",
+  Accessory: "Accessory Designer",
+  Footwear: "Footwear Designer",
+  Leather: "Leather Designer",
+  Illustrator: "Fashion Illustrator",
+  Stylist: "Fashion Stylist",
+  Merchandising: "Merchandiser",
+};
+
+const EXPERIENCE_TO_PREFIX: Record<string, string> = {
+  Student: "Intern",
+  Fresher: "Jr.",
+  "1-2 Yrs": "Jr.",
+  "3-5 Yrs": "Mid-Level",
+  "6-9 Yrs": "Senior",
+  "9-15 yrs": "Senior",
+  "16+ yrs": "Senior",
+};
+
 export function PostProjectDetailPage() {
   const navigate  = useNavigate();
   const location  = useLocation();
   const postId    = (location.state as { postId?: string } | null)?.postId ?? "kamini";
-  const config    = POST_CONFIGS[postId] ?? POST_CONFIGS.kamini;
+
+  // ── User-posted project — build config dynamically from store ──────────────
+  const isUserPost = postId.startsWith("post-");
+  const userPost = isUserPost ? postDraftStore.getPosts().find((p) => p.id === postId) : null;
+
+  const userConfig: PostConfig | null = (() => {
+    if (!userPost) return null;
+    const storedName = localStorage.getItem("lumio_name") ?? "";
+    const storedDomain = localStorage.getItem("lumio_domain") ?? "";
+    const storedExperience = localStorage.getItem("lumio_experience") ?? "";
+    const displayName = storedName ? toTitleCase(storedName) : "Sanya Gupta";
+    const domainRole = DOMAIN_TO_ROLE[storedDomain] ?? "Fashion Designer";
+    const expPrefix = EXPERIENCE_TO_PREFIX[storedExperience] ?? "Jr.";
+    const displayTitle = storedName ? `${expPrefix} ${domainRole}` : "Jr. Fashion Designer";
+    const displayStatus = storedExperience === "Student" ? "Seeking internship" : "Seeking full-time";
+
+    const allImages: EditorialBlock[] = [
+      ...userPost.aboutImages.map((src) => ({ type: "image" as const, src })),
+      ...userPost.processImages.map((src) => ({ type: "image" as const, src })),
+    ];
+
+    return {
+      id: userPost.id,
+      creator: {
+        name: displayName,
+        role: displayTitle,
+        status: displayStatus,
+        avatar: imgUserAvatar,
+      },
+      caption: userPost.caption || "My latest project",
+      coverSrc: userPost.coverUrl || "",
+      coverAspectRatio: "1.12 / 1",
+      blocks: allImages,
+      dockets: [],
+      engagement: { views: "1", claps: 0, comments: 0, reposts: 0, date: "Just now" },
+      totalComments: 0,
+      similarPosts: [],
+    };
+  })();
+
+  const config    = (isUserPost && userConfig) ? userConfig : (POST_CONFIGS[postId] ?? POST_CONFIGS.kamini);
   const { creator, caption, blocks, dockets, engagement, totalComments, similarPosts } = config;
 
   // Always open from the top — reset scroll on every navigation into this screen
@@ -859,11 +924,10 @@ export function PostProjectDetailPage() {
           className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-30 bg-[#fffeff]"
           style={{ boxShadow: "0px 1px 2px rgba(200,192,212,0.3)" }}
         >
-          <StatusBar />
           <div className="flex items-center px-4 py-3 gap-2">
             <button
               type="button"
-              onClick={() => navigate("/home/feed")}
+              onClick={() => navigate(isUserPost ? "/profile" : "/home/feed")}
               className="p-2 -ml-2 shrink-0 flex items-center justify-center cursor-pointer"
               aria-label="Go back"
             >
@@ -883,8 +947,8 @@ export function PostProjectDetailPage() {
           </div>
         </div>
 
-        {/* ── Scrollable content (offset = 44 StatusBar + 58 header = 102px) ── */}
-        <div className="pt-[102px] pb-[80px] flex flex-col">
+        {/* ── Scrollable content (offset = 58px header) ── */}
+        <div className="pt-[58px] pb-[80px] flex flex-col">
 
           {/* ── 2. Creator info ───────────────────────────────────────────────── */}
           <CreatorHeader creator={creator} onPress={goToDesignerProfile} />
@@ -1154,11 +1218,13 @@ export function PostProjectDetailPage() {
             </div>
           )}
 
-          {/* ── 9. Similar post — only for non-collaboration posts ───────────── */}
-          {!creator.isCollaboration && (
+
+
+          {/* ── 9. Similar post — feed/external posts only ────────────────── */}
+          {!isUserPost && !creator.isCollaboration && similarPosts.length > 0 && (
           <div className="pt-[24px] pb-[24px]">
 
-            {/* Heading — standalone, no decorative line */}
+            {/* Heading */}
             <div className="px-[16px] mb-[20px]">
               <p className="font-['Roboto_Serif',serif] font-semibold text-[#1A1128] text-[20px] leading-[28px]">
                 Similar post
@@ -1182,7 +1248,6 @@ export function PostProjectDetailPage() {
                     className="flex flex-col bg-white overflow-hidden"
                     style={{ borderRadius: 8, border: "1px solid #e2d9ef" }}
                   >
-                    {/* Thumbnail */}
                     <div style={{ width: 246, height: 140, flexShrink: 0 }}>
                       <img
                         src={src}
@@ -1191,7 +1256,6 @@ export function PostProjectDetailPage() {
                         draggable={false}
                       />
                     </div>
-                    {/* Date only */}
                     <div className="px-[10px] py-[8px]">
                       <p
                         className="font-['Manrope',sans-serif] font-normal text-[12px] leading-[18px] tracking-[0.24px]"
@@ -1206,14 +1270,9 @@ export function PostProjectDetailPage() {
             </div>
 
           </div>
-          )}{/* end !creator.isCollaboration */}
+          )}
 
         </div>{/* end scrollable content */}
-
-        {/* ── Fixed bottom safe area ────────────────────────────────────────── */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-40">
-          <BottomSafeArea />
-        </div>
 
         {/* ── Clap FAB — dynamic initial count per post ────────────────────── */}
         <ClapFab initialCount={engagement.claps} />

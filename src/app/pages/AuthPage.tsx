@@ -15,8 +15,6 @@ import imgLogo from "@/imports/AuthPhoneEntry/4cc7ee0fe5188ecaeb60505d7ea8a035d0
 import imgGoogle from "@/imports/AuthPhoneEntry/c821627267af44f079059837a664f4fe169b9fb6.png";
 import imgLinkedin from "@/imports/AuthPhoneEntry/fbbd2871c82071c66cadf90243ea1b3ae31ffda5.png";
 import imgApple from "@/imports/AuthPhoneEntry/c8008663eda301daaf444ff0f8fc6e191d46cac2.png";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 
 // ─── Shared primitives ────────────────────────────────────────────────────────
 
@@ -658,7 +656,7 @@ export function AuthPage() {
     localStorage.setItem("lumio_name", userName);
     localStorage.setItem("lumio_domain", userDomain);
     localStorage.setItem("lumio_experience", userExperience);
-    navigate("/home");
+    navigate("/home/feed");
   }
 
   const screens: Record<AuthStep, React.ReactNode> = {
@@ -689,13 +687,8 @@ export function AuthPage() {
   };
 
   return (
-    /* h-screen + overflow-hidden: StatusBar and HomeIndicator are pinned,
-       never scroll with content */
     <div className="h-screen bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
       <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
-
-        {/* ── Status bar — fixed at top ── */}
-        <StatusBar />
 
         {/* ── Scrollable content area ── */}
         <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto min-h-0">
@@ -706,8 +699,6 @@ export function AuthPage() {
           </div>
         </div>
 
-        {/* ── Home indicator — fixed at bottom ── */}
-        <BottomSafeArea />
       </div>
     </div>
   );

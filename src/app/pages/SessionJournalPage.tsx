@@ -2,8 +2,6 @@ import { useState, createContext, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, ShareFat, Link, BookOpen, FileText, CaretDown, CaretUp } from "@phosphor-icons/react";
 import imgMentorAvatarFallback from "@/imports/MentorsBookingConfirmed/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -417,7 +415,6 @@ function AiSummaryTab() {
         </div>
       </div>
 
-      <BottomSafeArea />
     </div>
   );
 }
@@ -516,7 +513,6 @@ function TranscriptTab() {
           <TranscriptSection key={section.id} section={section} />
         ))}
       </div>
-      <BottomSafeArea />
     </div>
   );
 }
@@ -593,7 +589,6 @@ function SessionChatTab() {
         ))}
       </div>
 
-      <BottomSafeArea />
     </div>
   );
 }
@@ -673,8 +668,6 @@ export function SessionJournalPage() {
     <SessionCtx.Provider value={resolvedSession}>
       <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
         <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
-          <StatusBar />
-
           {/* Shared header */}
           <JournalHeader onBack={handleBack} />
 

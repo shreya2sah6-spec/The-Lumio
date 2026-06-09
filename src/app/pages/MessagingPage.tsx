@@ -7,8 +7,6 @@ import {
   PaperPlaneTilt,
 } from "@phosphor-icons/react";
 import { SearchBar } from "../components/SearchBar";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import imgRahul from "@/imports/MessagingInbox-3/915a716cc5b6ad4efd2b16355a601dbc5e28776c.png";
 import imgPriya from "@/imports/MessagingInbox-3/424a03d1946d4f9a9f1bbebe51d8413d38f90e7e.png";
 import imgNeha from "@/imports/MessagingInbox-3/0e24066874f0be293f0c1d91df85f101e8dea5b1.png";
@@ -214,7 +212,6 @@ function InboxView({
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="shrink-0 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-        <StatusBar />
         <div className="flex items-center gap-3 px-4 h-[52px]">
           <button
             onClick={() => navigate("/home/feed")}
@@ -372,7 +369,6 @@ function ChatView({
   return (
     <div className="flex flex-col" style={{ height: "100dvh" }}>
       <div className="bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)] shrink-0">
-        <StatusBar />
         <div className="flex items-center gap-3 px-4 h-[60px]">
           <button
             onClick={onBack}
@@ -452,7 +448,6 @@ function ChatView({
             <PaperPlaneTilt size={20} color="white" weight="fill" />
           </button>
         </div>
-        <BottomSafeArea />
       </div>
     </div>
   );

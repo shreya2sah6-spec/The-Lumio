@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight } from "@phosphor-icons/react";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
-
 import imgSplashLogo from "@/imports/OnboardingSplashScreen/4cc7ee0fe5188ecaeb60505d7ea8a035d0ee470b.png";
 import imgLogo from "@/imports/OnboardingSlide1/53d3387f93d897cfb38b0811f091155ba5c9578f.png";
 import imgBg1 from "@/imports/OnboardingSlide1/fd3d51451c03abf8faadf8fa09d7b4cbe4ccb6b8.png";
@@ -113,7 +110,6 @@ function SplashScreen({ onFinish }: { onFinish: () => void }) {
       className="min-h-screen w-full max-w-[800px] mx-auto bg-[#fffeff] flex flex-col cursor-pointer"
       onClick={onFinish}
     >
-      <StatusBar />
       <div className="flex-1 flex items-center justify-center">
         <img
           alt="Lumio"
@@ -121,7 +117,6 @@ function SplashScreen({ onFinish }: { onFinish: () => void }) {
           src={imgSplashLogo}
         />
       </div>
-      <BottomSafeArea />
     </div>
   );
 }

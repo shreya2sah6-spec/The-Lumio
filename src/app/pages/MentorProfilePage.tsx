@@ -20,8 +20,6 @@ import {
 import { MentorCard, type Mentor } from "../components/MentorCard";
 import { Button } from "../components/ui/button";
 import { SaveButton } from "../components/SaveButton";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 
 import { PageHeader } from "../components/PageHeader";
@@ -80,6 +78,9 @@ import {
   logoArvind,
   logoGoodEarth,
   logoAbrahamThakore,
+  logoLifestyle,
+  logoMarksSpencer,
+  logoGlobalDesi,
 } from "../data/companyLogos";
 
 // ─── Mentor avatar + media images — sourced from the centralized registry ─────
@@ -243,8 +244,8 @@ const MENTOR_DATA: Record<string, MentorData> = {
     showResponseTime: true,
     experience: [
       { company: "MAX Fashion",           letter: "M", logo: logoMAX,      role: "Sr. Fashion Designer", start: "2019", end: "Present" },
-      { company: "Marks & Spencer India", letter: "M", color: "#309B48", role: "Designer",             start: "2017", end: "2019"    },
-      { company: "Global Desi",           letter: "G", color: "#C4922A", role: "Jr. Designer",         start: "2015", end: "2017"    },
+      { company: "Marks & Spencer India", letter: "M", logo: logoMarksSpencer, role: "Designer",             start: "2017", end: "2019"    },
+      { company: "Global Desi",           letter: "G", logo: logoGlobalDesi, role: "Jr. Designer",         start: "2015", end: "2017"    },
     ],
     education: { school: "NIFT Delhi", letter: "N", logo: logoNIFT, degree: "B.Des in Fashion Technology", start: "2013", end: "2017" },
     skills: ["Womenswear Design", "Sustainable Fashion", "Fabric Sourcing", "Range Planning", "Visual Merchandising", "Team Leadership", "Trend Analysis", "CAD / Illustrator"],
@@ -449,7 +450,7 @@ const MENTOR_DATA: Record<string, MentorData> = {
     showWebinar: false,
     showResponseTime: true,
     experience: [
-      { company: "Lifestyle Brand", letter: "L", color: "#374151",     role: "Sr. Fashion Designer", start: "2019", end: "Present" },
+      { company: "Lifestyle",        letter: "L", logo: logoLifestyle,  role: "Sr. Fashion Designer", start: "2019", end: "Present" },
       { company: "Shoppers Stop",   letter: "S", logo: logoShoppersStop, role: "Designer",             start: "2017", end: "2019"    },
       { company: "Central",         letter: "C", logo: logoCentral,      role: "Jr. Designer",          start: "2015", end: "2017"    },
       { company: "Arvind Brands",   letter: "A", logo: logoArvind,       role: "Design Trainee",        start: "2013", end: "2015"    },
@@ -767,8 +768,6 @@ export function MentorProfilePage() {
   return (
     <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-        <StatusBar />
-
         <PageHeader
           title="Mentor's Profile"
           onBack={() => navigate("/mentors")}
@@ -1378,8 +1377,6 @@ export function MentorProfilePage() {
               </Button>
             </div>
 
-            {/* Safe Area */}
-            <BottomSafeArea />
           </div>
         </div>
       </div>

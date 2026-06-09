@@ -73,8 +73,6 @@ import imgReviewer1 from "@/imports/JobsDetailReviews/5dde8865bca1503c9d643f24bd
 import imgReviewer2 from "@/imports/JobsDetailReviews/be6eb4acfee35fa9fb482f3e84f93a1f10551bbf.png";
 import imgReviewer3 from "@/imports/JobsDetailReviews/f801d802405de74f12a3ae2fc96210f8d94e06db.png";
 import imgNotFound from "@/imports/SharedNotFound/460b6c9e17511d97e9e5c7a1875505fb0de17812.png";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -1223,7 +1221,6 @@ function FilterSheet({
             Show Results
           </Button>
         </div>
-        <BottomSafeArea />
       </div>
     </>
   );
@@ -1330,7 +1327,6 @@ function ListingView({
   return (
     <div className="flex flex-col flex-1 overflow-hidden h-full">
       <div className="shrink-0 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-        <StatusBar />
         <div className="flex gap-[12px] items-center px-[16px] py-[12px]">
           <SearchBar placeholder={searchPlaceholder} className="flex-1" />
           <button
@@ -1621,8 +1617,6 @@ function DetailView({
     <div className="flex flex-col flex-1 overflow-hidden h-full">
       {/* Header */}
       <div className="shrink-0 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-        <StatusBar />
-
         <PageHeader
           title="Job Details"
           onBack={onBack}
@@ -1862,8 +1856,6 @@ function DetailView({
             {applied ? "Applied" : "Quick Apply"}
           </Button>
         </div>
-
-        <BottomSafeArea />
       </div>
     </div>
   );

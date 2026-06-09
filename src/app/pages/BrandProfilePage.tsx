@@ -3,8 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useArrowTabNav } from "../hooks/useArrowTabNav";
 import { ArrowLeft, ShareFat, Star, MapPin, ArrowSquareOut, DotsThreeVertical, Check } from "@phosphor-icons/react";
 import { Button } from "../components/ui/button";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import { OverviewTab } from "../components/brand-profile/OverviewTab";
 import { JobsTab } from "../components/brand-profile/JobsTab";
 import { ReviewsTab } from "../components/brand-profile/ReviewsTab";
@@ -402,10 +400,7 @@ export function BrandProfilePage() {
     <div className="h-screen bg-[#fffeff] flex items-start justify-center overflow-hidden">
     <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col h-full overflow-hidden">
 
-      {/* ── Status bar — fixed to top, never scrolls ── */}
-      <StatusBar />
-
-      {/* ── Top navbar — fixed below status bar ── */}
+      {/* ── Top navbar ── */}
       {/* Equal-side-panel layout: back | [flex-1 center] title [flex-1 center] | share
           The h1 is hug-content (no flex-1 on it) and visually centered because both
           side slots grow equally. -ml-2 / -mr-2 preserve the touch-target compensation. */}
@@ -569,8 +564,6 @@ export function BrandProfilePage() {
         </div>
       </div>
 
-      {/* ── Bottom safe-area — fixed to bottom, never scrolls ── */}
-      <BottomSafeArea />
     </div>
     </div>
   );

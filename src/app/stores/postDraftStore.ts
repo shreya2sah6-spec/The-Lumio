@@ -15,6 +15,14 @@ export interface PublishedPost {
   coverUrl: string;
   caption: string;
   publishedAt: string;
+  /** Step 1 images — for project detail page */
+  aboutImages: string[];
+  /** Step 1 text */
+  aboutText: string;
+  /** Step 2 images — for project detail page */
+  processImages: string[];
+  /** Step 2 text */
+  processText: string;
 }
 
 /**
@@ -90,12 +98,16 @@ export const postDraftStore = {
   },
 
   publishPost() {
-    const { coverUrl, caption } = _draft;
+    const { coverUrl, caption, aboutImages, aboutText, processImages, processText } = _draft;
     const newPost: PublishedPost = {
       id: `post-${Date.now()}`,
       coverUrl: coverUrl ?? "",
       caption,
       publishedAt: "Just now",
+      aboutImages: (aboutImages ?? []).filter(Boolean) as string[],
+      aboutText: aboutText ?? "",
+      processImages: (processImages ?? []).filter(Boolean) as string[],
+      processText: processText ?? "",
     };
     _posts = [newPost, ..._posts];
     _draft = { ...EMPTY_DRAFT };

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Images, Palette, Package, Bag } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
 import { CreateProjectStepper } from "../components/CreateProjectStepper";
 import { PortfolioComposerToolbar } from "../components/PortfolioComposerToolbar";
 import { UploadBlock, AddMoreBlock } from "../components/UploadBlock";
@@ -41,7 +40,6 @@ export function PostProjectEditorAbout() {
     /* Body-scroll layout: sticky header, content clears fixed toolbar via pb-[140px] */
     <div className="bg-[#fffeff] min-h-screen">
       <div className="sticky top-0 z-20 bg-[#fffeff]">
-        <StatusBar />
         <PageHeader
           title="Add Your Project"
           onBack={() => navigate("/post/create-project")}

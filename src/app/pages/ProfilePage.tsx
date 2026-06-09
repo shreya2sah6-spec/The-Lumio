@@ -11,7 +11,6 @@ import {
 import { toTitleCase } from "../utils/validation";
 import { truncateAiBulletItem } from "../utils/aiSummary";
 import { BottomNav } from "../components/BottomNav";
-import { StatusBar } from "../components/StatusBar";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 import svgPaths from "@/imports/ProfileOverview-2/svg-n8z2v8xsv9";
 import imgAvatar from "@/imports/ProfileOverview-2/bb5b0e0896cc0396e3c8e2b6811f344da7f15455.png";
@@ -200,7 +199,7 @@ function DesignersYouMayKnow() {
               <div className="size-[54px] rounded-full overflow-hidden border border-[#e2d9ef] shrink-0">
                 <img
                   alt=""
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                   src={designer.avatar}
                 />
               </div>
@@ -366,8 +365,6 @@ export function ProfilePage() {
   return (
     <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
-        <StatusBar />
-
         {/* Profile Header */}
         <div className="flex items-start pb-[12px] pt-[16px] px-[16px] bg-white gap-[8px]">
           <div className="flex-1 flex flex-col gap-[12px] items-center min-w-0">
@@ -529,11 +526,14 @@ export function ProfilePage() {
                   className="flex gap-[12px] overflow-x-auto -mx-[16px] px-[16px] pr-[16px]"
                   style={{ scrollbarWidth: "none" }}
                 >
-                  {/* Published posts from store — prepended */}
+                  {/* Published posts from store — prepended, clickable */}
                   {publishedPosts.map((post) => (
-                    <div
+                    <button
                       key={post.id}
-                      className="bg-white rounded-[8px] border border-[rgba(157,148,170,0.4)] shrink-0 overflow-hidden"
+                      type="button"
+                      onClick={() => navigate("/post/detail", { state: { postId: post.id } })}
+                      className="bg-white rounded-[8px] border border-[rgba(157,148,170,0.4)] shrink-0 overflow-hidden text-left cursor-pointer active:opacity-75 transition-opacity"
+                      style={{ WebkitTapHighlightColor: "transparent" }}
                     >
                       <div className="flex flex-col gap-[8px]">
                         <div className="h-[140px] w-[246px]">
@@ -553,7 +553,7 @@ export function ProfilePage() {
                           </p>
                         </div>
                       </div>
-                    </div>
+                    </button>
                   ))}
                   {/* Static seed posts */}
                   {[

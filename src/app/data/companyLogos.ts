@@ -62,6 +62,9 @@ import _arvind          from "@/imports/logo/Arvind.png";
 import _relianceTrend   from "@/imports/logo/Reliance Trend.png";
 import _nykaaFashion    from "@/imports/logo/NYKAA FASHION.png";
 import _puma            from "@/imports/logo/Pume.png";
+import _lifestyle       from "@/imports/logo/Lifestyle.png";
+import _marksSpencer    from "@/imports/logo/Markes & Spencers.png";
+import _globalDesi      from "@/imports/logo/Global Desi.png";
 
 // ─── Named exports ────────────────────────────────────────────────────────────
 
@@ -115,3 +118,6 @@ export const logoArvind         = _arvind;
 export const logoRelianceTrend  = _relianceTrend;
 export const logoNykaaFashion   = _nykaaFashion;
 export const logoPuma           = _puma;
+export const logoLifestyle      = _lifestyle;
+export const logoMarksSpencer   = _marksSpencer;
+export const logoGlobalDesi     = _globalDesi;

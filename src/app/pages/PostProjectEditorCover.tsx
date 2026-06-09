@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Images } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
 import { CreateProjectStepper } from "../components/CreateProjectStepper";
 import { PortfolioComposerToolbar } from "../components/PortfolioComposerToolbar";
 import { UploadBlock } from "../components/UploadBlock";
@@ -24,7 +23,6 @@ export function PostProjectEditorCover() {
   return (
     <div className="bg-[#fffeff] min-h-screen">
       <div className="sticky top-0 z-20 bg-[#fffeff]">
-        <StatusBar />
         <PageHeader
           title="Add Your Project"
           onBack={() => navigate("/post/project-editor/process")}

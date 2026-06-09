@@ -10,7 +10,6 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { BottomSafeArea } from "./BottomSafeArea";
 
 // After Cover (step 3) go straight to the full Preview.
 const CONTINUE_MAP: Record<string, string> = {
@@ -142,9 +141,6 @@ export function PortfolioComposerToolbar({ validate }: PortfolioComposerToolbarP
         </button>
 
       </div>
-
-      {/* Home indicator safe area */}
-      <BottomSafeArea />
     </div>
   );
 }

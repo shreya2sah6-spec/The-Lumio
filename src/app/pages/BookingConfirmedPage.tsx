@@ -1,8 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { X, VideoCamera, CalendarDots } from "@phosphor-icons/react";
 import type { Mentor } from "../components/MentorCard";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import imgGif from "@/imports/MentorsBookingConfirmed/f542fa271d38a41401e77674d52427657cdceb02.png";
 import imgMentorAvatarFallback from "@/imports/MentorsBookingConfirmed/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
 
@@ -62,8 +60,6 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
   return (
     <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-        <StatusBar />
-
         {/* Header with close button */}
         <div className="bg-[#fffeff] flex items-center px-[16px] py-[12px] shrink-0">
           <button
@@ -181,7 +177,6 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
                 </span>
               </button>
             </div>
-            <BottomSafeArea />
           </div>
         </div>
       </div>

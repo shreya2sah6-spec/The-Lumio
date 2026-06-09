@@ -1,7 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "@phosphor-icons/react";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import imgAvatar1 from "@/imports/HomeNotifications-1/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
 import imgAvatar2 from "@/imports/HomeNotifications-1/5d686febbf6bd99db27d32ec61024adf89b31b4f.png";
 
@@ -13,7 +11,6 @@ export function NotificationsPage() {
       <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
         {/* Top bar */}
         <div className="absolute bg-[#fffeff] flex flex-col items-start left-0 right-0 top-0 z-10">
-          <StatusBar />
           <div className="bg-[#fffeff] relative shrink-0 w-full">
             <div className="flex items-center justify-between px-[16px] py-[12px] max-w-[800px] mx-auto w-full">
               <div className="flex gap-[12px] items-center">
@@ -31,8 +28,8 @@ export function NotificationsPage() {
           </div>
         </div>
 
-        {/* Content — offset for fixed top bar (44px status + ~55px header) */}
-        <div className="flex flex-col gap-[16px] items-start pt-[120px] pb-[20px] w-full">
+        {/* Content — offset for fixed top bar (~55px header) */}
+        <div className="flex flex-col gap-[16px] items-start pt-[76px] pb-[20px] w-full">
           {/* Section header */}
           <div className="relative shrink-0 w-full">
             <div className="flex items-center justify-center w-full">
@@ -112,10 +109,6 @@ export function NotificationsPage() {
           </div>
         </div>
 
-        {/* Bottom safe area */}
-        <div className="mt-auto">
-          <BottomSafeArea />
-        </div>
       </div>
     </div>
   );

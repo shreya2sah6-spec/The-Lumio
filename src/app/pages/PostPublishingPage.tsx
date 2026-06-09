@@ -1,7 +1,7 @@
 /**
  * PostPublishingPage — skeleton loading screen shown while a post is being
- * "published". Mirrors the Home/Feed layout exactly (StatusBar + TopBar +
- * BottomNav) so there is no jarring layout shift when the redirect fires.
+ * "published". Mirrors the Home/Feed layout exactly (TopBar + BottomNav)
+ * so there is no jarring layout shift when the redirect fires.
  *
  * Flow: shown for 2 seconds, then redirects to /home/feed.
  */
@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { BellSimple, ChatCenteredDots } from "@phosphor-icons/react";
 import { BottomNav } from "../components/BottomNav";
 import { SearchBar } from "../components/SearchBar";
-import { StatusBar } from "../components/StatusBar";
 
 // ── Skeleton primitives ───────────────────────────────────────────────────────
 
@@ -84,7 +83,6 @@ function BoneFeedCard() {
 function TopBar() {
   return (
     <div className="sticky top-0 z-10 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-      <StatusBar />
       <div className="flex gap-3 items-center px-4 py-3">
         <SearchBar placeholder="Search" className="flex-1" />
         <button className="p-2 cursor-pointer" aria-label="Notifications">
@@ -104,7 +102,7 @@ export function PostPublishingPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const t = setTimeout(() => navigate("/home/feed", { replace: true }), 2000);
+    const t = setTimeout(() => navigate("/home/feed", { replace: true, state: { showToast: true } }), 2000);
     return () => clearTimeout(t);
   }, [navigate]);
 

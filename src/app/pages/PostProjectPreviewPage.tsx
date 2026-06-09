@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChatCircle } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
 import { PortfolioComposerToolbar } from "../components/PortfolioComposerToolbar";
 import { usePostDraft } from "../stores/postDraftStore";
 
@@ -96,7 +95,6 @@ export function PostProjectPreviewPage() {
 
       {/* Sticky header */}
       <div className="sticky top-0 z-20 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.3)]">
-        <StatusBar />
         <PageHeader
           title="Preview"
           onBack={() => navigate("/post/project-editor/cover")}
@@ -118,13 +116,7 @@ export function PostProjectPreviewPage() {
           <PreviewImage key={`process-${i}`} src={url} alt={`Process image ${i + 1}`} />
         ))}
 
-        {/* ── Cover image — 1.12:1 aspect ratio ───────────────────────── */}
-        {draft.coverUrl && (
-          <PreviewImage src={draft.coverUrl} alt="Cover" aspectRatio="1.12 / 1" />
-        )}
-
-        {/* Caption — padded text */}
-        <PreviewText text={draft.caption} />
+        {/* Step 3 cover page removed — preview shows Step 1 + Step 2 only */}
 
       </div>
 

@@ -15,8 +15,6 @@ import {
   CaretRight,
 } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import type { Icon } from "@phosphor-icons/react";
 
 function SettingsItem({
@@ -60,8 +58,6 @@ export function SettingsPage() {
   return (
     <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
       <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-        <StatusBar />
-
         <PageHeader title="Settings" onBack={() => navigate("/profile")} />
 
         {/* Content */}
@@ -121,8 +117,6 @@ export function SettingsPage() {
           </div>
         </div>
 
-        {/* Bottom safe area */}
-        <BottomSafeArea />
       </div>
     </div>
   );

@@ -16,8 +16,6 @@ import { BottomNav } from "../components/BottomNav";
 import { SearchBar } from "../components/SearchBar";
 import { SaveButton } from "../components/SaveButton";
 
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import imgPostImage01 from "@/imports/FeedCovers/sanyam-cover.png";
 import imgAvatarImage1 from "@/imports/HomeProfileCompletion-1/733e8cf72a0fc5655efdb377f7a418e9263541e1.png";
 import imgPostImage02 from "@/imports/HomeProfileCompletion-1/2237e23c0b0a917e12372a61adebbe568838af3e.png";
@@ -52,7 +50,6 @@ function TopBar() {
   const navigate = useNavigate();
   return (
     <div className="sticky top-0 z-10 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-      <StatusBar />
       <div className="flex gap-3 items-center px-4 py-3">
         <SearchBar placeholder="Search" className="flex-1" />
         <button
@@ -74,34 +71,6 @@ function TopBar() {
 
 
 // ─── Profile completion card ──────────────────────────────────────────────────
-
-function ProfileCompletionCard({ onComplete }: { onComplete: () => void }) {
-  return (
-    <div className="bg-[#f5f0ff] w-full flex flex-col gap-4 px-4 py-3">
-      <div className="flex flex-col gap-2 w-full">
-        <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
-          Complete your profile to apply for jobs
-        </p>
-        <div className="flex gap-3 items-center w-full">
-          <div className="flex-1 h-1 relative rounded-full overflow-hidden bg-white border border-[#e2d9ef]">
-            <div className="absolute left-0 top-0 h-full w-[40%] bg-[#7d3aea] rounded-full" />
-          </div>
-          <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px]">
-            40%
-          </span>
-        </div>
-      </div>
-      <button
-        onClick={onComplete}
-        className="bg-white border border-[#7d3aea] rounded-[8px] h-12 w-full flex items-center justify-center cursor-pointer"
-      >
-        <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[16px] leading-[20px] tracking-[0.48px]">
-          Autofill Demo Profile
-        </span>
-      </button>
-    </div>
-  );
-}
 
 // ─── Post card ────────────────────────────────────────────────────────────────
 
@@ -543,8 +512,6 @@ function StoryOverlay({
           </button>
         </div>
 
-        {/* bottom safe area — matches home indicator across all screens */}
-        <BottomSafeArea />
       </div>
     </div>
   );
@@ -747,11 +714,12 @@ function SessionSummaryBanner({ onChevron }: { onChevron: () => void }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export function HomePage({ showProfileCard = false }: { showProfileCard?: boolean } = {}) {
+export function HomePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [storyIndex, setStoryIndex] = useState<number | null>(null);
   const [showUpcomingBanner, setShowUpcomingBanner] = useState(false);
+  const [showPostToast, setShowPostToast] = useState<boolean>(() => !!(location.state as { showToast?: boolean } | null)?.showToast);
 
   // Close story overlay when navigation occurs elsewhere in the app.
   useEffect(() => {
@@ -776,6 +744,7 @@ export function HomePage({ showProfileCard = false }: { showProfileCard?: boolea
       role?: string;
       company?: string;
     };
+    showToast?: boolean;
   } | null;
 
   const sessionBooked = locState?.sessionBooked ?? false;
@@ -790,17 +759,18 @@ export function HomePage({ showProfileCard = false }: { showProfileCard?: boolea
     return () => clearTimeout(t);
   }, [sessionBooked]);
 
+  // Auto-dismiss post toast after 3s or on any interaction
+  useEffect(() => {
+    if (!showPostToast) return;
+    const t = setTimeout(() => setShowPostToast(false), 3000);
+    return () => clearTimeout(t);
+  }, [showPostToast]);
+
   // Banner ~46px + BottomNav 114px = 160px total clearance when banner visible
   const feedPb = showUpcomingBanner ? "pb-[160px]" : "pb-[0px]";
 
-  // Profile card: mark complete and return to normal feed
-  function handleProfileComplete() {
-    localStorage.setItem("profileComplete", "true");
-    navigate("/home/feed");
-  }
-
-  // Navbar profile image: placeholder during onboarding, real avatar after
-  const profileNavImage = showProfileCard ? PROFILE_PLACEHOLDER : imgProfileNav;
+  // Navbar profile image
+  const profileNavImage = imgProfileNav;
 
   return (
     <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
@@ -809,6 +779,37 @@ export function HomePage({ showProfileCard = false }: { showProfileCard?: boolea
       )}
       <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
         <TopBar />
+
+        {/* ── Post success toast ── */}
+        {showPostToast && (
+          <div
+            onClick={() => setShowPostToast(false)}
+            className="fixed top-[60px] left-1/2 -translate-x-1/2 z-[90] w-[calc(100%-32px)] max-w-[368px]"
+          >
+            <div
+              className="flex items-center gap-[10px] px-[16px] py-[12px] rounded-[10px]"
+              style={{
+                background: "#1A1128",
+                boxShadow: "0px 4px 16px rgba(26, 17, 40, 0.28)",
+              }}
+            >
+              <div
+                className="shrink-0 flex items-center justify-center rounded-full"
+                style={{ width: 28, height: 28, background: "#7D3AEA" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M2 7.5L5.5 11L12 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <p
+                className="flex-1 font-['Manrope',sans-serif] font-medium text-white text-[14px] leading-[20px]"
+              >
+                Your post is now live
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className={`flex-1 overflow-y-auto ${feedPb}`}>
           <div className="flex flex-col gap-1">
             {/* Session summary banner — fixed as first feed item */}
@@ -824,10 +825,6 @@ export function HomePage({ showProfileCard = false }: { showProfileCard?: boolea
                   })
                 }
               />
-            )}
-            {/* Profile completion card — only shown during the onboarding flow */}
-            {showProfileCard && (
-              <ProfileCompletionCard onComplete={handleProfileComplete} />
             )}
             <PostCard
               image={imgPostImage01}

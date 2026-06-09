@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Funnel, VideoCamera, Check } from "@phosphor-icons/react";
 import { BottomNav } from "../components/BottomNav";
-import { StatusBar } from "../components/StatusBar";
-import { BottomSafeArea } from "../components/BottomSafeArea";
 import { MentorCard, type Mentor } from "../components/MentorCard";
 import { SearchBar } from "../components/SearchBar";
 import { ViewMoreButton } from "../components/ViewMoreButton";
@@ -120,7 +118,7 @@ const pickedForYouMentors: Mentor[] = [
     title: "Fashion Designer",
     company: "W for Woman",
     avatar: MENTOR_AVATARS.nehaVerma,
-    experience: "6 yrs exp • EX - Lifestyle",
+    experience: "6 yrs exp • EX - Reliance Trends",
     rating: 4.5,
     reviews: 88,
     originalPrice: 480,
@@ -240,7 +238,6 @@ function TopBar({
 }) {
   return (
     <div className="sticky top-0 z-10 bg-[#fffeff]">
-      <StatusBar />
       <div className="flex gap-3 items-center px-4 py-3 h-[64px]">
         <SearchBar placeholder={searchPlaceholder} className="flex-1" />
         <button className="p-2 cursor-pointer" onClick={onFilterClick}>
@@ -964,8 +961,6 @@ function MentorFilterSheet({
             Show Results
           </Button>
         </div>
-        {/* Safe area */}
-        <BottomSafeArea />
       </div>
     </>
   );
@@ -1090,8 +1085,6 @@ function SessionFilterSheet({
             Show Results
           </Button>
         </div>
-        {/* Safe area */}
-        <BottomSafeArea />
       </div>
     </>
   );
