@@ -43,7 +43,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
     }`;
 
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[430px] bg-white shadow-[0px_-1px_2px_rgba(200,192,212,0.6)] flex flex-col items-center border-t border-[#ECE7F3]">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-30 w-full max-w-[430px] bg-white flex flex-col items-center border-t border-[#ECE7F3]">
       <div className="w-full flex items-center gap-[12px] px-[16px] py-[8px] h-[68px]">
 
         <button

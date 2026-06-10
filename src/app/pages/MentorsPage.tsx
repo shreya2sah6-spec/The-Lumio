@@ -929,10 +929,10 @@ function MentorFilterSheet({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
+        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)]"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         {/* Handle */}
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
@@ -1053,10 +1053,10 @@ function SessionFilterSheet({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
+        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)]"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         {/* Handle */}
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
@@ -1153,6 +1153,13 @@ export function MentorsPage() {
   const [showSessionFilter, setShowSessionFilter] = useState(false);
   const [activeMentorFilters, setActiveMentorFilters] = useState<ActiveMentorFilters>({ gender: null, category: null });
   const [sessionFiltersActive, setSessionFiltersActive] = useState(false);
+
+  // Prevent background scroll while any filter sheet is open
+  useEffect(() => {
+    const isOpen = showMentorFilter || showSessionFilter;
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [showMentorFilter, showSessionFilter]);
 
   // Close mentor filters/sheets when navigation occurs elsewhere in the app.
   useEffect(() => {

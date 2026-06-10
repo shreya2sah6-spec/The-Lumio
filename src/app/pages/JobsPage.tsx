@@ -1169,10 +1169,10 @@ function FilterSheet({
   return (
     <>
       <div
-        className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
+        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)]"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
         </div>
@@ -1947,6 +1947,12 @@ export function JobsPage() {
   const [isFiltered, setIsFiltered] = useState(false);
   const [isAppliedFiltered, setIsAppliedFiltered] = useState(false);
   const [activeFilters, setActiveFilters] = useState<ActiveFilters | null>(null);
+
+  // Prevent background scroll while filter sheet is open
+  useEffect(() => {
+    document.body.style.overflow = showFilter ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [showFilter]);
 
   // Close any open overlays if navigation fires while we are still mounted
   // (defensive — Root.tsx key={location.key} normally remounts the component

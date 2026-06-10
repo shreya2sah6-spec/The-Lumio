@@ -20,7 +20,7 @@ export function AppLayout({
 
         {/* Header — sits above scroll container, never moves */}
         {header && (
-          <div className="shrink-0 z-40 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
+          <div className="shrink-0 z-40 bg-[#fffeff]">
             {header}
           </div>
         )}
