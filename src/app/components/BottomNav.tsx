@@ -43,12 +43,12 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
     }`;
 
   return (
-    <div className="sticky bottom-0 z-10 bg-white shadow-[0px_-1px_2px_rgba(200,192,212,0.6)] flex flex-col items-center">
-      <div className="w-full flex items-center justify-around px-4 h-[68px]">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[430px] bg-white shadow-[0px_-1px_2px_rgba(200,192,212,0.6)] flex flex-col items-center border-t border-[#ECE7F3]">
+      <div className="w-full flex items-center gap-[12px] px-[16px] py-[8px] h-[68px]">
 
         <button
           data-nav-item
-          className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
           onClick={() => navigate("/home/feed")}
           aria-label="Home"
         >
@@ -58,7 +58,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
           onClick={() => navigate("/jobs")}
           aria-label="Jobs"
         >
@@ -68,7 +68,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
           onClick={() => navigate("/post/create-project")}
           aria-label="Post"
         >
@@ -78,7 +78,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
           onClick={() => navigate("/mentors")}
           aria-label="Mentors"
         >
@@ -88,7 +88,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-col gap-px items-center justify-center h-[50px] px-4 cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
           onClick={() => navigate("/profile")}
           aria-label="Profile"
         >

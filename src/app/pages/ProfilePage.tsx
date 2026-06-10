@@ -10,8 +10,8 @@ import {
 } from "@phosphor-icons/react";
 import { toTitleCase } from "../utils/validation";
 import { truncateAiBulletItem } from "../utils/aiSummary";
-import { BottomNav } from "../components/BottomNav";
 import { ViewMoreButton } from "../components/ViewMoreButton";
+import { AppLayout } from "../components/AppLayout";
 import svgPaths from "@/imports/ProfileOverview-2/svg-n8z2v8xsv9";
 import imgAvatar from "@/imports/ProfileOverview-2/bb5b0e0896cc0396e3c8e2b6811f344da7f15455.png";
 import imgAboutImage from "@/imports/ProfileOverview-2/76ae4b7f2a4ed92c5b6590f918eac3b778e97c34.png";
@@ -363,8 +363,7 @@ export function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
+    <AppLayout profileNavImg={imgAvatar}>
         {/* Profile Header */}
         <div className="flex items-start pb-[12px] pt-[16px] px-[16px] bg-white gap-[8px]">
           <div className="flex-1 flex flex-col gap-[12px] items-center min-w-0">
@@ -849,8 +848,6 @@ export function ProfilePage() {
           )}
         </div>
 
-        <BottomNav active="profile" profileNavImg={imgAvatar} />
-      </div>
-    </div>
+    </AppLayout>
   );
 }

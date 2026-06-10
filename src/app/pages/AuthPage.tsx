@@ -99,7 +99,7 @@ function TextInput({
         />
         <div className="flex items-center justify-between px-4 py-3">
           <input
-            className="flex-1 font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] bg-transparent outline-none placeholder:text-[#6b5f7a]"
+            className="flex-1 type-h5 text-[#1a1128] bg-transparent outline-none placeholder:font-normal placeholder:text-[#6b5f7a] placeholder:tracking-normal"
             inputMode={inputMode}
             placeholder={placeholder}
             value={value}
@@ -376,7 +376,7 @@ function OtpVerifyScreen({ onNext, onBack }: { onNext: () => void; onBack: () =>
                 />
                 <input
                   ref={(el) => { inputRefs.current[i] = el; }}
-                  className="bg-white w-full rounded-[4px] px-1 py-2 font-['Manrope',sans-serif] font-semibold text-[18px] leading-[28px] text-center outline-none transition-colors"
+                  
                   style={{ color: textColor }}
                   inputMode="numeric"
                   maxLength={1}
@@ -687,14 +687,12 @@ export function AuthPage() {
   };
 
   return (
-    <div className="h-screen bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
-      <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
+    <div className="h-[100dvh] bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
+      <div className="w-full max-w-[430px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
 
         {/* ── Scrollable content area ── */}
         <div className="flex-1 px-4 pt-8 pb-4 overflow-y-auto min-h-0">
-          {/* min-h-full + flex flex-col lets flex-1 spacers inside each screen
-              push the CTA to the bottom of the VISIBLE area */}
-          <div className="w-full max-w-[800px] mx-auto min-h-full flex flex-col">
+          <div className="w-full max-w-[430px] mx-auto min-h-full flex flex-col">
             {screens[step]}
           </div>
         </div>

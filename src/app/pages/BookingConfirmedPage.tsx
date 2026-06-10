@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { AppLayout } from "../components/AppLayout";
 import { X, VideoCamera, CalendarDots } from "@phosphor-icons/react";
 import type { Mentor } from "../components/MentorCard";
 import imgGif from "@/imports/MentorsBookingConfirmed/f542fa271d38a41401e77674d52427657cdceb02.png";
@@ -58,10 +59,10 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
     : "If the request is declined, your payment will be refunded within 3–5 business days.";
 
   return (
-    <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-        {/* Header with close button */}
-        <div className="bg-[#fffeff] flex items-center px-[16px] py-[12px] shrink-0">
+    <AppLayout
+      hideNav
+      header={
+        <div className="bg-[#fffeff] flex items-center px-[16px] py-[12px]">
           <button
             onClick={handleDone}
             className="p-[8px] -ml-[8px] flex items-center justify-center"
@@ -69,9 +70,10 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
             <X size={24} color="#1A1128" />
           </button>
         </div>
-
+      }
+    >
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto pb-[160px]">
+        <div className="pb-[160px]">
           <div className="flex flex-col items-center px-[16px]">
             {/* GIF illustration */}
             <div className="relative shrink-0 size-[64px] mt-[8px] mb-[36px]">
@@ -152,7 +154,7 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
 
         {/* Sticky footer */}
         <div className="fixed bottom-0 left-0 right-0 z-30 drop-shadow-[0px_-1px_2.5px_rgba(200,192,212,0.6)]">
-          <div className="max-w-[800px] mx-auto bg-white">
+          <div className="max-w-[430px] mx-auto bg-white">
             <div className="px-[16px] pt-[12px] pb-[24px] flex gap-[16px]">
               {/* Share booking button — only for session */}
               {!isChatUnlock && (
@@ -179,7 +181,6 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </AppLayout>
   );
 }

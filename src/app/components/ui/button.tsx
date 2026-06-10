@@ -38,39 +38,37 @@ const buttonVariants = cva(
         // PRIMARY CTA
         gradient: [
           "text-white",
-          "bg-[linear-gradient(90deg,var(--action-primary-bg,#7D3AEA)_0%,var(--action-secondary-bg,#5E28B5)_100%)]",
+          "bg-gradient-to-r from-[#7D3AEA] to-[#5E28B5]",
           "hover:opacity-90",
         ].join(" "),
 
         // SECONDARY CTA
         outline: [
-          "border",
-          "border-[var(--action-primary-bg,#7D3AEA)]",
-          "bg-[var(--surface-bg-card,#FFF)]",
-          "text-[var(--action-primary-bg,#7D3AEA)]",
-          "hover:bg-[var(--surface-bg-primary-soft,#EFE9FC)]",
+          "border border-[#7d3aea]",
+          "bg-white",
+          "text-[#7d3aea]",
+          "hover:bg-[#efe9fc]",
         ].join(" "),
 
         // TERTIARY CTA
         ghost: [
-          "bg-[var(--surface-bg-default,#FFFEFF)]",
-          "text-[var(--action-primary-bg,#7D3AEA)]",
-          "hover:bg-[var(--surface-bg-primary-soft,#EFE9FC)]",
+          "bg-[#fffeff]",
+          "text-[#7d3aea]",
+          "hover:bg-[#efe9fc]",
         ].join(" "),
 
         // SUCCESS CTA
         success: [
-          "border",
-          "border-[var(--text-success,#208436)]",
-          "bg-[var(--surface-bg-success,#D6F5DD)]",
-          "text-[var(--text-success,#208436)]",
+          "border border-[#208436]",
+          "bg-[#d6f5dd]",
+          "text-[#208436]",
           "hover:opacity-90",
         ].join(" "),
 
         // SOFT CTA
         subtle: [
-          "bg-[var(--surface-bg-primary-soft,#EFE9FC)]",
-          "text-[var(--action-primary-bg,#7D3AEA)]",
+          "bg-[#efe9fc]",
+          "text-[#7d3aea]",
           "hover:opacity-90",
         ].join(" "),
       },
@@ -81,19 +79,19 @@ const buttonVariants = cva(
           // SIZE
           "min-h-[48px]",
           "max-h-[48px]",
-          "px-[var(--m,16px)]",
-          "py-[var(--s,12px)]",
-          "gap-[var(--xs,8px)]",
+          "px-[16px]",
+          "py-[12px]",
+          "gap-[8px]",
 
           // RADIUS
-          "rounded-[var(--primary-button-large,8px)]",
+          "rounded-[8px]",
 
           // TYPOGRAPHY
-          "font-[var(--font-family-body,Manrope)]",
-          "text-[var(--size-m,16px)]",
+          "font-manrope",
+          "text-[16px]",
           "font-semibold",
-          "leading-[var(--line-height-xs,20px)]",
-          "tracking-[var(--letter-spacing-relaxed,0.48px)]",
+          "leading-[20px]",
+          "tracking-[0.48px]",
         ].join(" "),
 
         // SMALL BUTTON
@@ -101,23 +99,23 @@ const buttonVariants = cva(
           // SIZE
           "min-h-[40px]",
           "max-h-[40px]",
-          "px-[var(--s,12px)]",
-          "py-[var(--xs,8px)]",
-          "gap-[var(--xs,8px)]",
+          "px-[12px]",
+          "py-[8px]",
+          "gap-[8px]",
 
           // RADIUS
-          "rounded-[var(--primary-button-small,4px)]",
+          "rounded-[4px]",
 
           // TYPOGRAPHY
-          "font-[var(--font-family-body,Manrope)]",
-          "text-[var(--size-s,14px)]",
+          "font-manrope",
+          "text-[14px]",
           "font-semibold",
-          "leading-[var(--line-height-xs,20px)]",
-          "tracking-[var(--letter-spacing-tight,0.14px)]",
+          "leading-[20px]",
+          "tracking-[0.14px]",
         ].join(" "),
 
         // ICON BUTTON
-        icon: ["size-9", "rounded-[var(--primary-button-small,4px)]"].join(" "),
+        icon: ["size-9", "rounded-[4px]"].join(" "),
       },
     },
 

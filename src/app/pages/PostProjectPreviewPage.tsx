@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChatCircle } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
+import { AppLayout } from "../components/AppLayout";
 import { PortfolioComposerToolbar } from "../components/PortfolioComposerToolbar";
 import { usePostDraft } from "../stores/postDraftStore";
 
@@ -91,17 +92,17 @@ export function PostProjectPreviewPage() {
   const processImages = (draft.processImages ?? []).filter(Boolean) as string[];
 
   return (
-    <div className="bg-[#fffeff] min-h-screen">
-
-      {/* Sticky header */}
-      <div className="sticky top-0 z-20 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.3)]">
+    <AppLayout
+      hideNav
+      header={
         <PageHeader
           title="Preview"
           onBack={() => navigate("/post/project-editor/cover")}
+          shadow
         />
-      </div>
-
-      {/* Scrollable content — pb clears fixed toolbar */}
+      }
+    >
+      {/* Content — pb clears fixed toolbar */}
       <div className="pb-[140px]">
 
         {/* ── Step 1 — About: text then images ─────────────────────────── */}
@@ -125,6 +126,6 @@ export function PostProjectPreviewPage() {
 
       {/* Fixed toolbar */}
       <PortfolioComposerToolbar />
-    </div>
+    </AppLayout>
   );
 }

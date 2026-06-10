@@ -8,6 +8,7 @@ import { JobsTab } from "../components/brand-profile/JobsTab";
 import { ReviewsTab } from "../components/brand-profile/ReviewsTab";
 import { PeopleTab, type BrandPerson } from "../components/brand-profile/PeopleTab";
 import { BRAND_FEATURED_JOBS } from "./JobsPage";
+import { AppLayout } from "../components/AppLayout";
 import type { Job } from "../components/JobCard";
 
 // ─── Company logos — sourced from the centralized registry ───────────────────
@@ -397,47 +398,39 @@ export function BrandProfilePage() {
   if (!brand) return null;
 
   return (
-    <div className="h-screen bg-[#fffeff] flex items-start justify-center overflow-hidden">
-    <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col h-full overflow-hidden">
-
-      {/* ── Top navbar ── */}
-      {/* Equal-side-panel layout: back | [flex-1 center] title [flex-1 center] | share
-          The h1 is hug-content (no flex-1 on it) and visually centered because both
-          side slots grow equally. -ml-2 / -mr-2 preserve the touch-target compensation. */}
-      <div className="bg-[#fffeff] flex items-center px-4 py-3 shrink-0 shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-        {/* Back arrow — gap: 0 between arrow and heading (no spacer div between them) */}
-        <button
-          onClick={() => {
-            if (fromJob) {
-              navigate("/jobs", { state: { openJob: fromJob } });
-            } else {
-              navigate(-1);
-            }
-          }}
-          className="p-2 -ml-2 flex items-center justify-center shrink-0"
-          aria-label="Go back"
-        >
-          <ArrowLeft size={24} color="#1A1128" />
-        </button>
-
-        {/* H1 — hug-content, pr-[12px] per spec, no flex-1 */}
-        <h1 className="type-h1 text-[#1a1128] whitespace-nowrap pr-[12px]">
-          Company Profile
-        </h1>
-
-        {/* Push share button to the far right */}
-        <div className="flex-1 flex justify-end">
+    <AppLayout
+      hideNav
+      header={
+        <div className="bg-[#fffeff] flex items-center px-4 py-3">
           <button
-            className="p-2 -mr-2 flex items-center justify-center"
-            aria-label="Share"
+            onClick={() => {
+              if (fromJob) {
+                navigate("/jobs", { state: { openJob: fromJob } });
+              } else {
+                navigate(-1);
+              }
+            }}
+            className="p-2 -ml-2 flex items-center justify-center shrink-0"
+            aria-label="Go back"
           >
-            <ShareFat size={22} color="#1A1128" weight="regular" />
+            <ArrowLeft size={24} color="#1A1128" />
           </button>
+          <h1 className="type-h1 text-[#1a1128] whitespace-nowrap pr-[12px]">
+            Company Profile
+          </h1>
+          <div className="flex-1 flex justify-end">
+            <button
+              className="p-2 -mr-2 flex items-center justify-center"
+              aria-label="Share"
+            >
+              <ShareFat size={22} color="#1A1128" weight="regular" />
+            </button>
+          </div>
         </div>
-      </div>
-
+      }
+    >
       {/* ── Scrollable content — company banner + tabs + tab content ── */}
-      <div className="flex-1 overflow-y-auto min-h-0">
+      <div>
 
         {/* ── Company banner ── */}
         <div className="px-4 pt-5 pb-4">
@@ -564,7 +557,6 @@ export function BrandProfilePage() {
         </div>
       </div>
 
-    </div>
-    </div>
+    </AppLayout>
   );
 }

@@ -89,7 +89,7 @@ function SplashScreen({ onFinish }: { onFinish: () => void }) {
 
   return (
     <div
-      className="min-h-screen w-full max-w-[800px] mx-auto bg-[#fffeff] flex flex-col cursor-pointer"
+      className="h-[100dvh] overflow-hidden w-full max-w-[430px] mx-auto bg-[#fffeff] flex flex-col cursor-pointer"
       onClick={onFinish}
     >
       <div className="flex-1 flex items-center justify-center">
@@ -125,7 +125,7 @@ function SlideScreen({
   onSkip,
 }: SlideScreenProps) {
   return (
-    <div className="min-h-screen w-full relative flex flex-col">
+    <div className="h-[100dvh] overflow-hidden w-full relative flex flex-col">
       {/* Full-bleed background */}
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
         <div
@@ -142,7 +142,7 @@ function SlideScreen({
       </div>
 
       {/* Foreground layout */}
-      <div className="relative z-10 flex flex-col min-h-screen w-full max-w-[800px] mx-auto">
+      <div className="relative z-10 flex flex-col h-full w-full max-w-[430px] mx-auto">
         {/* Skip button — pt-[36px] matches Figma header-area py-xxxxl */}
         <div className="flex justify-end px-4 pt-[36px]">
           <button

@@ -1,4 +1,5 @@
 import { useState, createContext, useContext } from "react";
+import { AppLayout } from "../components/AppLayout";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ArrowLeft, ShareFat, Link, BookOpen, FileText, CaretDown, CaretUp } from "@phosphor-icons/react";
 import imgMentorAvatarFallback from "@/imports/MentorsBookingConfirmed/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
@@ -536,7 +537,7 @@ function ChatResourceCard({ resource }: { resource: ChatResource }) {
         <img
           src={session.mentorAvatar}
           alt={session.mentorName}
-          className="w-[36px] h-[36px] rounded-full object-cover shrink-0"
+          className="w-[36px] h-[36px] rounded-full object-cover object-top scale-110 shrink-0"
         />
         <div className="flex flex-col flex-1 min-w-0">
           <span className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[14px] leading-[21px] truncate">
@@ -666,20 +667,20 @@ export function SessionJournalPage() {
 
   return (
     <SessionCtx.Provider value={resolvedSession}>
-      <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
-        <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
-          {/* Shared header */}
-          <JournalHeader onBack={handleBack} />
-
-          {/* Tab row — sticky under header */}
-          <TabRow active={activeTab} onChange={setActiveTab} />
-
-          {/* Tab content — each tab renders its own SafeAreaBottom at scroll end */}
-          {activeTab === "summary" && <AiSummaryTab />}
-          {activeTab === "transcript" && <TranscriptTab />}
-          {activeTab === "chat" && <SessionChatTab />}
-        </div>
-      </div>
+      <AppLayout
+        hideNav
+        header={
+          <>
+            <JournalHeader onBack={handleBack} />
+            <TabRow active={activeTab} onChange={setActiveTab} />
+          </>
+        }
+      >
+        {/* Tab content — each tab renders its own SafeAreaBottom at scroll end */}
+        {activeTab === "summary" && <AiSummaryTab />}
+        {activeTab === "transcript" && <TranscriptTab />}
+        {activeTab === "chat" && <SessionChatTab />}
+      </AppLayout>
     </SessionCtx.Provider>
   );
 }

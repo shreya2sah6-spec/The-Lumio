@@ -39,7 +39,7 @@ function ReviewBottomSheet({
       <div className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]" />
 
       {/* Sheet */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px]">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px]">
         {/* Drag handle */}
         <div className="flex justify-center pt-[12px] pb-[8px]">
           <div className="bg-[#1a1128] h-[4px] rounded-full w-[32px]" />
@@ -162,8 +162,8 @@ export function VideoCallPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden flex items-start justify-center">
-      <div className="relative w-full max-w-[800px] min-w-[360px] h-screen overflow-hidden">
+    <div className="relative h-[100dvh] bg-black overflow-hidden flex items-start justify-center">
+      <div className="relative w-full max-w-[430px] h-[100dvh] overflow-hidden">
 
         {/* Full-screen mentor video background */}
         <img

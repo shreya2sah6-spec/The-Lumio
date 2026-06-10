@@ -53,7 +53,7 @@ export function PortfolioComposerToolbar({ validate }: PortfolioComposerToolbarP
      * Matches the existing session-timer pattern in HomePage.
      * z-50 sits above all page content (FAB is z-40, lightbulb popover z-30).
      */
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50">
+    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50">
 
       {/* ── Error toast ──────────────────────────────────────────────────── */}
       {toastMsg && (

@@ -323,9 +323,6 @@ function InboxView({
         )}
       </div>
 
-      <div className="h-[34px] w-full bg-[#FFFEFF] flex items-end justify-center pb-[8px] shrink-0">
-        <div className="bg-[#FFFEFF] h-[5px] rounded-[200px] w-[134px]" />
-      </div>
     </div>
   );
 }
@@ -502,8 +499,8 @@ export function MessagingPage() {
   });
 
   return (
-    <div className="h-screen bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
-      <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
+    <div className="h-[100dvh] bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
+      <div className="w-full max-w-[430px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
         {activeContact ? (
           <ChatView
             contact={activeContact}

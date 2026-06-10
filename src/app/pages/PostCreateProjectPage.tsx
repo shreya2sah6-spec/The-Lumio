@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { PencilSimple } from "@phosphor-icons/react";
-import { BottomNav } from "../components/BottomNav";
+import { AppLayout } from "../components/AppLayout";
 
 import imgWomenswear        from "@/imports/TemplatePickerScreen/2bbff255be2068af496d248303b6d6456d304285.png";
 import imgMenswear          from "@/imports/TemplatePickerScreen/2938191fef7ba1f8cd30dd88e1ce83bcae14ace0.png";
@@ -32,10 +32,8 @@ export function PostCreateProjectPage() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#fffeff]">
-
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-4 pt-4 pb-6">
+    <AppLayout>
+      <div className="px-4 pt-4 pb-6">
           {/* Heading */}
           <h1 className="font-['Roboto_Serif',serif] font-bold text-[#1a1128] text-[26px] leading-[34px] mb-1">
             Choose a Project Template
@@ -81,10 +79,7 @@ export function PostCreateProjectPage() {
             ))}
 
           </div>
-        </div>
       </div>
-
-      <BottomNav active="post" />
-    </div>
+    </AppLayout>
   );
 }

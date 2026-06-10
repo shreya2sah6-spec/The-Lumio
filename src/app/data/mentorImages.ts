@@ -18,6 +18,7 @@ import _raviKumar    from "@/imports/mentors/ravi kumar.png";
 import _snehaPane    from "@/imports/mentors/sneha patel.png";
 import _amitSharma   from "@/imports/mentors/amit sharma.png";
 import _nehaVerma    from "@/imports/mentors/neha verma.png";
+import _teaching     from "@/imports/mentors/teaching.png";
 import _vikramSingh  from "@/imports/mentors/vikram singh.png";
 import _anjaliNair   from "@/imports/mentors/anjali nair.png";
 import _rajeshPatel  from "@/imports/mentors/rajesh patel.png";
@@ -42,6 +43,11 @@ import _webinarSnehaPane  from "@/imports/mentors-webinar/sneha-patel.png";
 import _webinarAmitSharma from "@/imports/mentors-webinar/amit-sharma.png";
 
 // ─── Exports ──────────────────────────────────────────────────────────────────
+
+/** Session category cover image — used for the Mentoring-tagged session card. */
+export const SESSION_IMAGES = {
+  mentoring: _teaching,
+} as const;
 
 /** Profile face avatars for the 10 named mentors. */
 export const MENTOR_AVATARS = {

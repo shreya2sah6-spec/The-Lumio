@@ -9,7 +9,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BellSimple, ChatCenteredDots } from "@phosphor-icons/react";
-import { BottomNav } from "../components/BottomNav";
+import { AppLayout } from "../components/AppLayout";
 import { SearchBar } from "../components/SearchBar";
 
 // ── Skeleton primitives ───────────────────────────────────────────────────────
@@ -82,16 +82,14 @@ function BoneFeedCard() {
 
 function TopBar() {
   return (
-    <div className="sticky top-0 z-10 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-      <div className="flex gap-3 items-center px-4 py-3">
-        <SearchBar placeholder="Search" className="flex-1" />
-        <button className="p-2 cursor-pointer" aria-label="Notifications">
-          <BellSimple size={24} color="#6B5F7A" />
-        </button>
-        <button className="p-2 cursor-pointer" aria-label="Messages">
-          <ChatCenteredDots size={24} color="#6B5F7A" />
-        </button>
-      </div>
+    <div className="flex gap-3 items-center px-4 py-3">
+      <SearchBar placeholder="Search" className="flex-1" />
+      <button className="p-2 cursor-pointer" aria-label="Notifications">
+        <BellSimple size={24} color="#6B5F7A" />
+      </button>
+      <button className="p-2 cursor-pointer" aria-label="Messages">
+        <ChatCenteredDots size={24} color="#6B5F7A" />
+      </button>
     </div>
   );
 }
@@ -107,18 +105,12 @@ export function PostPublishingPage() {
   }, [navigate]);
 
   return (
-    <div className="bg-[#fffeff] min-h-screen flex flex-col">
-      {/* Identical top bar to Home/Feed */}
-      <TopBar />
-
+    <AppLayout header={<TopBar />}>
       {/* Skeleton feed content */}
-      <div className="flex-1 px-4 pt-8 pb-6 flex flex-col gap-[40px]">
+      <div className="px-4 pt-8 pb-6 flex flex-col gap-[40px]">
         <BoneFeedCard />
         <BoneFeedCard />
       </div>
-
-      {/* Identical bottom nav to Home/Feed — Home tab naturally active */}
-      <BottomNav />
-    </div>
+    </AppLayout>
   );
 }

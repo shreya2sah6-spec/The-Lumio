@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Funnel, VideoCamera, Check } from "@phosphor-icons/react";
-import { BottomNav } from "../components/BottomNav";
 import { MentorCard, type Mentor } from "../components/MentorCard";
+import { AppLayout } from "../components/AppLayout";
 import { SearchBar } from "../components/SearchBar";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 import { Button } from "../components/ui/button";
@@ -14,7 +14,7 @@ import imgProfileNav from "@/imports/MentorsListing-1/bb5b0e0896cc0396e3c8e2b681
 // Session images for non-canonical session participants (Riya Raj, Ankita K)
 
 // ─── Mentor avatars + webinar hosts — sourced from the centralized registry ───
-import { MENTOR_AVATARS, WEBINAR_HOSTS } from "../data/mentorImages";
+import { MENTOR_AVATARS, WEBINAR_HOSTS, SESSION_IMAGES } from "../data/mentorImages";
 
 // ─── SVG paths ────────────────────────────────────────────────────────────────
 
@@ -231,8 +231,7 @@ const sessionsData: Session[] = [
     mentor: "Kiya Rathi",
     mentorTitle: "Intern",
     mentorCompany: "Nykaa Fashion",
-    // Local bundled avatar — avoids runtime hotlink to Unsplash CDN
-    mentorAvatar: MENTOR_AVATARS.nehaVerma,
+    mentorAvatar: SESSION_IMAGES.mentoring,
     date: "Mon · 5 August",
     time: "4:00 PM – 5:00 PM",
     duration: 60,
@@ -270,13 +269,11 @@ function TopBar({
   searchPlaceholder: string;
 }) {
   return (
-    <div className="sticky top-0 z-10 bg-[#fffeff]">
-      <div className="flex gap-3 items-center px-4 py-3 h-[64px]">
-        <SearchBar placeholder={searchPlaceholder} className="flex-1" />
-        <button className="p-2 cursor-pointer" onClick={onFilterClick}>
-          <Funnel size={24} color="#6B5F7A" />
-        </button>
-      </div>
+    <div className="flex gap-3 items-center px-4 py-3 h-[64px]">
+      <SearchBar placeholder={searchPlaceholder} className="flex-1" />
+      <button className="p-2 cursor-pointer" onClick={onFilterClick}>
+        <Funnel size={24} color="#6B5F7A" />
+      </button>
     </div>
   );
 }
@@ -397,7 +394,7 @@ function SessionCard1On1({
   const isImminent = session.status === "imminent";
 
   return (
-    <div className="bg-white border border-[#e2d9ef] rounded-[4px] overflow-hidden w-full max-w-[768px] min-w-[320px]">
+    <div className="bg-white border border-[#e2d9ef] rounded-[4px] overflow-hidden w-full">
       {isExpanded ? (
         <div className="flex flex-col gap-3 items-start px-4 py-3">
           <button
@@ -523,7 +520,7 @@ function SessionCardWebinar({
   onToggle: () => void;
 }) {
   return (
-    <div className="bg-white border border-[#e2d9ef] rounded-[4px] overflow-hidden w-full max-w-[768px] min-w-[320px]">
+    <div className="bg-white border border-[#e2d9ef] rounded-[4px] overflow-hidden w-full">
       {isExpanded ? (
         <div className="flex flex-col gap-3 items-start px-4 py-3">
           <button
@@ -935,7 +932,7 @@ function MentorFilterSheet({
         className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         {/* Handle */}
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
@@ -1059,7 +1056,7 @@ function SessionFilterSheet({
         className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         {/* Handle */}
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
@@ -1213,8 +1210,8 @@ export function MentorsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
+    <AppLayout
+      header={
         <TopBar
           onFilterClick={handleFilterClick}
           searchPlaceholder={
@@ -1223,124 +1220,121 @@ export function MentorsPage() {
               : "Search Sessions"
           }
         />
+      }
+      profileNavImg={imgProfileNav}
+    >
+      <MainTabs activeTab={mainTab} onTabChange={setMainTab} />
 
-        <div className="flex-1 overflow-y-auto pb-[114px]">
-          <MainTabs activeTab={mainTab} onTabChange={setMainTab} />
-
-          {mainTab === "Discover" && (
-            mentorFiltersActive ? (
-              filteredMentors.length === 0 ? (
-                <MentorsEmptyState mentors={[...topRatedMentors, ...pickedForYouMentors].slice(0, 4)} />
-              ) : (
-                <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
-                  <div className="flex flex-col gap-4 items-start w-full">
-                    <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
-                      {getFilterHeading()}
-                    </div>
-                    <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                      Showing {filteredMentors.length} Matching Mentor{filteredMentors.length !== 1 ? "s" : ""}
-                    </p>
-                    <div
-                      className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
-                      style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
-                    >
-                      {filteredMentors.map((mentor) => (
-                        <MentorCard key={mentor.id} mentor={mentor} />
-                      ))}
-                    </div>
-                  </div>
+      {mainTab === "Discover" && (
+        mentorFiltersActive ? (
+          filteredMentors.length === 0 ? (
+            <MentorsEmptyState mentors={[...topRatedMentors, ...pickedForYouMentors].slice(0, 4)} />
+          ) : (
+            <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
+              <div className="flex flex-col gap-4 items-start w-full">
+                <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                  {getFilterHeading()}
                 </div>
-              )
-            ) : (
-              <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
-                <div className="flex flex-col gap-4 items-start w-full">
-                  <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
-                    Top rated mentors
-                  </div>
-                  <div
-                    className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
-                    style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
-                  >
-                    {topRatedMentors.map((mentor) => (
-                      <MentorCard key={mentor.id} mentor={mentor} />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-4 items-start w-full">
-                  <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
-                    Picked for you
-                  </div>
-                  <div
-                    className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
-                    style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
-                  >
-                    {displayedPickedMentors.map((mentor) => (
-                      <MentorCard key={mentor.id} mentor={mentor} />
-                    ))}
-                  </div>
-                  {!showMore && (
-                    <ViewMoreButton onClick={() => setShowMore(true)} />
-                  )}
+                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                  Showing {filteredMentors.length} Matching Mentor{filteredMentors.length !== 1 ? "s" : ""}
+                </p>
+                <div
+                  className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
+                  style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
+                >
+                  {filteredMentors.map((mentor) => (
+                    <MentorCard key={mentor.id} mentor={mentor} />
+                  ))}
                 </div>
               </div>
-            )
-          )}
+            </div>
+          )
+        ) : (
+          <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
+            <div className="flex flex-col gap-4 items-start w-full">
+              <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                Top rated mentors
+              </div>
+              <div
+                className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
+                style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
+              >
+                {topRatedMentors.map((mentor) => (
+                  <MentorCard key={mentor.id} mentor={mentor} />
+                ))}
+              </div>
+            </div>
 
-          {mainTab === "Upcoming Sessions" && (
-            <>
-              <SessionTabs activeTab={sessionTab} onTabChange={setSessionTab} />
-              {sessionFiltersActive || filteredSessions.length === 0 ? (
-                <SessionsEmptyState sessions={sessionsData} />
-              ) : (
-                <div className="flex flex-col gap-3 px-4 py-6">
-                  {filteredSessions.map((session) =>
-                    session.type === "1:1" ? (
-                      <SessionCard1On1
-                        key={session.id}
-                        session={session}
-                        isExpanded={expandedSession === session.id}
-                        onToggle={() =>
-                          setExpandedSession(
-                            expandedSession === session.id ? null : session.id
-                          )
-                        }
-                      />
-                    ) : (
-                      <SessionCardWebinar
-                        key={session.id}
-                        session={session}
-                        isExpanded={expandedSession === session.id}
-                        onToggle={() =>
-                          setExpandedSession(
-                            expandedSession === session.id ? null : session.id
-                          )
-                        }
-                      />
-                    )
-                  )}
-                </div>
+            <div className="flex flex-col gap-4 items-start w-full">
+              <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                Picked for you
+              </div>
+              <div
+                className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
+                style={{ contentVisibility: "auto", containIntrinsicSize: "0 400px" }}
+              >
+                {displayedPickedMentors.map((mentor) => (
+                  <MentorCard key={mentor.id} mentor={mentor} />
+                ))}
+              </div>
+              {!showMore && (
+                <ViewMoreButton onClick={() => setShowMore(true)} />
               )}
-            </>
+            </div>
+          </div>
+        )
+      )}
+
+      {mainTab === "Upcoming Sessions" && (
+        <>
+          <SessionTabs activeTab={sessionTab} onTabChange={setSessionTab} />
+          {sessionFiltersActive || filteredSessions.length === 0 ? (
+            <SessionsEmptyState sessions={sessionsData} />
+          ) : (
+            <div className="flex flex-col gap-3 px-4 py-6">
+              {filteredSessions.map((session) =>
+                session.type === "1:1" ? (
+                  <SessionCard1On1
+                    key={session.id}
+                    session={session}
+                    isExpanded={expandedSession === session.id}
+                    onToggle={() =>
+                      setExpandedSession(
+                        expandedSession === session.id ? null : session.id
+                      )
+                    }
+                  />
+                ) : (
+                  <SessionCardWebinar
+                    key={session.id}
+                    session={session}
+                    isExpanded={expandedSession === session.id}
+                    onToggle={() =>
+                      setExpandedSession(
+                        expandedSession === session.id ? null : session.id
+                      )
+                    }
+                  />
+                )
+              )}
+            </div>
           )}
-        </div>
+        </>
+      )}
 
-        <BottomNav active="mentors" profileNavImg={imgProfileNav} />
-
-        {/* Filter sheets */}
-        {showMentorFilter && (
-          <MentorFilterSheet
-            onClose={() => setShowMentorFilter(false)}
-            onShowResults={(filters) => setActiveMentorFilters(filters)}
-          />
-        )}
-        {showSessionFilter && (
-          <SessionFilterSheet
-            onClose={() => setShowSessionFilter(false)}
-            onShowResults={(hasFilters) => setSessionFiltersActive(hasFilters)}
-          />
-        )}
-      </div>
-    </div>
+      {/* Filter sheets */}
+      {showMentorFilter && (
+        <MentorFilterSheet
+          onClose={() => setShowMentorFilter(false)}
+          onShowResults={(filters) => setActiveMentorFilters(filters)}
+        />
+      )}
+      {showSessionFilter && (
+        <SessionFilterSheet
+          onClose={() => setShowSessionFilter(false)}
+          onShowResults={(hasFilters) => setSessionFiltersActive(hasFilters)}
+        />
+      )}
+    </AppLayout>
   );
 }

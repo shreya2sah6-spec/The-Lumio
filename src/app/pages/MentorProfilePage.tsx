@@ -23,6 +23,7 @@ import { SaveButton } from "../components/SaveButton";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 
 import { PageHeader } from "../components/PageHeader";
+import { AppLayout } from "../components/AppLayout";
 
 // ─── Images ──────────────────────────────────────────────────────────────────
 
@@ -766,8 +767,9 @@ export function MentorProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
+    <AppLayout
+      hideNav
+      header={
         <PageHeader
           title="Mentor's Profile"
           onBack={() => navigate("/mentors")}
@@ -776,11 +778,11 @@ export function MentorProfilePage() {
               <ShareFat size={24} color="#6B5F7A" />
             </button>
           }
-          sticky
           shadow
         />
-
-        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+      }
+    >
+        <div ref={scrollRef}>
           {/* Mentor Hero Section */}
           <div className="bg-[#fffeff] px-4 pt-5 pb-3">
             {/* Image and Action Buttons Row */}
@@ -1342,7 +1344,7 @@ export function MentorProfilePage() {
 
         {/* Sticky Footer - All Tabs */}
         <div className="fixed bottom-0 left-0 right-0 z-30 shadow-[0px_-2px_8px_rgba(0,0,0,0.06)]">
-          <div className="max-w-[800px] mx-auto bg-[#fffeff]">
+          <div className="max-w-[430px] mx-auto bg-[#fffeff]">
             {/* Unlock Chat Banner */}
             <div className="bg-[#f5f0ff] px-4 py-3 rounded-t-[8px]">
               <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[14px] leading-[20px] text-center">
@@ -1379,7 +1381,6 @@ export function MentorProfilePage() {
 
           </div>
         </div>
-      </div>
-    </div>
+    </AppLayout>
   );
 }

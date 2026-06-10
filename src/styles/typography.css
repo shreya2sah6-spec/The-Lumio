@@ -159,4 +159,56 @@
     letter-spacing: 0.14px;
   }
 
+  /* ── Input / Form ────────────────────────────────────────────────────────── */
+
+  /* Input Value · Manrope · Regular 400 · 14/21 · ls 0.14
+     Applied to <input> and <textarea> value text.                            */
+  .type-input {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 21px;
+    letter-spacing: 0.14px;
+  }
+
+  /* Input Placeholder — same metrics, muted opacity */
+  .type-input::placeholder {
+    font-weight: 400;
+    opacity: 1;
+  }
+
+  /* Input Label · Manrope · Medium 500 · 14/21 · ls 0.14 */
+  .type-label {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 21px;
+    letter-spacing: 0.14px;
+  }
+
+  /* ── Subheading (between H3 and H4 in modals / sheets) ──────────────────── */
+
+  /* Subheading · Manrope · Semibold 600 · 22/32 · ls 0
+     Used for modal titles, confirmation headings, sheet titles.              */
+  .type-subheading {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 32px;
+    letter-spacing: 0;
+  }
+
+  /* ── Overline / tag label ────────────────────────────────────────────────── */
+
+  /* Overline · Manrope · Medium 500 · 10/14 · ls 0.8
+     Used for ALL-CAPS tags, role chips, status labels.                       */
+  .type-overline {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+
 }

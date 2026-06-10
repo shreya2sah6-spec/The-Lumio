@@ -17,7 +17,7 @@ export function NotFoundScreen({
   imageSrc,
 }: NotFoundScreenProps) {
   return (
-    <div className="min-h-screen bg-[#fffeff] flex flex-col">
+    <div className="min-h-[100dvh] bg-[#fffeff] flex flex-col">
 
       {/* Main content */}
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-8 gap-8">

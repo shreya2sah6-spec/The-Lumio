@@ -12,8 +12,8 @@ import {
   ShareFat,
 } from "@phosphor-icons/react";
 import { FileTextIcon } from "lucide-react";
-import { BottomNav } from "../components/BottomNav";
 import { SearchBar } from "../components/SearchBar";
+import { AppLayout } from "../components/AppLayout";
 import { SaveButton } from "../components/SaveButton";
 
 import imgPostImage01 from "@/imports/FeedCovers/sanyam-cover.png";
@@ -49,22 +49,20 @@ const PROFILE_PLACEHOLDER =
 function TopBar() {
   const navigate = useNavigate();
   return (
-    <div className="sticky top-0 z-10 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-      <div className="flex gap-3 items-center px-4 py-3">
-        <SearchBar placeholder="Search" className="flex-1" />
-        <button
-          className="p-2 cursor-pointer"
-          onClick={() => navigate("/notifications")}
-        >
-          <BellSimple size={24} color="#6B5F7A" />
-        </button>
-        <button
-          className="p-2 cursor-pointer"
-          onClick={() => navigate("/messages")}
-        >
-          <ChatCenteredDots size={24} color="#6B5F7A" />
-        </button>
-      </div>
+    <div className="flex gap-3 items-center px-4 py-3">
+      <SearchBar placeholder="Search" className="flex-1" />
+      <button
+        className="p-2 cursor-pointer"
+        onClick={() => navigate("/notifications")}
+      >
+        <BellSimple size={24} color="#6B5F7A" />
+      </button>
+      <button
+        className="p-2 cursor-pointer"
+        onClick={() => navigate("/messages")}
+      >
+        <ChatCenteredDots size={24} color="#6B5F7A" />
+      </button>
     </div>
   );
 }
@@ -406,7 +404,7 @@ function StoryOverlay({
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center bg-black">
-      <div className="relative h-full w-full max-w-[800px] flex flex-col">
+      <div className="relative h-full w-full max-w-[430px] flex flex-col">
         {/* background image — full bleed, no crop */}
         <img
           src={card.image}
@@ -668,7 +666,7 @@ function UpcomingSessionBanner({ mentorName, onChevron }: { mentorName: string; 
   const label = useCountdown(3480); // 58:00
   // BottomNav = 68px nav row + 46px safe-area = 114px total
   return (
-    <div className="fixed bottom-[114px] left-1/2 -translate-x-1/2 w-full max-w-[800px] z-20 bg-[#f5f0ff] border-t border-[#c8bbda] shadow-[0px_-1px_3px_rgba(157,148,170,0.25)]">
+    <div className="fixed bottom-[114px] left-1/2 -translate-x-1/2 w-full max-w-[430px] z-20 bg-[#f5f0ff] border-t border-[#c8bbda] shadow-[0px_-1px_3px_rgba(157,148,170,0.25)]">
       <div className="inline-flex items-center justify-between w-full px-[16px] py-[12px]">
         {/* Left: label */}
         <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[15px] leading-[22px]">
@@ -766,141 +764,132 @@ export function HomePage() {
     return () => clearTimeout(t);
   }, [showPostToast]);
 
-  // Banner ~46px + BottomNav 114px = 160px total clearance when banner visible
-  const feedPb = showUpcomingBanner ? "pb-[160px]" : "pb-[0px]";
-
   // Navbar profile image
   const profileNavImage = imgProfileNav;
 
   return (
-    <div className="min-h-screen bg-[#f0ecf7] flex items-start justify-center">
+    <AppLayout header={<TopBar />} profileNavImg={profileNavImage}>
       {storyIndex !== null && (
         <StoryOverlay index={storyIndex} onClose={() => setStoryIndex(null)} />
       )}
-      <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen">
-        <TopBar />
 
-        {/* ── Post success toast ── */}
-        {showPostToast && (
+      {/* ── Post success toast ── */}
+      {showPostToast && (
+        <div
+          onClick={() => setShowPostToast(false)}
+          className="fixed top-[60px] left-1/2 -translate-x-1/2 z-[90] w-[calc(100%-32px)] max-w-[368px]"
+        >
           <div
-            onClick={() => setShowPostToast(false)}
-            className="fixed top-[60px] left-1/2 -translate-x-1/2 z-[90] w-[calc(100%-32px)] max-w-[368px]"
+            className="flex items-center gap-[10px] px-[16px] py-[12px] rounded-[10px]"
+            style={{
+              background: "#1A1128",
+              boxShadow: "0px 4px 16px rgba(26, 17, 40, 0.28)",
+            }}
           >
             <div
-              className="flex items-center gap-[10px] px-[16px] py-[12px] rounded-[10px]"
-              style={{
-                background: "#1A1128",
-                boxShadow: "0px 4px 16px rgba(26, 17, 40, 0.28)",
-              }}
+              className="shrink-0 flex items-center justify-center rounded-full"
+              style={{ width: 28, height: 28, background: "#7D3AEA" }}
             >
-              <div
-                className="shrink-0 flex items-center justify-center rounded-full"
-                style={{ width: 28, height: 28, background: "#7D3AEA" }}
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path d="M2 7.5L5.5 11L12 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <p
-                className="flex-1 font-['Manrope',sans-serif] font-medium text-white text-[14px] leading-[20px]"
-              >
-                Your post is now live
-              </p>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7.5L5.5 11L12 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </div>
-          </div>
-        )}
-
-        <div className={`flex-1 overflow-y-auto ${feedPb}`}>
-          <div className="flex flex-col gap-1">
-            {/* Session summary banner — fixed as first feed item */}
-            {showSummaryBanner && (
-              <SessionSummaryBanner
-                onChevron={() =>
-                  navigate("/journal/summary", {
-                    state: {
-                      mentor: locState?.mentor,
-                      mentorName: locState?.mentorName,
-                      mentorAvatar: locState?.mentorAvatar,
-                    },
-                  })
-                }
-              />
-            )}
-            <PostCard
-              image={imgPostImage01}
-              containImage
-              avatarSingle={imgAvatarImage1}
-              name="Sanyam Kumar"
-              role="Fashion Designer and Stylist"
-              status="Seeking Internship"
-              caption="Maximal Baarat styling meets royal drama with layered jewels, bold turbans, and statement silhouettes."
-              date="26 July"
-              engagementAvatar={imgEngagementAvatar1}
-              engagementLabel="Sr. Designer from Sabyasachi"
-              engagementIcon="repost"
-              onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "sanyam" } })}
-            />
-            <PostCard
-              image={imgPostImage02}
-              avatarPrimary={imgAvatarPrimary}
-              avatarSecondary={imgAvatarSecondary}
-              name="Neha Jain"
-              role="Fashion Designer"
-              status="Seeking Full time"
-              caption="A Celebration of Resilience, Beauty, and Feminine Power."
-              date="25 July"
-              coCreate
-              coCreateWith="2 Others"
-              onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "neha" } })}
-            />
-            <CreativeMomentumSection onOpenStory={setStoryIndex} />
-            <PostCard
-              image={imgPostImage2}
-              containImage
-              avatarSingle={imgAvatarImage3}
-              name="Arpita Sharma"
-              role="Jewellery Designer @Rubas"
-              caption="Temple artistry steeped in South Indian tradition."
-              date="25 July"
-              onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "arpita" } })}
-            />
-            <BrandJobPost />
-            <PostCard
-              image={imgPostImage3}
-              avatarSingle={imgAvatarImage4}
-              name="Kamini Singh"
-              role="Fashion Designer"
-              caption="Denim dreams stitched with confidence and runway elegance."
-              date="20 July"
-              onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "kamini" } })}
-            />
-            <PostCard
-              image={imgPostImage4}
-              containImage
-              avatarSingle={imgAvatarImage5}
-              name="Aayush Kumar"
-              role="Textile Designer"
-              caption="Modern swirl patterns in muted tones bring artistic movement and cozy elegance to the rug design."
-              date="20 July"
-              engagementAvatar={imgEngagementAvatar2}
-              engagementLabel="Sr. Designer from Papa Dont' Preach"
-              engagementIcon="clap"
-              onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "aayush" } })}
-            />
+            <p
+              className="flex-1 font-['Manrope',sans-serif] font-medium text-white text-[14px] leading-[20px]"
+            >
+              Your post is now live
+            </p>
           </div>
         </div>
-        <BottomNav active="home" profileNavImg={profileNavImage} />
+      )}
 
-        {/* Upcoming session banner — fixed above BottomNav */}
-        {showUpcomingBanner && (
-          <UpcomingSessionBanner
-            mentorName={mentorName}
+      <div className="flex flex-col gap-1">
+        {/* Session summary banner — fixed as first feed item */}
+        {showSummaryBanner && (
+          <SessionSummaryBanner
             onChevron={() =>
-              navigate("/mentors/video-call", { state: { mentorName, mentorAvatar } })
+              navigate("/journal/summary", {
+                state: {
+                  mentor: locState?.mentor,
+                  mentorName: locState?.mentorName,
+                  mentorAvatar: locState?.mentorAvatar,
+                },
+              })
             }
           />
         )}
+        <PostCard
+          image={imgPostImage01}
+          containImage
+          avatarSingle={imgAvatarImage1}
+          name="Sanyam Kumar"
+          role="Fashion Designer and Stylist"
+          status="Seeking Internship"
+          caption="Maximal Baarat styling meets royal drama with layered jewels, bold turbans, and statement silhouettes."
+          date="26 July"
+          engagementAvatar={imgEngagementAvatar1}
+          engagementLabel="Sr. Designer from Sabyasachi"
+          engagementIcon="repost"
+          onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "sanyam" } })}
+        />
+        <PostCard
+          image={imgPostImage02}
+          avatarPrimary={imgAvatarPrimary}
+          avatarSecondary={imgAvatarSecondary}
+          name="Neha Jain"
+          role="Fashion Designer"
+          status="Seeking Full time"
+          caption="A Celebration of Resilience, Beauty, and Feminine Power."
+          date="25 July"
+          coCreate
+          coCreateWith="2 Others"
+          onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "neha" } })}
+        />
+        <CreativeMomentumSection onOpenStory={setStoryIndex} />
+        <PostCard
+          image={imgPostImage2}
+          containImage
+          avatarSingle={imgAvatarImage3}
+          name="Arpita Sharma"
+          role="Jewellery Designer @Rubas"
+          caption="Temple artistry steeped in South Indian tradition."
+          date="25 July"
+          onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "arpita" } })}
+        />
+        <BrandJobPost />
+        <PostCard
+          image={imgPostImage3}
+          avatarSingle={imgAvatarImage4}
+          name="Kamini Singh"
+          role="Fashion Designer"
+          caption="Denim dreams stitched with confidence and runway elegance."
+          date="20 July"
+          onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "kamini" } })}
+        />
+        <PostCard
+          image={imgPostImage4}
+          containImage
+          avatarSingle={imgAvatarImage5}
+          name="Aayush Kumar"
+          role="Textile Designer"
+          caption="Modern swirl patterns in muted tones bring artistic movement and cozy elegance to the rug design."
+          date="20 July"
+          engagementAvatar={imgEngagementAvatar2}
+          engagementLabel="Sr. Designer from Papa Dont' Preach"
+          engagementIcon="clap"
+          onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "aayush" } })}
+        />
       </div>
-    </div>
+
+      {/* Upcoming session banner — fixed above BottomNav */}
+      {showUpcomingBanner && (
+        <UpcomingSessionBanner
+          mentorName={mentorName}
+          onChevron={() =>
+            navigate("/mentors/video-call", { state: { mentorName, mentorAvatar } })
+          }
+        />
+      )}
+    </AppLayout>
   );
 }

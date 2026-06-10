@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { PageHeader } from "../components/PageHeader";
+import { AppLayout } from "../components/AppLayout";
 import type { Mentor } from "../components/MentorCard";
 
 export function MessagingChatLockedPage() {
@@ -8,8 +9,9 @@ export function MessagingChatLockedPage() {
   const mentor = (location.state as { mentor?: Mentor } | null)?.mentor ?? null;
 
   return (
-    <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen relative">
+    <AppLayout
+      hideNav
+      header={
         <PageHeader
           title={mentor?.name ?? "Chat"}
           onBack={() =>
@@ -17,7 +19,10 @@ export function MessagingChatLockedPage() {
               ? navigate("/mentor-profile", { state: { mentor } })
               : navigate("/messages")
           }
+          shadow
         />
+      }
+    >
 
         {/* Chat Messages (blurred background) */}
         <div className="flex-1 relative">
@@ -142,7 +147,6 @@ export function MessagingChatLockedPage() {
           </div>
         </div>
 
-      </div>
-    </div>
+    </AppLayout>
   );
 }

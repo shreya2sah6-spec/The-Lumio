@@ -3,7 +3,7 @@ import App from "./app/App.tsx";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <div className="max-w-[800px] mx-auto w-full min-h-screen overflow-x-hidden">
+  <div className="max-w-[430px] mx-auto w-full min-h-[100dvh] overflow-x-hidden">
     <App />
   </div>
 );

@@ -921,7 +921,12 @@ function ApplicationStatusModal({
 
         {/* action buttons */}
         <div className="flex gap-[12px] items-start w-full">
-          <Button variant="outline" size="lg" onClick={onClose} className="w-[112px] shrink-0">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={onClose}
+            className="w-[112px] shrink-0"
+          >
             Close
           </Button>
           <Button variant="gradient" size="lg" onClick={onContinueApplying} className="flex-1 min-w-px">
@@ -1167,7 +1172,7 @@ function FilterSheet({
         className="fixed inset-0 z-40 bg-[rgba(26,26,26,0.5)]"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50 bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
         </div>
@@ -1336,14 +1341,14 @@ function ListingView({
             <Funnel size={24} color="#6B5F7A" />
           </button>
         </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pb-[88px]">
         <TabBar
           tabs={["Discover", "Applied"] as JobsTab[]}
           active={activeTab}
           onChange={onTabChange}
         />
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
         {activeTab === "Discover" ? (
           isFiltered ? (
             computedFilteredJobs.length === 0 ? (
@@ -2015,8 +2020,8 @@ export function JobsPage() {
     else setIsAppliedFiltered(true);
   }
   return (
-    <div className="h-screen bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
-      <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
+    <div className="h-[100dvh] bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
+      <div className="w-full max-w-[430px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
         {screen === "listing" ? (
           <>
             <ListingView

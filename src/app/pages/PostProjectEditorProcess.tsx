@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PencilSimple, Scissors, Rows, Ruler, TShirt, Images } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
+import { AppLayout } from "../components/AppLayout";
 import { CreateProjectStepper } from "../components/CreateProjectStepper";
 import { PortfolioComposerToolbar } from "../components/PortfolioComposerToolbar";
 import { UploadBlock, AddMoreBlock } from "../components/UploadBlock";
@@ -33,14 +34,18 @@ export function PostProjectEditorProcess() {
   }
 
   return (
-    <div className="bg-[#fffeff] min-h-screen">
-      <div className="sticky top-0 z-20 bg-[#fffeff]">
-        <PageHeader
-          title="Add Your Project"
-          onBack={() => navigate("/post/project-editor/about")}
-        />
-        <CreateProjectStepper currentStep={2} />
-      </div>
+    <AppLayout
+      hideNav
+      header={
+        <>
+          <PageHeader
+            title="Add Your Project"
+            onBack={() => navigate("/post/project-editor/about")}
+          />
+          <CreateProjectStepper currentStep={2} />
+        </>
+      }
+    >
 
       <div className="pb-[140px]">
         <div className="flex flex-col pt-2">
@@ -91,6 +96,6 @@ export function PostProjectEditorProcess() {
       </div>
 
       <PortfolioComposerToolbar validate={validate} />
-    </div>
+    </AppLayout>
   );
 }

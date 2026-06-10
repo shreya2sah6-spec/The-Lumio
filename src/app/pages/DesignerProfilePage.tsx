@@ -14,6 +14,7 @@ import { Button } from "../components/ui/button";
 import { SaveButton } from "../components/SaveButton";
 import { ViewMoreButton } from "../components/ViewMoreButton";
 import { PageHeader } from "../components/PageHeader";
+import { AppLayout } from "../components/AppLayout";
 
 import imgProject1 from "@/imports/MentorsListing-1/af1c850daadb743337a79569abbde7a01ce4354c.png";
 import { rv, rvAnon } from "@/app/data/reviewIdentities";
@@ -565,9 +566,9 @@ export function DesignerProfilePage() {
   }, [designerId]);
 
   return (
-    <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-
+    <AppLayout
+      hideNav
+      header={
         <PageHeader
           title="Designer Profile"
           onBack={() => navigate(-1)}
@@ -576,11 +577,11 @@ export function DesignerProfilePage() {
               <ShareFat size={24} color="#6B5F7A" />
             </button>
           }
-          sticky
           shadow
         />
-
-        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+      }
+    >
+        <div ref={scrollRef}>
 
           {/* ── Hero (matches Mentor hero section exactly) ── */}
           <div className="bg-[#fffeff] px-4 pt-5 pb-3">
@@ -863,7 +864,6 @@ export function DesignerProfilePage() {
           </div>
 
         </div>
-      </div>
-    </div>
+    </AppLayout>
   );
 }

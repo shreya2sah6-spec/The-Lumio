@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AppLayout } from "../components/AppLayout";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
@@ -916,39 +917,34 @@ export function PostProjectDetailPage() {
   const goToDesignerProfile = () => navigate("/designer-profile");
 
   return (
-    <div className="bg-[#fffeff] min-h-screen flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-0 bg-[#fffeff] flex flex-col min-h-screen relative">
-
-        {/* ── 1. Fixed header ───────────────────────────────────────────────── */}
-        <div
-          className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[800px] z-30 bg-[#fffeff]"
-          style={{ boxShadow: "0px 1px 2px rgba(200,192,212,0.3)" }}
-        >
-          <div className="flex items-center px-4 py-3 gap-2">
-            <button
-              type="button"
-              onClick={() => navigate(isUserPost ? "/profile" : "/home/feed")}
-              className="p-2 -ml-2 shrink-0 flex items-center justify-center cursor-pointer"
-              aria-label="Go back"
-            >
-              <ArrowLeft size={24} color="#1A1128" />
-            </button>
-            <h1 className="font-['Roboto_Serif',serif] font-extrabold text-[#1a1128] text-[24px] leading-[31px] flex-1 min-w-0 truncate ml-3">
-              Project
-            </h1>
-            <button
-              type="button"
-              className="p-2 shrink-0 flex items-center justify-center cursor-pointer"
-              aria-label="Share"
-            >
-              <ShareFat size={22} color="#6B5F7A" />
-            </button>
-            <SaveButton />
-          </div>
+    <AppLayout
+      hideNav
+      header={
+        <div className="flex items-center px-4 py-3 gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(isUserPost ? "/profile" : "/home/feed")}
+            className="p-2 -ml-2 shrink-0 flex items-center justify-center cursor-pointer"
+            aria-label="Go back"
+          >
+            <ArrowLeft size={24} color="#1A1128" />
+          </button>
+          <h1 className="font-['Roboto_Serif',serif] font-extrabold text-[#1a1128] text-[24px] leading-[31px] flex-1 min-w-0 truncate ml-3">
+            Project
+          </h1>
+          <button
+            type="button"
+            className="p-2 shrink-0 flex items-center justify-center cursor-pointer"
+            aria-label="Share"
+          >
+            <ShareFat size={22} color="#6B5F7A" />
+          </button>
+          <SaveButton />
         </div>
-
-        {/* ── Scrollable content (offset = 58px header) ── */}
-        <div className="pt-[58px] pb-[80px] flex flex-col">
+      }
+    >
+        {/* ── Content ── */}
+        <div className="flex flex-col">
 
           {/* ── 2. Creator info ───────────────────────────────────────────────── */}
           <CreatorHeader creator={creator} onPress={goToDesignerProfile} />
@@ -1277,7 +1273,6 @@ export function PostProjectDetailPage() {
         {/* ── Clap FAB — dynamic initial count per post ────────────────────── */}
         <ClapFab initialCount={engagement.claps} />
 
-      </div>
-    </div>
+    </AppLayout>
   );
 }

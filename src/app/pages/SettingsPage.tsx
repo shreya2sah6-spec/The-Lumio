@@ -15,6 +15,7 @@ import {
   CaretRight,
 } from "@phosphor-icons/react";
 import { PageHeader } from "../components/PageHeader";
+import { AppLayout } from "../components/AppLayout";
 import type { Icon } from "@phosphor-icons/react";
 
 function SettingsItem({
@@ -56,12 +57,12 @@ export function SettingsPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-[#fffeff] flex items-start justify-center">
-      <div className="w-full max-w-[800px] min-w-[360px] bg-[#fffeff] flex flex-col min-h-screen">
-        <PageHeader title="Settings" onBack={() => navigate("/profile")} />
-
+    <AppLayout
+      hideNav
+      header={<PageHeader title="Settings" onBack={() => navigate("/profile")} />}
+    >
         {/* Content */}
-        <div className="flex-1 overflow-y-auto px-[16px] py-[20px]">
+        <div className="px-[16px] py-[20px]">
           {/* Your account */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
             <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
@@ -117,7 +118,6 @@ export function SettingsPage() {
           </div>
         </div>
 
-      </div>
-    </div>
+    </AppLayout>
   );
 }
