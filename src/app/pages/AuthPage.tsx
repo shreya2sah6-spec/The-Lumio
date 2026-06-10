@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Phone, ArrowLeft, ArrowRight, Check } from "@phosphor-icons/react";
 import { Button } from "../components/ui/button";
 import { FieldError } from "../components/FieldError";
+import { OtpInput } from "../components/OtpInput";
+import { HeaderBackButton } from "../components/HeaderBackButton";
+import { signInWithSocial, type SocialProvider } from "../services/authService";
 import {
   validatePhone,
   validateOtp,
@@ -189,11 +192,12 @@ function Chip({ label, selected, onClick, showTick = false }: ChipProps) {
 
 // ─── PhoneEntryScreen ─────────────────────────────────────────────────────────
 
-function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
+function PhoneEntryScreen({ onNext, onSocialSuccess }: { onNext: () => void; onSocialSuccess: () => void }) {
   const [phone, setPhone] = useState("");
   const [isFocused, setIsFocused] = useState(false);
-  // submitted: true only after user taps "Send OTP"
   const [submitted, setSubmitted] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<SocialProvider | null>(null);
+  const [socialError, setSocialError] = useState<string | null>(null);
 
   const phoneValidation = validatePhone(phone);
 
@@ -207,6 +211,30 @@ function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
   function handleSendOtp() {
     setSubmitted(true);
     if (phoneValidation.valid) onNext();
+  }
+
+  async function handleSocialLogin(provider: SocialProvider) {
+    setSocialError(null);
+    setSocialLoading(provider);
+    try {
+      // Apple and LinkedIn providers are not yet configured in Supabase — route
+      // both through Google OAuth until native credentials are added.
+      const resolvedProvider: SocialProvider =
+        provider === "apple" || provider === "linkedin_oidc" ? "google" : provider;
+      await signInWithSocial(resolvedProvider);
+      // signInWithSocial triggers a full-page redirect — code below won't run
+      // unless the Supabase URL is missing (dev/unconfigured mode).
+      onSocialSuccess();
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "Sign-in failed. Please try again.";
+      // "provider not enabled" is a common misconfiguration message
+      const friendly = msg.toLowerCase().includes("provider")
+        ? "This sign-in method is not configured yet. Please check your Supabase dashboard."
+        : msg;
+      setSocialError(friendly);
+      setSocialLoading(null);
+    }
   }
 
   return (
@@ -255,22 +283,39 @@ function PhoneEntryScreen({ onNext }: { onNext: () => void }) {
       {/* Flexible spacer before social login */}
       <div className="flex-1" />
 
-      <div className="flex flex-col gap-9 items-center w-full">
+      <div className="flex flex-col gap-5 items-center w-full">
         <Divider label="Or continue with" />
         <div className="flex gap-4 items-center">
-          {[
-            { src: imgGoogle, alt: "Google" },
-            { src: imgLinkedin, alt: "LinkedIn" },
-            { src: imgApple, alt: "Apple" },
-          ].map(({ src, alt }) => (
-            <button
-              key={alt}
-              className="bg-white rounded-full size-12 flex items-center justify-center p-2 shadow-[0px_1px_4px_0px_rgba(200,192,212,0.6)] border border-[#e2d9ef] cursor-pointer"
-            >
-              <img src={src} alt={alt} className="size-[14px] object-contain" />
-            </button>
-          ))}
+          {(
+            [
+              { src: imgGoogle,   alt: "Google",   provider: "google"         as SocialProvider },
+              { src: imgLinkedin, alt: "LinkedIn",  provider: "linkedin_oidc"  as SocialProvider },
+              { src: imgApple,    alt: "Apple",     provider: "apple"          as SocialProvider },
+            ] as const
+          ).map(({ src, alt, provider }) => {
+            const isLoading = socialLoading === provider;
+            return (
+              <button
+                key={alt}
+                onClick={() => handleSocialLogin(provider)}
+                disabled={socialLoading !== null}
+                aria-label={`Sign in with ${alt}`}
+                className="bg-white rounded-full size-12 flex items-center justify-center p-2 shadow-[0px_1px_4px_0px_rgba(200,192,212,0.6)] border border-[#e2d9ef] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-opacity active:scale-95"
+              >
+                {isLoading ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-[#7d3aea] border-t-transparent animate-spin" />
+                ) : (
+                  <img src={src} alt={alt} className="size-[14px] object-contain" />
+                )}
+              </button>
+            );
+          })}
         </div>
+        {socialError && (
+          <p className="font-['Manrope',sans-serif] font-normal text-[#c30105] text-[13px] leading-[19px] text-center px-4">
+            {socialError}
+          </p>
+        )}
       </div>
 
       <div className="flex gap-2 items-center justify-center w-full">
@@ -362,34 +407,15 @@ function OtpVerifyScreen({ onNext, onBack }: { onNext: () => void; onBack: () =>
 
       <div className="flex flex-col gap-5 w-full">
         <FieldLabel>4 digit OTP</FieldLabel>
-        <div className="flex gap-2 items-center">
-          {digits.map((digit, i) => {
-            const isFocused = focusedIndex === i;
-            const isFilled = digit !== "";
-            const borderColor = isFocused ? "#1a1128" : "#c8bbda";
-            const textColor = isFilled ? "#1a1128" : "#9d90ad";
-            return (
-              <div key={i} className="relative w-[42px]">
-                <div
-                  className="absolute border inset-0 pointer-events-none rounded-[4px] transition-colors"
-                  style={{ borderColor }}
-                />
-                <input
-                  ref={(el) => { inputRefs.current[i] = el; }}
-                  
-                  style={{ color: textColor }}
-                  inputMode="numeric"
-                  maxLength={1}
-                  value={digit}
-                  onChange={(e) => handleDigit(i, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(i, e)}
-                  onFocus={() => setFocusedIndex(i)}
-                  onBlur={() => setFocusedIndex(null)}
-                />
-              </div>
-            );
-          })}
-        </div>
+        <OtpInput
+          digits={digits}
+          focusedIndex={focusedIndex}
+          inputRefs={inputRefs}
+          onDigitChange={handleDigit}
+          onKeyDown={handleKeyDown}
+          onFocus={setFocusedIndex}
+          onBlur={() => setFocusedIndex(null)}
+        />
         {/* Error — only after submit attempt */}
         {incompleteError && <FieldError message={incompleteError} />}
       </div>
@@ -450,9 +476,7 @@ function OnboardingNameScreen({
   return (
     <div className="flex flex-col gap-8 w-full flex-1">
       <div className="flex flex-col gap-6 w-full">
-        <button onClick={onBack} className="flex items-center p-2 -ml-2 cursor-pointer" aria-label="Go back">
-          <ArrowLeft size={24} color="#1A1128" />
-        </button>
+        <HeaderBackButton onClick={onBack} />
         <ProgressBar total={3} filled={1} />
       </div>
       <div className="flex flex-col gap-4 w-full">
@@ -529,9 +553,7 @@ function DomainScreen({
   return (
     <div className="flex flex-col gap-8 w-full flex-1">
       <div className="flex flex-col gap-6 w-full">
-        <button onClick={onBack} className="flex items-center p-2 -ml-2 cursor-pointer" aria-label="Go back">
-          <ArrowLeft size={24} color="#1A1128" />
-        </button>
+        <HeaderBackButton onClick={onBack} />
         <ProgressBar total={3} filled={2} />
       </div>
       <div className="flex flex-col gap-4 w-full">
@@ -605,9 +627,7 @@ function ExperienceScreen({
   return (
     <div className="flex flex-col gap-8 w-full flex-1">
       <div className="flex flex-col gap-6 w-full">
-        <button onClick={onBack} className="flex items-center p-2 -ml-2 cursor-pointer" aria-label="Go back">
-          <ArrowLeft size={24} color="#1A1128" />
-        </button>
+        <HeaderBackButton onClick={onBack} />
         <ProgressBar total={3} filled={3} />
       </div>
       <div className="flex flex-col gap-4 w-full">
@@ -652,6 +672,20 @@ export function AuthPage() {
   const [userDomain, setUserDomain] = useState("");
   const [userExperience, setUserExperience] = useState("");
 
+  // After OAuth redirect back from provider, AuthCallbackPage flags this key.
+  // On mount we detect it and jump straight to the name-entry step.
+  useEffect(() => {
+    const socialDone = sessionStorage.getItem("lumio:social_auth_complete");
+    if (socialDone) {
+      sessionStorage.removeItem("lumio:social_auth_complete");
+      // Prefill name from provider profile if available
+      const providerName = sessionStorage.getItem("lumio:social_display_name") ?? "";
+      sessionStorage.removeItem("lumio:social_display_name");
+      if (providerName) setUserName(providerName);
+      setStep("name");
+    }
+  }, []);
+
   function handleComplete() {
     localStorage.setItem("lumio_name", userName);
     localStorage.setItem("lumio_domain", userDomain);
@@ -660,7 +694,12 @@ export function AuthPage() {
   }
 
   const screens: Record<AuthStep, React.ReactNode> = {
-    phone: <PhoneEntryScreen onNext={() => setStep("otp")} />,
+    phone: (
+      <PhoneEntryScreen
+        onNext={() => setStep("otp")}
+        onSocialSuccess={() => setStep("name")}
+      />
+    ),
     otp: <OtpVerifyScreen onNext={() => setStep("name")} onBack={() => setStep("phone")} />,
     name: (
       <OnboardingNameScreen

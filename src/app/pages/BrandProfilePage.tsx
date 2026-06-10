@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useArrowTabNav } from "../hooks/useArrowTabNav";
-import { ArrowLeft, ShareFat, Star, MapPin, ArrowSquareOut, DotsThreeVertical, Check } from "@phosphor-icons/react";
+import { ShareFat, Star, MapPin, ArrowSquareOut, DotsThreeVertical, Check } from "@phosphor-icons/react";
+import { HeaderBackButton } from "../components/HeaderBackButton";
 import { Button } from "../components/ui/button";
 import { OverviewTab } from "../components/brand-profile/OverviewTab";
 import { JobsTab } from "../components/brand-profile/JobsTab";
@@ -402,7 +403,7 @@ export function BrandProfilePage() {
       hideNav
       header={
         <div className="bg-[#fffeff] flex items-center px-4 py-3">
-          <button
+          <HeaderBackButton
             onClick={() => {
               if (fromJob) {
                 navigate("/jobs", { state: { openJob: fromJob } });
@@ -410,11 +411,7 @@ export function BrandProfilePage() {
                 navigate(-1);
               }
             }}
-            className="p-2 -ml-2 flex items-center justify-center shrink-0"
-            aria-label="Go back"
-          >
-            <ArrowLeft size={24} color="#1A1128" />
-          </button>
+          />
           <h1 className="type-h1 text-[#1a1128] whitespace-nowrap pr-[12px]">
             Company Profile
           </h1>

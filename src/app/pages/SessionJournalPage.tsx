@@ -1,7 +1,8 @@
 import { useState, createContext, useContext } from "react";
 import { AppLayout } from "../components/AppLayout";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, ShareFat, Link, BookOpen, FileText, CaretDown, CaretUp } from "@phosphor-icons/react";
+import { ShareFat, Link, BookOpen, FileText, CaretDown, CaretUp } from "@phosphor-icons/react";
+import { HeaderBackButton } from "../components/HeaderBackButton";
 import imgMentorAvatarFallback from "@/imports/MentorsBookingConfirmed/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -260,13 +261,7 @@ const CHAT_RESOURCES: ChatResource[] = [
 function JournalHeader({ onBack }: { onBack: () => void }) {
   return (
     <div className="relative bg-[#fffeff] flex items-center px-4 py-3 shrink-0 border-b border-[#e2d9ef]">
-      <button
-        onClick={onBack}
-        className="p-2 -ml-2 shrink-0 flex items-center justify-center cursor-pointer"
-        aria-label="Go back"
-      >
-        <ArrowLeft size={24} color="#1A1128" />
-      </button>
+      <HeaderBackButton onClick={onBack} />
 
       {/* Centered title — absolute so it doesn't interact with the flex layout */}
       <h1 className="type-h1 text-[#1a1128] absolute left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none select-none">

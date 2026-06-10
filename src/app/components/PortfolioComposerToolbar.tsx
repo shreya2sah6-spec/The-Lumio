@@ -89,18 +89,18 @@ export function PortfolioComposerToolbar({ validate }: PortfolioComposerToolbarP
 
       {/* ── Main toolbar row + bottom safe area ─────────────────────────── */}
       {/*
-          Spacing spec (updated):
+          Spacing spec:
             icon tap target         40 × 40 px
-            between media icons     gap-[8px]
-            mic → divider           16px   (ml-[16px] on divider)
+            between media icons     gap-[12px]
+            mic → divider           12px   (ml-[12px] on divider)
             divider → lightbulb     8px    (ml-[8px] on lightbulb)
-            lightbulb → continue    16px   (ml-[16px] on continue)
+            lightbulb → continue    12px   (ml-[12px] on continue)
             row alignment           justify-center  (whole group centred)
       */}
       <div className="bg-[#fffeff] border-t border-[#e2d9ef] px-4 py-[10px] flex items-center justify-center">
 
-        {/* Media-action icons — 8px gap, 40×40 touch targets, #1A1128 */}
-        <div className="flex items-center gap-[8px]">
+        {/* Media-action icons — 12px gap, 40×40 touch targets, #1A1128 */}
+        <div className="flex items-center gap-[12px]">
           {[
             { icon: <Image                size={24} />, label: "Image" },
             { icon: <VideoCamera          size={24} />, label: "Video" },
@@ -118,7 +118,7 @@ export function PortfolioComposerToolbar({ validate }: PortfolioComposerToolbarP
         </div>
 
         {/* Mic → divider: 16px */}
-        <div className="w-px h-[22px] bg-[#E2D9EF] ml-[16px]" />
+        <div className="w-px h-[22px] bg-[#E2D9EF] ml-[12px]" />
 
         {/* Divider → lightbulb: 8px */}
         <button
@@ -134,7 +134,7 @@ export function PortfolioComposerToolbar({ validate }: PortfolioComposerToolbarP
         {/* Lightbulb → continue: 16px */}
         <button
           onClick={handleContinue}
-          className="w-[40px] h-[40px] flex items-center justify-center ml-[16px] bg-[#7d3aea] rounded-full active:bg-[#6d2fd9] transition-colors shrink-0"
+          className="w-[40px] h-[40px] flex items-center justify-center ml-[12px] bg-[#7d3aea] rounded-full active:bg-[#6d2fd9] transition-colors shrink-0"
           aria-label="Continue"
         >
           <CaretRight size={22} weight="bold" color="white" />

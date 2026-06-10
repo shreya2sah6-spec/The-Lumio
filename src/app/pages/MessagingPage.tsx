@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   Plus,
   DotsThreeVertical,
   PaperPlaneTilt,
 } from "@phosphor-icons/react";
+import { HeaderBackButton } from "../components/HeaderBackButton";
 import { SearchBar } from "../components/SearchBar";
+import { AppLayout } from "../components/AppLayout";
 import imgRahul from "@/imports/MessagingInbox-3/915a716cc5b6ad4efd2b16355a601dbc5e28776c.png";
 import imgPriya from "@/imports/MessagingInbox-3/424a03d1946d4f9a9f1bbebe51d8413d38f90e7e.png";
 import imgNeha from "@/imports/MessagingInbox-3/0e24066874f0be293f0c1d91df85f101e8dea5b1.png";
@@ -197,133 +198,87 @@ const contacts: Contact[] = [
 
 const TABS: InboxTab[] = ["All", "Brands", "Groups", "Requests", "Favourite"];
 
-// ─── Inbox view ───────────────────────────────────────────────────────────────
+// ─── Inbox contact list (scroll content only — header lives in AppLayout) ─────
 
-function InboxView({
+function InboxList({
   contacts,
+  activeTab,
   onOpenChat,
 }: {
   contacts: Contact[];
+  activeTab: InboxTab;
   onOpenChat: (contact: Contact) => void;
 }) {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<InboxTab>("All");
+  if (activeTab !== "All") {
+    return (
+      <div className="flex flex-col items-center justify-center gap-6 py-16 px-8">
+        <img src={imgEmpty} alt="" className="w-48 h-auto object-contain" />
+        <div className="flex flex-col items-center gap-2 text-center">
+          <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
+            No messages yet
+          </p>
+          <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+            {activeTab === "Brands"
+              ? "Messages from brands and labels will appear here."
+              : activeTab === "Groups"
+                ? "Join or create a group to see messages here."
+                : activeTab === "Requests"
+                  ? "Message requests from new connections will appear here."
+                  : "Your favourite conversations will appear here."}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="shrink-0 bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)]">
-        <div className="flex items-center gap-3 px-4 h-[52px]">
+    <>
+      {contacts.map((c) => {
+        const lastRealMsg = [...c.messages]
+          .reverse()
+          .find((m) => m.type !== "divider");
+        const preview = lastRealMsg
+          ? lastRealMsg.type === "sent"
+            ? `You: ${lastRealMsg.text}`
+            : lastRealMsg.text
+          : "";
+        return (
           <button
-            onClick={() => navigate("/home/feed")}
-            className="p-1 cursor-pointer shrink-0"
+            key={c.id}
+            onClick={() => onOpenChat(c)}
+            className="w-full flex gap-3 items-center px-4 py-4 border-b border-[#f0ecf7] cursor-pointer text-left hover:bg-[#faf8ff] transition-colors"
           >
-            <ArrowLeft size={18} color="#1A1128" />
-          </button>
-          <SearchBar
-            placeholder="Search messages"
-            size="sm"
-            dimPlaceholder
-            className="flex-1"
-          />
-        </div>
-        {/* Tabs row: "+" add-tab button + horizontally scrollable tabs */}
-        <div
-          className="flex items-end gap-3 px-4 pt-4 pb-2 overflow-x-auto border-b border-[#e2d9ef]"
-          style={{ scrollbarWidth: "none" }}
-        >
-          <button className="bg-[#f7f4fa] flex items-center justify-center p-2 rounded-[8px] shrink-0 mb-2 cursor-pointer">
-            <Plus size={18} color="#7D3AEA" />
-          </button>
-          <div className="flex gap-3 border-b border-[#E2D9EF]">
-            {TABS.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`flex flex-col items-center justify-end h-[40px] px-4 whitespace-nowrap cursor-pointer font-['Manrope',sans-serif] text-[16px] leading-[25px] shrink-0 gap-0 ${
-                  activeTab === tab
-                    ? "font-medium text-[#1e1530]"
-                    : "font-normal text-[#6b5f7a]"
-                }`}
-              >
-                <span className="pb-[6px]">{tab}</span>
-                {activeTab === tab && (
-                  <div className="h-[2px] w-full bg-[#7d3aea] rounded-tl-[2px] rounded-tr-[2px]" />
-                )}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === "All" ? (
-          contacts.map((c) => {
-            const lastRealMsg = [...c.messages]
-              .reverse()
-              .find((m) => m.type !== "divider");
-            const preview = lastRealMsg
-              ? lastRealMsg.type === "sent"
-                ? `You: ${lastRealMsg.text}`
-                : lastRealMsg.text
-              : "";
-            return (
-              <button
-                key={c.id}
-                onClick={() => onOpenChat(c)}
-                className="w-full flex gap-3 items-center px-4 py-4 border-b border-[#f0ecf7] cursor-pointer text-left hover:bg-[#faf8ff] transition-colors"
-              >
-                <img
-                  src={c.avatar}
-                  alt=""
-                  className="size-[54px] rounded-full object-cover shrink-0"
-                />
-                <div className="flex-1 min-w-0 h-[54px] flex flex-col gap-[2px] justify-center">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] truncate">
-                      {c.name}
-                    </p>
-                    <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px] shrink-0 whitespace-nowrap">
-                      {c.time}
+            <img
+              src={c.avatar}
+              alt=""
+              className="size-[54px] rounded-full object-cover shrink-0"
+            />
+            <div className="flex-1 min-w-0 h-[54px] flex flex-col gap-[2px] justify-center">
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+                  {c.name}
+                </p>
+                <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px] shrink-0 whitespace-nowrap">
+                  {c.time}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] truncate">
+                  {preview}
+                </p>
+                {c.unread ? (
+                  <div className="bg-[#7d3aea] flex flex-col items-center justify-center p-[8px] rounded-[200px] shrink-0 size-[26px]">
+                    <span className="font-['Manrope',sans-serif] font-medium text-white text-[12px] leading-[18px] tracking-[0.24px]">
+                      {c.unread}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] truncate">
-                      {preview}
-                    </p>
-                    {c.unread ? (
-                      <div className="bg-[#7d3aea] flex flex-col items-center justify-center p-[8px] rounded-[200px] shrink-0 size-[26px]">
-                        <span className="font-['Manrope',sans-serif] font-medium text-white text-[12px] leading-[18px] tracking-[0.24px]">
-                          {c.unread}
-                        </span>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              </button>
-            );
-          })
-        ) : (
-          <div className="flex flex-col items-center justify-center gap-6 py-16 px-8">
-            <img src={imgEmpty} alt="" className="w-48 h-auto object-contain" />
-            <div className="flex flex-col items-center gap-2 text-center">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
-                No messages yet
-              </p>
-              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                {activeTab === "Brands"
-                  ? "Messages from brands and labels will appear here."
-                  : activeTab === "Groups"
-                    ? "Join or create a group to see messages here."
-                    : activeTab === "Requests"
-                      ? "Message requests from new connections will appear here."
-                      : "Your favourite conversations will appear here."}
-              </p>
+                ) : null}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-
-    </div>
+          </button>
+        );
+      })}
+    </>
   );
 }
 
@@ -367,12 +322,7 @@ function ChatView({
     <div className="flex flex-col" style={{ height: "100dvh" }}>
       <div className="bg-[#fffeff] shadow-[0px_1px_2px_rgba(200,192,212,0.4)] shrink-0">
         <div className="flex items-center gap-3 px-4 h-[60px]">
-          <button
-            onClick={onBack}
-            className="p-1 cursor-pointer shrink-0"
-          >
-            <ArrowLeft size={18} color="#1A1128" />
-          </button>
+          <HeaderBackButton onClick={onBack} />
           <img
             src={contact.id === "rahul" ? imgRahulChat : contact.avatar}
             alt=""
@@ -453,22 +403,45 @@ function ChatView({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function MessagingPage() {
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState<InboxTab>("All");
   const [activeContact, setActiveContact] = useState<Contact | null>(null);
-  const [clearedUnread, setClearedUnread] = useState<Set<string>>(new Set());
+
+  // Unread cleared state — persisted in localStorage so it survives navigation
+  const [clearedUnread, setClearedUnread] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem("lumio:clearedUnread");
+      return stored ? new Set<string>(JSON.parse(stored)) : new Set<string>();
+    } catch {
+      return new Set<string>();
+    }
+  });
+
   // Persists all user-sent messages per contact across chat opens
   const [sentMessagesByContact, setSentMessagesByContact] = useState<
     Record<string, ChatMessage[]>
   >({});
 
+  function markRead(contactId: string) {
+    setClearedUnread((prev) => {
+      const next = new Set([...prev, contactId]);
+      try {
+        localStorage.setItem("lumio:clearedUnread", JSON.stringify([...next]));
+      } catch {}
+      return next;
+    });
+  }
+
   function handleOpenChat(contact: Contact) {
     const original = contacts.find((c) => c.id === contact.id) ?? contact;
-    // Merge persisted sent messages so they survive back-navigation and reopen
     const sentMessages = sentMessagesByContact[original.id] ?? [];
     const merged: Contact = sentMessages.length
       ? { ...original, messages: [...original.messages, ...sentMessages] }
       : original;
-    if (contact.unread) {
-      setClearedUnread((prev) => new Set([...prev, contact.id]));
+    // Mark as read immediately on open
+    if (original.unread && !clearedUnread.has(original.id)) {
+      markRead(original.id);
     }
     setActiveContact(merged);
   }
@@ -480,10 +453,11 @@ export function MessagingPage() {
     }));
   }
 
-  // contactsWithState: for inbox preview, append the last sent message so
-  // InboxView's existing "You: …" logic picks it up automatically
+  // Derive display contacts: apply cleared-unread + latest sent message preview
   const contactsWithState = contacts.map((c) => {
-    let contact: Contact = clearedUnread.has(c.id) ? { ...c, unread: undefined } : c;
+    let contact: Contact = clearedUnread.has(c.id)
+      ? { ...c, unread: undefined }
+      : c;
     const sent = sentMessagesByContact[c.id];
     if (sent && sent.length > 0) {
       const last = sent[sent.length - 1];
@@ -498,19 +472,67 @@ export function MessagingPage() {
     return contact;
   });
 
+  // Chat view — standalone full-screen layout (no AppLayout/BottomNav)
+  if (activeContact) {
+    return (
+      <ChatView
+        contact={activeContact}
+        onBack={() => setActiveContact(null)}
+        onSend={(msg) => handleSentMessage(activeContact.id, msg)}
+      />
+    );
+  }
+
+  // Inbox view — uses AppLayout so BottomNav shows consistently
   return (
-    <div className="h-[100dvh] bg-[#f0ecf7] flex items-start justify-center overflow-hidden">
-      <div className="w-full max-w-[430px] min-w-0 bg-[#fffeff] flex flex-col h-full overflow-hidden">
-        {activeContact ? (
-          <ChatView
-            contact={activeContact}
-            onBack={() => setActiveContact(null)}
-            onSend={(msg) => handleSentMessage(activeContact.id, msg)}
-          />
-        ) : (
-          <InboxView contacts={contactsWithState} onOpenChat={handleOpenChat} />
-        )}
-      </div>
-    </div>
+    <AppLayout
+      header={
+        <>
+          {/* Row 1: back + search */}
+          <div className="flex items-center gap-3 px-4 h-[52px]">
+            <HeaderBackButton onClick={() => navigate("/home/feed")} />
+            <SearchBar
+              placeholder="Search messages"
+              size="sm"
+              dimPlaceholder
+              className="flex-1"
+            />
+          </div>
+          {/* Row 2: tab group */}
+          <div
+            className="flex items-end gap-3 px-4 pt-4 pb-2 overflow-x-auto border-b border-[#e2d9ef]"
+            style={{ scrollbarWidth: "none" }}
+          >
+            <button className="bg-[#f7f4fa] flex items-center justify-center p-2 rounded-[8px] shrink-0 mb-2 cursor-pointer">
+              <Plus size={18} color="#7D3AEA" />
+            </button>
+            <div className="flex gap-3 border-b border-[#E2D9EF]">
+              {TABS.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex flex-col items-center justify-end h-[40px] px-4 whitespace-nowrap cursor-pointer font-['Manrope',sans-serif] text-[16px] leading-[25px] shrink-0 gap-0 ${
+                    activeTab === tab
+                      ? "font-medium text-[#1e1530]"
+                      : "font-normal text-[#6b5f7a]"
+                  }`}
+                >
+                  <span className="pb-[6px]">{tab}</span>
+                  {activeTab === tab && (
+                    <div className="h-[2px] w-full bg-[#7d3aea] rounded-tl-[2px] rounded-tr-[2px]" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      }
+    >
+      <InboxList
+        contacts={contactsWithState}
+        activeTab={activeTab}
+        onOpenChat={handleOpenChat}
+      />
+    </AppLayout>
   );
 }

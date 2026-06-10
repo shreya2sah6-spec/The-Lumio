@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "@phosphor-icons/react";
+import { HeaderBackButton } from "../components/HeaderBackButton";
 import { AppLayout } from "../components/AppLayout";
 import imgAvatar1 from "@/imports/HomeNotifications-1/8a0297188511b9e7d739e0bdb0fad1599992ea67.png";
 import imgAvatar2 from "@/imports/HomeNotifications-1/5d686febbf6bd99db27d32ec61024adf89b31b4f.png";
@@ -12,12 +12,7 @@ export function NotificationsPage() {
       header={
         <div className="flex items-center justify-between px-[16px] py-[12px] w-full">
           <div className="flex gap-[12px] items-center">
-            <button
-              onClick={() => navigate("/home/feed")}
-              className="flex items-center p-[8px] cursor-pointer shrink-0"
-            >
-              <ArrowLeft size={18} color="#1A1128" />
-            </button>
+            <HeaderBackButton onClick={() => navigate("/home/feed")} />
             <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[24px] leading-[31px]">
               Notifications
             </p>

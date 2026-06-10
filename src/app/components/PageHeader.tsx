@@ -1,4 +1,4 @@
-import { ArrowLeft } from "@phosphor-icons/react";
+import { HeaderBackButton } from "./HeaderBackButton";
 
 interface PageHeaderProps {
   title: string;
@@ -28,14 +28,7 @@ export function PageHeader({
         .filter(Boolean)
         .join(" ")}
     >
-      {/* Back button — negative left margin aligns icon visually with page edge */}
-      <button
-        onClick={onBack}
-        className="p-2 -ml-2 shrink-0 flex items-center justify-center cursor-pointer"
-        aria-label="Go back"
-      >
-        <ArrowLeft size={24} color="#1A1128" />
-      </button>
+      <HeaderBackButton onClick={onBack} />
 
       {/* Title — H1 spec: Roboto Serif · Extrabold 800 · 24/31 */}
       <h1 className="type-h1 text-[#1a1128] ml-3 flex-1 min-w-0 truncate">

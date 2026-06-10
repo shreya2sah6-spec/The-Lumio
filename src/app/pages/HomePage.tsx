@@ -666,7 +666,7 @@ function UpcomingSessionBanner({ mentorName, onChevron }: { mentorName: string; 
   const label = useCountdown(3480); // 58:00
   // BottomNav = 68px nav row + 46px safe-area = 114px total
   return (
-    <div className="fixed bottom-[114px] left-1/2 -translate-x-1/2 w-full max-w-[430px] z-20 bg-[#f5f0ff] border-t border-[#c8bbda] shadow-[0px_-1px_3px_rgba(157,148,170,0.25)]">
+    <div className="fixed bottom-[68px] left-1/2 -translate-x-1/2 w-full max-w-[430px] z-20 bg-[#f5f0ff] border-t border-[#c8bbda] shadow-[0px_-1px_3px_rgba(157,148,170,0.25)]">
       <div className="inline-flex items-center justify-between w-full px-[16px] py-[12px]">
         {/* Left: label */}
         <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[15px] leading-[22px]">
@@ -768,7 +768,11 @@ export function HomePage() {
   const profileNavImage = imgProfileNav;
 
   return (
-    <AppLayout header={<TopBar />} profileNavImg={profileNavImage}>
+    <AppLayout
+  header={storyIndex === null ? <TopBar /> : undefined}
+  profileNavImg={profileNavImage}
+  hideNav={storyIndex !== null}
+>
       {storyIndex !== null && (
         <StoryOverlay index={storyIndex} onClose={() => setStoryIndex(null)} />
       )}

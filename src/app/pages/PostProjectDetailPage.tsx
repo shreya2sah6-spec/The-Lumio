@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { AppLayout } from "../components/AppLayout";
 import { useNavigate, useLocation } from "react-router-dom";
+import { HeaderBackButton } from "../components/HeaderBackButton";
 import {
-  ArrowLeft,
   ShareFat,
   DotsThreeVertical,
   Eye,
@@ -921,14 +921,7 @@ export function PostProjectDetailPage() {
       hideNav
       header={
         <div className="flex items-center px-4 py-3 gap-2">
-          <button
-            type="button"
-            onClick={() => navigate(isUserPost ? "/profile" : "/home/feed")}
-            className="p-2 -ml-2 shrink-0 flex items-center justify-center cursor-pointer"
-            aria-label="Go back"
-          >
-            <ArrowLeft size={24} color="#1A1128" />
-          </button>
+          <HeaderBackButton onClick={() => navigate(isUserPost ? "/profile" : "/home/feed")} />
           <h1 className="font-['Roboto_Serif',serif] font-extrabold text-[#1a1128] text-[24px] leading-[31px] flex-1 min-w-0 truncate ml-3">
             Project
           </h1>

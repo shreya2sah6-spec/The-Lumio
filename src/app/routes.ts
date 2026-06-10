@@ -25,6 +25,7 @@ import { PostProjectPreviewPage } from "./pages/PostProjectPreviewPage";
 import { PostPublishPage } from "./pages/PostPublishPage";
 import { PostPublishingPage } from "./pages/PostPublishingPage";
 import { PostProjectDetailPage } from "./pages/PostProjectDetailPage";
+import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { Root, HydrateFallback } from "./Root";
 
 export const router = createBrowserRouter([
@@ -44,6 +45,10 @@ export const router = createBrowserRouter([
       {
         path: "auth",
         Component: AuthPage,
+      },
+      {
+        path: "auth/callback",
+        Component: AuthCallbackPage,
       },
       {
         path: "home",
