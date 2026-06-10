@@ -132,7 +132,6 @@ function ReviewBottomSheet({
             </span>
           </button>
         </div>
-
       </div>
     </>
   );

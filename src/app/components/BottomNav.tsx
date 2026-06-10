@@ -116,10 +116,6 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
       </div>
 
-      {/* iOS home indicator */}
-      <div className="h-[46px] w-full bg-[#FFFEFF] flex items-end justify-center pb-[7.69px]">
-        <div className="bg-[#FFFEFF] h-[4.808px] rounded-[200px] w-[128.846px]" />
-      </div>
     </div>
   );
 }
