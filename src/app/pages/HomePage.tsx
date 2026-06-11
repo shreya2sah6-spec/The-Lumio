@@ -10,6 +10,7 @@ import {
   HandsClapping,
   Check,
   ShareFat,
+  Images,
 } from "@phosphor-icons/react";
 import { FileTextIcon } from "lucide-react";
 import { SearchBar } from "../components/SearchBar";
@@ -72,6 +73,18 @@ function TopBar() {
 
 // ─── Post card ────────────────────────────────────────────────────────────────
 
+function GalleryCountBadge({ count }: { count: number }) {
+  if (count <= 1) return null;
+  return (
+    <div className="absolute top-[16px] right-[16px] inline-flex items-center gap-[4px] bg-[rgba(58,58,58,0.60)] rounded-[4px] px-[8px] py-[4px]">
+      <Images size={24} color="white" weight="regular" />
+      <span className="type-h5 text-white">
+        +{count}
+      </span>
+    </div>
+  );
+}
+
 interface PostCardProps {
   image: string;
   /** When true: image rendered with object-contain + #FFFEFF bg (editorial cover).
@@ -90,6 +103,7 @@ interface PostCardProps {
   engagementIcon?: "repost" | "clap";
   coCreate?: boolean;
   coCreateWith?: string;
+  galleryCount?: number;
   onClick?: () => void;
 }
 
@@ -109,6 +123,7 @@ function PostCard({
   engagementIcon,
   coCreate,
   coCreateWith,
+  galleryCount = 0,
   onClick,
 }: PostCardProps) {
   return (
@@ -131,6 +146,7 @@ function PostCard({
           }
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[rgba(26,26,26,0.12)]" />
+        <GalleryCountBadge count={galleryCount} />
         {engagementAvatar && (
           <div className="absolute bottom-0 left-0 p-4">
             <div className="bg-white rounded-[8px] flex gap-2 items-center p-2 h-[46px]">
@@ -831,6 +847,7 @@ export function HomePage() {
           status="Seeking Internship"
           caption="Maximal Baarat styling meets royal drama with layered jewels, bold turbans, and statement silhouettes."
           date="26 July"
+          galleryCount={10}
           engagementAvatar={imgEngagementAvatar1}
           engagementLabel="Sr. Designer from Sabyasachi"
           engagementIcon="repost"
@@ -845,6 +862,7 @@ export function HomePage() {
           status="Seeking Full time"
           caption="A Celebration of Resilience, Beauty, and Feminine Power."
           date="25 July"
+          galleryCount={21}
           coCreate
           coCreateWith="2 Others"
           onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "neha" } })}
@@ -858,6 +876,7 @@ export function HomePage() {
           role="Jewellery Designer @Rubas"
           caption="Temple artistry steeped in South Indian tradition."
           date="25 July"
+          galleryCount={10}
           onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "arpita" } })}
         />
         <BrandJobPost />
@@ -868,6 +887,7 @@ export function HomePage() {
           role="Fashion Designer"
           caption="Denim dreams stitched with confidence and runway elegance."
           date="20 July"
+          galleryCount={15}
           onClick={() => navigate("/profile/project-detail-screen", { state: { postId: "kamini" } })}
         />
         <PostCard
@@ -878,6 +898,7 @@ export function HomePage() {
           role="Textile Designer"
           caption="Modern swirl patterns in muted tones bring artistic movement and cozy elegance to the rug design."
           date="20 July"
+          galleryCount={9}
           engagementAvatar={imgEngagementAvatar2}
           engagementLabel="Sr. Designer from Papa Dont' Preach"
           engagementIcon="clap"
