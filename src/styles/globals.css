@@ -1,3 +1,74 @@
 .input-h5 {
   @apply font-['Manrope',sans-serif] font-medium text-[14px] leading-[21px] tracking-[0.14px] text-[#1A1128];
 }
+
+/* ─── Lumio Motion Keyframes ─────────────────────────────────────────────── */
+
+@keyframes lumio-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lumio-save-bounce {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.38); }
+  65%  { transform: scale(0.86); }
+  82%  { transform: scale(1.10); }
+  100% { transform: scale(1); }
+}
+
+@keyframes lumio-shake {
+  0%, 100% { transform: translateX(0); }
+  18%  { transform: translateX(-7px); }
+  45%  { transform: translateX(7px); }
+  62%  { transform: translateX(-4px); }
+  80%  { transform: translateX(4px); }
+}
+
+@keyframes lumio-scale-pop {
+  0%   { transform: scale(0.55); opacity: 0; }
+  55%  { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes lumio-ring-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(125, 58, 234, 0.35); }
+  60%  { box-shadow: 0 0 0 8px rgba(125, 58, 234, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(125, 58, 234, 0); }
+}
+
+/* ─── Utility Classes ─────────────────────────────────────────────────────── */
+
+.animate-lumio-fade-up {
+  animation: lumio-fade-up 260ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+.animate-lumio-save-bounce {
+  animation: lumio-save-bounce 440ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-lumio-shake {
+  animation: lumio-shake 380ms ease-in-out both;
+}
+
+.animate-lumio-scale-pop {
+  animation: lumio-scale-pop 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-lumio-ring-pulse {
+  animation: lumio-ring-pulse 550ms ease-out both;
+}
+
+/* ─── Stagger delay helpers ───────────────────────────────────────────────── */
+
+.stagger-1 { animation-delay: 60ms; }
+.stagger-2 { animation-delay: 120ms; }
+.stagger-3 { animation-delay: 190ms; }
+.stagger-4 { animation-delay: 260ms; }
+.stagger-5 { animation-delay: 330ms; }

@@ -26,7 +26,7 @@ export function AppLayout({
         )}
 
         {/* Scrollable content — fills remaining height */}
-        <main className={`flex-1 overflow-y-auto overflow-x-hidden ${hideNav ? "" : "pb-[88px]"}`}>
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden animate-lumio-fade-up ${hideNav ? "" : "pb-[88px]"}`}>
           {children}
         </main>
 

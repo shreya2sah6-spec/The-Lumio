@@ -1169,10 +1169,10 @@ function FilterSheet({
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)]"
+        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)] animate-in fade-in duration-200"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden animate-in slide-in-from-bottom duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]">
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
         </div>
@@ -1242,24 +1242,29 @@ function TabBar<T extends string>({
   active: T;
   onChange: (t: T) => void;
 }) {
+  const activeIdx = tabs.indexOf(active);
+  const pct = tabs.length > 0 ? 100 / tabs.length : 0;
+
   return (
-    <div className="flex items-end border-b border-[#e2d9ef] bg-[#fffeff]">
+    <div className="relative flex items-end border-b border-[#e2d9ef] bg-[#fffeff]">
+      {/* Sliding indicator */}
+      <div
+        className="absolute bottom-0 h-[2px] rounded-t-[2px] bg-[#7d3aea] transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+        style={{ width: `${pct}%`, transform: `translateX(${activeIdx * 100}%)` }}
+      />
       {tabs.map((tab) => {
         const isActive = tab === active;
         return (
           <button
             key={tab}
             onClick={() => onChange(tab)}
-            className="flex flex-1 flex-col items-center justify-end h-[44px] px-[20px] cursor-pointer gap-0"
+            className="flex flex-1 flex-col items-center justify-end h-[44px] px-[20px] cursor-pointer gap-0 active:opacity-70 transition-opacity duration-75"
           >
             <span
-              className={`font-['Manrope',sans-serif] text-[16px] pb-[8px] leading-[25px] ${isActive ? "font-semibold text-[#1a1128]" : "font-normal text-[#6b5f7a]"}`}
+              className={`font-['Manrope',sans-serif] text-[16px] pb-[8px] leading-[25px] transition-colors duration-150 ${isActive ? "font-semibold text-[#1a1128]" : "font-normal text-[#6b5f7a]"}`}
             >
               {tab}
             </span>
-            {isActive && (
-              <div className="h-[2px] w-full bg-[#7d3aea] rounded-t-[2px]" />
-            )}
           </button>
         );
       })}

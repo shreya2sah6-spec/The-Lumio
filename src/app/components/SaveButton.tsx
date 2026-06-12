@@ -35,6 +35,7 @@ export function SaveButton({
   className = "",
 }: SaveButtonProps) {
   const [internalSaved, setInternalSaved] = useState(false);
+  const [bounceKey, setBounceKey] = useState(0);
 
   // Controlled when savedProp is explicitly provided, uncontrolled otherwise.
   const saved = savedProp !== undefined ? savedProp : internalSaved;
@@ -44,6 +45,10 @@ export function SaveButton({
     const next = !saved;
     if (savedProp === undefined) {
       setInternalSaved(next);
+    }
+    if (next) {
+      // Re-trigger bounce by incrementing key
+      setBounceKey((k) => k + 1);
     }
     onToggle?.(next);
   }
@@ -55,11 +60,16 @@ export function SaveButton({
       aria-pressed={saved}
       className={`size-[40px] flex items-center justify-center shrink-0 cursor-pointer ${className}`}
     >
-      <BookmarkSimple
-        size={24}
-        weight={saved ? "fill" : "regular"}
-        color="#6B5F7A"
-      />
+      <span
+        key={bounceKey}
+        className={`inline-flex ${bounceKey > 0 && saved ? "animate-lumio-save-bounce" : ""}`}
+      >
+        <BookmarkSimple
+          size={24}
+          weight={saved ? "fill" : "regular"}
+          color={saved ? "#7D3AEA" : "#6B5F7A"}
+        />
+      </span>
     </button>
   );
 }

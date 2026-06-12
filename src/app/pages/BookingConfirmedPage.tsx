@@ -76,12 +76,12 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
         <div className="pb-[160px]">
           <div className="flex flex-col items-center px-[16px]">
             {/* GIF illustration */}
-            <div className="relative shrink-0 size-[64px] mt-[8px] mb-[36px]">
+            <div className="relative shrink-0 size-[64px] mt-[8px] mb-[36px] animate-lumio-scale-pop">
               <img alt="Confirmed" className="absolute max-w-none object-cover size-full" src={imgGif} />
             </div>
 
             {/* Confirmation message */}
-            <div className="flex flex-col gap-[8px] items-center text-center w-full mb-[32px]">
+            <div className="flex flex-col gap-[8px] items-center text-center w-full mb-[32px] animate-lumio-fade-up stagger-1">
               <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[24px] leading-[31px] w-full text-center">
                 {title}
               </p>
@@ -91,7 +91,7 @@ export function BookingConfirmedPage({ onDone, bookingType: typeProp, mentor: me
             </div>
 
             {/* Booking summary card */}
-            <div className="flex flex-col gap-[20px] w-full">
+            <div className="flex flex-col gap-[20px] w-full animate-lumio-fade-up stagger-2">
               <div className="bg-white relative rounded-[4px] w-full">
                 <div aria-hidden className="absolute border border-[rgba(157,148,170,0.4)] inset-0 pointer-events-none rounded-[4px]" />
                 <div className="flex flex-col gap-[16px] px-[16px] py-[20px]">

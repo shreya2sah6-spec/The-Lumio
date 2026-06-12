@@ -36,7 +36,7 @@ export function SearchBar({
     size === "sm" ? "h-[36px] px-3" : "h-[40px] px-4";
 
   const containerCls = [
-    "bg-white rounded-[4px] border border-[rgba(157,148,170,0.4)] flex items-center gap-2",
+    "bg-white rounded-[4px] border border-[rgba(157,148,170,0.4)] flex items-center gap-2 transition-[border-color,box-shadow] duration-200 focus-within:border-[rgba(125,58,234,0.45)] focus-within:shadow-[0_0_0_3px_rgba(125,58,234,0.12)]",
     sizeClasses,
     className,
   ]

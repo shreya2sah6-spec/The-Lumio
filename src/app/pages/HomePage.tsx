@@ -128,9 +128,8 @@ function PostCard({
 }: PostCardProps) {
   return (
     <div
-      className="bg-white w-full flex flex-col"
+      className={`bg-white w-full flex flex-col ${onClick ? "cursor-pointer active:opacity-85 transition-opacity duration-100" : ""}`}
       onClick={onClick}
-      style={onClick ? { cursor: "pointer" } : undefined}
     >
       <div
         className="w-full aspect-[390/348] relative overflow-hidden"

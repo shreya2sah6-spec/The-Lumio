@@ -287,46 +287,44 @@ function MainTabs({
   activeTab: MainTab;
   onTabChange: (tab: MainTab) => void;
 }) {
+  const tabs: MainTab[] = ["Discover", "Upcoming Sessions"];
+  const activeIdx = tabs.indexOf(activeTab);
+
   return (
     <div className="w-full border-b border-[#e2d9ef] px-4 pt-4">
-      <div className="flex">
+      <div className="relative flex">
+        {/* Sliding indicator */}
+        <div
+          className="absolute bottom-0 h-[2px] rounded-t-[2px] bg-[#7d3aea] transition-transform duration-[220ms] ease-[cubic-bezier(0.4,0,0.2,1)]"
+          style={{ width: "50%", transform: `translateX(${activeIdx * 100}%)` }}
+        />
         <button
           onClick={() => onTabChange("Discover")}
-          className="flex-1 h-10 px-4 flex flex-col justify-between items-center"
+          className="flex-1 h-10 px-4 flex items-center justify-center active:opacity-70 transition-opacity duration-75"
         >
-          <div className="flex-1 flex items-center justify-center">
-            <span
-              className={`font-['Manrope',sans-serif] text-[16px] whitespace-nowrap ${
-                activeTab === "Discover"
-                  ? "font-medium text-[#1a1128] leading-[25px] tracking-[0.16px]"
-                  : "font-normal text-[#6b5f7a] leading-[24px]"
-              }`}
-            >
-              Discover
-            </span>
-          </div>
-          <div
-            className={`h-[2px] w-full rounded-tl-[2px] rounded-tr-[2px] ${activeTab === "Discover" ? "bg-[#7d3aea]" : "bg-transparent"}`}
-          />
+          <span
+            className={`font-['Manrope',sans-serif] text-[16px] whitespace-nowrap transition-colors duration-150 ${
+              activeTab === "Discover"
+                ? "font-medium text-[#1a1128] leading-[25px] tracking-[0.16px]"
+                : "font-normal text-[#6b5f7a] leading-[24px]"
+            }`}
+          >
+            Discover
+          </span>
         </button>
         <button
           onClick={() => onTabChange("Upcoming Sessions")}
-          className="flex-1 h-10 px-4 flex flex-col justify-between items-center"
+          className="flex-1 h-10 px-4 flex items-center justify-center active:opacity-70 transition-opacity duration-75"
         >
-          <div className="flex-1 flex items-center justify-center">
-            <span
-              className={`font-['Manrope',sans-serif] text-[16px] whitespace-nowrap ${
-                activeTab === "Upcoming Sessions"
-                  ? "font-medium text-[#1a1128] leading-[25px] tracking-[0.16px]"
-                  : "font-normal text-[#6b5f7a] leading-[24px]"
-              }`}
-            >
-              Upcoming session
-            </span>
-          </div>
-          <div
-            className={`h-[2px] w-full rounded-tl-[2px] rounded-tr-[2px] ${activeTab === "Upcoming Sessions" ? "bg-[#7d3aea]" : "bg-transparent"}`}
-          />
+          <span
+            className={`font-['Manrope',sans-serif] text-[16px] whitespace-nowrap transition-colors duration-150 ${
+              activeTab === "Upcoming Sessions"
+                ? "font-medium text-[#1a1128] leading-[25px] tracking-[0.16px]"
+                : "font-normal text-[#6b5f7a] leading-[24px]"
+            }`}
+          >
+            Upcoming session
+          </span>
         </button>
       </div>
     </div>
@@ -929,10 +927,10 @@ function MentorFilterSheet({
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)]"
+        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)] animate-in fade-in duration-200"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden animate-in slide-in-from-bottom duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]">
         {/* Handle */}
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
@@ -1053,10 +1051,10 @@ function SessionFilterSheet({
   return (
     <>
       <div
-        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)]"
+        className="fixed inset-0 z-50 bg-[rgba(26,26,26,0.5)] animate-in fade-in duration-200"
         onClick={onClose}
       />
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden">
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-[60] bg-white rounded-tl-[24px] rounded-tr-[24px] shadow-[0px_-1px_4px_0px_rgba(26,26,26,0.6)] flex flex-col items-start overflow-hidden animate-in slide-in-from-bottom duration-[320ms] ease-[cubic-bezier(0.32,0.72,0,1)]">
         {/* Handle */}
         <div className="flex flex-col items-center p-[16px] w-full">
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />

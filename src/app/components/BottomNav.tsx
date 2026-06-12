@@ -48,7 +48,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px] active:scale-90 active:opacity-75 transition-transform duration-75"
           onClick={() => navigate("/home/feed")}
           aria-label="Home"
         >
@@ -58,7 +58,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px] active:scale-90 active:opacity-75 transition-transform duration-75"
           onClick={() => navigate("/jobs")}
           aria-label="Jobs"
         >
@@ -68,7 +68,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px] active:scale-90 active:opacity-75 transition-transform duration-75"
           onClick={() => navigate("/post/create-project")}
           aria-label="Post"
         >
@@ -78,7 +78,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px] active:scale-90 active:opacity-75 transition-transform duration-75"
           onClick={() => navigate("/mentors")}
           aria-label="Mentors"
         >
@@ -88,7 +88,7 @@ export function BottomNav({ profileNavImg }: BottomNavProps) {
 
         <button
           data-nav-item
-          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px]"
+          className="flex flex-1 flex-col gap-px items-center justify-center h-[50px] cursor-pointer rounded-[8px] active:scale-90 active:opacity-75 transition-transform duration-75"
           onClick={() => navigate("/profile")}
           aria-label="Profile"
         >

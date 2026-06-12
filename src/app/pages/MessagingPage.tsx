@@ -246,7 +246,7 @@ function InboxList({
           <button
             key={c.id}
             onClick={() => onOpenChat(c)}
-            className="w-full flex gap-3 items-center px-4 py-4 border-b border-[#f0ecf7] cursor-pointer text-left hover:bg-[#faf8ff] transition-colors"
+            className="w-full flex gap-3 items-center px-4 py-4 border-b border-[#f0ecf7] cursor-pointer text-left hover:bg-[#faf8ff] active:bg-[#f0eaff] active:scale-[0.99] transition-all duration-75"
           >
             <img
               src={c.avatar}
