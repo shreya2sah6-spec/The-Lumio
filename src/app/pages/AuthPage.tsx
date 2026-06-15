@@ -5,7 +5,7 @@ import { Button } from "../components/ui/button";
 import { FieldError } from "../components/FieldError";
 import { OtpInput } from "../components/OtpInput";
 import { HeaderBackButton } from "../components/HeaderBackButton";
-import { signInWithSocial, type SocialProvider } from "../services/authService";
+import { signInWithSocial, isInAppBrowser, classifyAuthError, type SocialProvider } from "../services/authService";
 import {
   validatePhone,
   validateOtp,
@@ -198,6 +198,21 @@ function PhoneEntryScreen({ onNext, onSocialSuccess }: { onNext: () => void; onS
   const [submitted, setSubmitted] = useState(false);
   const [socialLoading, setSocialLoading] = useState<SocialProvider | null>(null);
   const [socialError, setSocialError] = useState<string | null>(null);
+  const inAppBrowser = isInAppBrowser();
+
+  // If the user just returned from a failed OAuth callback, show a friendly message.
+  useEffect(() => {
+    const errorKey = sessionStorage.getItem("lumio:social_auth_error");
+    if (errorKey) {
+      sessionStorage.removeItem("lumio:social_auth_error");
+      if (errorKey === "cancelled") {
+        // User pressed Cancel on Google's consent screen — no need to alarm them.
+        setSocialError(null);
+      } else {
+        setSocialError("Sign-in didn't complete. Please try again.");
+      }
+    }
+  }, []);
 
   const phoneValidation = validatePhone(phone);
 
@@ -226,13 +241,7 @@ function PhoneEntryScreen({ onNext, onSocialSuccess }: { onNext: () => void; onS
       // unless the Supabase URL is missing (dev/unconfigured mode).
       onSocialSuccess();
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Sign-in failed. Please try again.";
-      // "provider not enabled" is a common misconfiguration message
-      const friendly = msg.toLowerCase().includes("provider")
-        ? "This sign-in method is not configured yet. Please check your Supabase dashboard."
-        : msg;
-      setSocialError(friendly);
+      setSocialError(classifyAuthError(err));
       setSocialLoading(null);
     }
   }
@@ -298,9 +307,9 @@ function PhoneEntryScreen({ onNext, onSocialSuccess }: { onNext: () => void; onS
               <button
                 key={alt}
                 onClick={() => handleSocialLogin(provider)}
-                disabled={socialLoading !== null}
+                disabled={socialLoading !== null || inAppBrowser}
                 aria-label={`Sign in with ${alt}`}
-                className="bg-white rounded-full size-12 flex items-center justify-center p-2 shadow-[0px_1px_4px_0px_rgba(200,192,212,0.6)] border border-[#e2d9ef] cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed transition-opacity active:scale-95"
+                className="bg-white rounded-full size-12 flex items-center justify-center p-2 shadow-[0px_1px_4px_0px_rgba(200,192,212,0.6)] border border-[#e2d9ef] cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed transition-opacity active:scale-95"
               >
                 {isLoading ? (
                   <div className="w-4 h-4 rounded-full border-2 border-[#7d3aea] border-t-transparent animate-spin" />
@@ -311,7 +320,26 @@ function PhoneEntryScreen({ onNext, onSocialSuccess }: { onNext: () => void; onS
             );
           })}
         </div>
-        {socialError && (
+        {inAppBrowser && (
+          <div className="flex flex-col gap-[8px] items-center w-full rounded-[8px] bg-[#fef6e4] border border-[rgba(162,104,7,0.35)] px-[12px] py-[12px]">
+            <p className="font-['Manrope',sans-serif] font-medium text-[#7a4f05] text-[13px] leading-[20px] text-center">
+              Please open Lumio in Chrome or Safari to continue signing in.
+            </p>
+            <button
+              onClick={() => {
+                try {
+                  navigator.clipboard.writeText(window.location.href);
+                } catch {
+                  // Clipboard API may be blocked in some in-app browsers
+                }
+              }}
+              className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[12px] leading-[18px] underline cursor-pointer"
+            >
+              Copy link to open in browser
+            </button>
+          </div>
+        )}
+        {!inAppBrowser && socialError && (
           <p className="font-['Manrope',sans-serif] font-normal text-[#c30105] text-[13px] leading-[19px] text-center px-4">
             {socialError}
           </p>
