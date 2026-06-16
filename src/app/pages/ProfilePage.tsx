@@ -110,18 +110,18 @@ function ReviewCard({
           />
         </div>
         <div className="flex flex-col flex-1 min-w-0">
-          <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+          <p className="type-h4 text-[#2d2040] truncate">
             {name}
           </p>
           {role && (
-            <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] truncate">
+            <p className="type-body-2 text-[#433059] truncate">
               {role}
             </p>
           )}
         </div>
       </div>
       <div className="flex gap-[8px] items-center w-full">
-        <p className="flex-1 font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate min-w-0">
+        <p className="flex-1 type-h4 text-[#2d2040] truncate min-w-0">
           {title}
         </p>
         <div className="flex gap-[4px] items-center shrink-0 h-[18px]">
@@ -133,13 +133,13 @@ function ReviewCard({
               className="shrink-0"
             />
           </div>
-          <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">
+          <span className="type-caption-1 text-[#433059]">
             {rating}
           </span>
         </div>
       </div>
       {/* Full review text — no truncation, no ellipsis, no expand/collapse */}
-      <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
+      <p className="type-body-1 text-[#433059]">
         {text}
       </p>
     </div>
@@ -179,7 +179,7 @@ function DesignersYouMayKnow() {
 
   return (
     <div className="w-full flex flex-col gap-[16px] pb-[20px]">
-      <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+      <p className="type-h2 text-[#1a1128]">
         Designers you may know
       </p>
       {designers.map((designer) => {
@@ -204,10 +204,10 @@ function DesignersYouMayKnow() {
                 />
               </div>
               <div className="flex-1 flex flex-col gap-[4px] min-w-0">
-                <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+                <p className="type-h4 text-[#1a1128] truncate">
                   {designer.name}
                 </p>
-                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] truncate">
+                <p className="type-body-2 text-[#6b5f7a] truncate">
                   {designer.role}
                 </p>
               </div>
@@ -222,13 +222,13 @@ function DesignersYouMayKnow() {
               {isFollowed ? (
                 <>
                   <Check size={14} color="#7d3aea" weight="bold" />
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px]">
+                  <span className="type-btn-sm text-[#7d3aea]">
                     Followed
                   </span>
                 </>
               ) : (
                 <>
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px]">
+                  <span className="type-btn-sm text-[#7d3aea]">
                     Follow
                   </span>
                   <div className="flex items-center justify-center h-[20px]">
@@ -268,7 +268,7 @@ function MentorshipInsights({
             weight="fill"
             className="shrink-0"
           />
-          <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px]">
+          <p className="type-h3 text-[#2d2040]">
             Mentorship insights
           </p>
         </div>
@@ -278,10 +278,10 @@ function MentorshipInsights({
           <ul className="list-disc pl-[20px] flex flex-col gap-[2px]">
             {insights.map((insight, i) => (
               <li key={i}>
-                <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px]">
+                <span className="type-h5 text-[#1a1128]">
                   {insight.title}:{" "}
                 </span>
-                <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                <span className="type-body-2 text-[#6b5f7a]">
                   {truncateAiBulletItem(insight.description, insights.length)}
                 </span>
               </li>
@@ -393,10 +393,10 @@ export function ProfilePage() {
             {/* User Details */}
             <div className="flex flex-col gap-[4px] items-center w-full">
               <div className="flex flex-col gap-[2px] items-center text-[#433059] text-center w-full">
-                <p className="font-['Manrope',sans-serif] font-semibold text-[18px] leading-[28px]">
+                <p className="type-h3">
                   {displayName}
                 </p>
-                <p className="font-['Manrope',sans-serif] font-normal text-[16px] leading-[24px]">
+                <p className="type-body-1">
                   {displayTitle}
                 </p>
               </div>
@@ -498,7 +498,7 @@ export function ProfilePage() {
             <div className="flex flex-col">
               {/* About */}
               <div className="flex flex-col gap-[16px] pt-[28px] pb-[20px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+                <p className="type-h2 text-[#1a1128]">
                   About
                 </p>
                 <div className="flex flex-col gap-[12px]">
@@ -509,7 +509,7 @@ export function ProfilePage() {
                       src={imgAboutImage}
                     />
                   </div>
-                  <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px]">
+                  <p className="type-body-2 text-[#433059]">
                     A curious designer who think like from a business point of
                     view work like a artist.
                   </p>
@@ -518,7 +518,7 @@ export function ProfilePage() {
 
               {/* Recent Projects */}
               <div className="flex flex-col gap-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+                <p className="type-h2 text-[#1a1128]">
                   Recent project
                 </p>
                 <div
@@ -584,7 +584,7 @@ export function ProfilePage() {
 
               {/* Experience */}
               <div className="flex flex-col gap-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+                <p className="type-h2 text-[#1a1128]">
                   Experience
                 </p>
                 <div className="flex gap-[4px] items-center py-[4px]">
@@ -597,10 +597,10 @@ export function ProfilePage() {
                       />
                     </div>
                     <div className="flex-1 flex flex-col gap-[4px]">
-                      <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px]">
+                      <p className="type-h4 text-[#2d2040]">
                         Myntra
                       </p>
-                      <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px]">
+                      <p className="type-body-2 text-[#433059]">
                         Fashion Design Intern
                       </p>
                     </div>
@@ -615,7 +615,7 @@ export function ProfilePage() {
 
               {/* Education */}
               <div className="flex flex-col gap-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+                <p className="type-h2 text-[#1a1128]">
                   Education
                 </p>
                 <div className="flex gap-[4px] items-center py-[12px]">
@@ -628,10 +628,10 @@ export function ProfilePage() {
                       />
                     </div>
                     <div className="flex-1 flex flex-col gap-[4px]">
-                      <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px]">
+                      <p className="type-h4 text-[#2d2040]">
                         School of Fashion Technology
                       </p>
-                      <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px]">
+                      <p className="type-body-2 text-[#433059]">
                         Bachelors of Design, Fashion Design
                       </p>
                     </div>
@@ -646,7 +646,7 @@ export function ProfilePage() {
 
               {/* Top Skills */}
               <div className="flex flex-col gap-[16px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+                <p className="type-h2 text-[#1a1128]">
                   Top skills
                 </p>
                 <div className="flex flex-wrap gap-[12px] py-[8px] items-center">

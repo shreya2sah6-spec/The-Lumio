@@ -412,7 +412,7 @@ function OtpVerifyScreen({ onNext, onBack }: { onNext: () => void; onBack: () =>
       <div className="flex flex-col gap-3 w-full">
         <BrandLogo />
         <div className="flex flex-col gap-4 w-full">
-          <ScreenTitle>Verify your Number</ScreenTitle>
+          <ScreenTitle>Verify your number</ScreenTitle>
           <ScreenSubtitle>In a few moments you will be ready to share</ScreenSubtitle>
         </div>
         <div className="flex gap-3 items-center w-full">
@@ -585,7 +585,7 @@ function DomainScreen({
         <ProgressBar total={3} filled={2} />
       </div>
       <div className="flex flex-col gap-4 w-full">
-        <ScreenTitle>{"What Domain do you Work in?"}</ScreenTitle>
+        <ScreenTitle>{"What domain do you work in?"}</ScreenTitle>
         <ScreenSubtitle>{"Choose the field you're most active in."}</ScreenSubtitle>
       </div>
 
@@ -659,7 +659,7 @@ function ExperienceScreen({
         <ProgressBar total={3} filled={3} />
       </div>
       <div className="flex flex-col gap-4 w-full">
-        <ScreenTitle>How much Experience do you have?</ScreenTitle>
+        <ScreenTitle>How much experience do you have?</ScreenTitle>
         <ScreenSubtitle>This helps us personalize mentors and opportunities.</ScreenSubtitle>
       </div>
 

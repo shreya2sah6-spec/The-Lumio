@@ -407,11 +407,11 @@ function SessionCard1On1({
                     : "bg-[#d6f5dd]"
                 }`}
               >
-                <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
+                <span className="type-caption-1 text-[#1a1128]">
                   {session.category}
                 </span>
               </div>
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px] text-left">
+              <p className="type-h3 text-[#1a1128] text-left">
                 {isImminent
                   ? `Your session starts in ${session.timeUntil}`
                   : "Session in 5 days"}
@@ -437,16 +437,16 @@ function SessionCard1On1({
                   className="absolute inset-0 size-full object-cover"
                 />
               </div>
-              <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] flex-1">
+              <p className="type-h4 text-[#1a1128] flex-1">
                 {session.date}, {session.time}
               </p>
             </div>
             <div className="flex flex-col gap-3 items-start w-full">
               <div className="flex flex-col gap-[2px] items-start w-full">
-                <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px] overflow-hidden text-ellipsis whitespace-nowrap w-full">
+                <p className="type-h5 text-[#1a1128] overflow-hidden text-ellipsis whitespace-nowrap w-full">
                   {session.mentor}
                 </p>
-                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] overflow-hidden text-ellipsis whitespace-nowrap w-full">
+                <p className="type-body-2 text-[#6b5f7a] overflow-hidden text-ellipsis whitespace-nowrap w-full">
                   ({session.mentorTitle} @{session.mentorCompany})
                 </p>
               </div>
@@ -454,15 +454,15 @@ function SessionCard1On1({
                 <div className="relative shrink-0 size-6 overflow-hidden flex items-center justify-center">
                   <VideoCamera size={20} color="#6B5F7A" weight="regular" />
                 </div>
-                <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                  {session.duration}mins
+                <span className="type-body-2 text-[#6b5f7a]">
+                  {session.duration} min
                 </span>
               </div>
             </div>
           </div>
 
           <div className="flex gap-3 items-center w-full mt-6">
-            <button className="flex-1 h-10 bg-white border border-[#7d3aea] rounded-[4px] flex items-center justify-center font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px]">
+            <button className="flex-1 h-10 bg-white border border-[#7d3aea] rounded-[4px] flex items-center justify-center type-btn-sm text-[#7d3aea]">
               Reschedule
             </button>
             <button className="flex-1 h-10 bg-[#7d3aea] rounded-[4px] flex items-center justify-center font-['Manrope',sans-serif] font-semibold text-white text-[14px] leading-[20px]">
@@ -487,7 +487,7 @@ function SessionCard1On1({
                 {session.category}
               </span>
             </div>
-            <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
+            <p className="type-h3 text-[#1a1128]">
               {isImminent ? "Session in 10 mins" : "Session in 5 days"}
             </p>
           </div>
@@ -527,11 +527,11 @@ function SessionCardWebinar({
           >
             <div className="flex flex-col gap-2 items-start flex-1">
               <div className="bg-[#fef0d2] flex items-center justify-center px-2 py-1 rounded-[2px]">
-                <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[12px] leading-[18px] tracking-[0.24px]">
+                <span className="type-caption-1 text-[#1a1128]">
                   {session.category}
                 </span>
               </div>
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
+              <p className="type-h3 text-[#1a1128]">
                 Session in 7 days
               </p>
             </div>
@@ -589,16 +589,16 @@ function SessionCardWebinar({
                   />
                 </div>
               </div>
-              <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] flex-1">
+              <p className="type-h4 text-[#1a1128] flex-1">
                 {session.date}, {session.time}
               </p>
             </div>
             <div className="flex flex-col gap-3 items-start w-full">
               <div className="flex flex-col gap-[2px] items-start w-full">
-                <p className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[14px] leading-[21px] tracking-[0.14px] overflow-hidden text-ellipsis whitespace-nowrap w-full">
+                <p className="type-h5 text-[#1a1128] overflow-hidden text-ellipsis whitespace-nowrap w-full">
                   {session.mentor}
                 </p>
-                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] overflow-hidden text-ellipsis whitespace-nowrap w-full">
+                <p className="type-body-2 text-[#6b5f7a] overflow-hidden text-ellipsis whitespace-nowrap w-full">
                   ({session.mentorTitle} @{session.mentorCompany})
                 </p>
               </div>
@@ -606,7 +606,7 @@ function SessionCardWebinar({
                 <div className="relative shrink-0 size-6 overflow-hidden flex items-center justify-center">
                   <VideoCamera size={20} color="#6B5F7A" weight="regular" />
                 </div>
-                <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+                <span className="type-body-2 text-[#6b5f7a]">
                   5 hrs
                 </span>
               </div>
@@ -632,7 +632,7 @@ function SessionCardWebinar({
                 {session.category}
               </span>
             </div>
-            <p className="font-['Manrope',sans-serif] font-semibold text-[#1a1128] text-[18px] leading-[28px]">
+            <p className="type-h3 text-[#1a1128]">
               Session in 7 days
             </p>
           </div>
@@ -788,7 +788,7 @@ function MentorsEmptyState({ mentors }: { mentors: Mentor[] }) {
             src={imgNotFound}
           />
         </div>
-        <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] text-center w-full">
+        <p className="type-h2 text-[#1a1128] text-center w-full">
           No mentors found
         </p>
       </div>
@@ -796,7 +796,7 @@ function MentorsEmptyState({ mentors }: { mentors: Mentor[] }) {
       {/* Similar Mentors */}
       {mentors.length > 0 && (
         <div className="flex flex-col gap-[16px] px-[16px] pt-[16px]">
-          <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+          <p className="type-h2 text-[#1a1128]">
             Similar Mentors
           </p>
           <div className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full">
@@ -826,7 +826,7 @@ function SessionsEmptyState({ sessions }: { sessions: Session[] }) {
             src={imgNotFound}
           />
         </div>
-        <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] text-center w-full">
+        <p className="type-h2 text-[#1a1128] text-center w-full">
           No sessions found
         </p>
       </div>
@@ -834,7 +834,7 @@ function SessionsEmptyState({ sessions }: { sessions: Session[] }) {
       {/* Upcoming Sessions */}
       {sessions.length > 0 && (
         <div className="flex flex-col gap-[12px] px-[16px] pt-[16px]">
-          <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px]">
+          <p className="type-h2 text-[#1a1128]">
             Upcoming Sessions
           </p>
           <div className="flex flex-col gap-3">
@@ -937,7 +937,7 @@ function MentorFilterSheet({
         </div>
         {/* Title */}
         <div className="flex items-center px-[16px] pb-[12px] w-full">
-          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">
+          <p className="flex-1 type-h3 text-[#2d2040] text-center">
             Filter
           </p>
         </div>
@@ -988,7 +988,7 @@ function MentorFilterSheet({
             </div>
           ) : (
             <div className="px-[16px] pt-[20px] pb-[20px]">
-              <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
+              <p className="type-body-2 text-[#6b5f7a]">
                 No sub-filters for this category.
               </p>
             </div>
@@ -1061,7 +1061,7 @@ function SessionFilterSheet({
         </div>
         {/* Title */}
         <div className="flex items-center px-[16px] pb-[12px] w-full">
-          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">
+          <p className="flex-1 type-h3 text-[#2d2040] text-center">
             Filter
           </p>
         </div>
@@ -1237,11 +1237,11 @@ export function MentorsPage() {
           ) : (
             <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
               <div className="flex flex-col gap-4 items-start w-full">
-                <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <div className="type-h2 text-[#1a1128] w-full">
                   {getFilterHeading()}
                 </div>
-                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                  Showing {filteredMentors.length} Matching Mentor{filteredMentors.length !== 1 ? "s" : ""}
+                <p className="type-body-2 text-[#6b5f7a]">
+                  Showing {filteredMentors.length} matching mentor{filteredMentors.length !== 1 ? "s" : ""}
                 </p>
                 <div
                   className="grid grid-cols-[repeat(2,minmax(0,1fr))] gap-x-[12px] gap-y-[12px] w-full"
@@ -1257,7 +1257,7 @@ export function MentorsPage() {
         ) : (
           <div className="flex flex-col items-start w-full px-4 py-5 gap-6">
             <div className="flex flex-col gap-4 items-start w-full">
-              <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+              <div className="type-h2 text-[#1a1128] w-full">
                 Top rated mentors
               </div>
               <div
@@ -1271,7 +1271,7 @@ export function MentorsPage() {
             </div>
 
             <div className="flex flex-col gap-4 items-start w-full">
-              <div className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+              <div className="type-h2 text-[#1a1128] w-full">
                 Picked for you
               </div>
               <div

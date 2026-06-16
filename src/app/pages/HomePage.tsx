@@ -163,7 +163,7 @@ function PostCard({
                   )}
                 </div>
               </div>
-              <span className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[12px] leading-[18px] tracking-[0.24px] max-w-[138px] truncate">
+              <span className="type-caption-1 text-[#2d2040] max-w-[138px] truncate">
                 {engagementLabel}
               </span>
             </div>
@@ -628,7 +628,7 @@ function BrandJobPost() {
 
         <p className="font-['Manrope',sans-serif] font-normal text-[#1a1128] text-[14px] leading-[21px]">
           {
-            "An exciting chance to join one of India's fashion houses apply now and step into the world of high fashion."
+            "An exciting chance to join one of India's fashion houses. Apply now and step into the world of high fashion."
           }
         </p>
 

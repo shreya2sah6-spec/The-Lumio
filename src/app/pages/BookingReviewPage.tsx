@@ -106,10 +106,10 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
                 />
               </div>
               <div className="flex flex-col gap-[2px] flex-1 min-w-px">
-                <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] overflow-hidden text-ellipsis whitespace-nowrap">
+                <p className="type-h4 text-[#2d2040] overflow-hidden text-ellipsis whitespace-nowrap">
                   {mentor.name}
                 </p>
-                <p className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px] tracking-[0.14px] overflow-hidden text-ellipsis whitespace-nowrap">
+                <p className="type-body-2 text-[#6b5f7a] overflow-hidden text-ellipsis whitespace-nowrap">
                   {mentor.title} @{mentor.company}
                 </p>
               </div>
@@ -120,19 +120,19 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
               <div className="flex items-center pb-[12px]">
                 <div className="flex gap-[4px] items-center shrink-0">
                   <VideoCamera size={24} color="#6B5F7A" />
-                  <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[14px] leading-[21px]">
-                    60mins
+                  <span className="type-body-2 text-[#6b5f7a]">
+                    60 min
                   </span>
                 </div>
                 <div className="flex items-center flex-1 min-w-px ml-[12px]">
                   <div className="flex gap-[4px] items-center min-w-px flex-1">
                     <CalendarDots size={24} color="#6B5F7A" />
-                    <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[14px] leading-[21px] tracking-[0.14px] whitespace-nowrap">
+                    <p className="type-h5 text-[#433059] whitespace-nowrap">
                       Sat · 30 July, 6:00–7:00 PM
                     </p>
                   </div>
                   <button className="flex items-center justify-center pl-[16px] py-[8px] rounded-[4px] shrink-0">
-                    <span className="font-['Manrope',sans-serif] font-semibold text-[#7d3aea] text-[14px] leading-[20px] tracking-[0.14px]">
+                    <span className="type-btn-sm text-[#7d3aea]">
                       Edit
                     </span>
                   </button>
@@ -145,10 +145,10 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
             {/* What is the call / chat about? */}
             <div className="flex flex-col gap-[16px] py-[20px]">
               <div className="flex gap-[2px] items-center flex-wrap">
-                <span className="font-['Manrope',sans-serif] font-semibold text-[#433059] text-[18px] leading-[28px]">
+                <span className="type-h3 text-[#433059]">
                   {sectionTitle}
                 </span>
-                <span className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">
+                <span className="type-caption text-[#433059]">
                   {sectionSubtitle}
                 </span>
               </div>
@@ -179,17 +179,17 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
                   {/* Header */}
                   <div className="bg-[#f7f4fa] relative px-[16px] py-[12px]">
                     <div aria-hidden className="absolute border-b border-[rgba(157,148,170,0.4)] inset-0 pointer-events-none" />
-                    <span className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px]">
+                    <span className="type-body-2 text-[#433059]">
                       Booking summary
                     </span>
                   </div>
                   {/* Line item 1 */}
                   <div className="bg-white relative px-[16px] py-[12px] flex gap-[12px] items-center">
                     <div aria-hidden className="absolute border-b border-[rgba(157,148,170,0.4)] inset-0 pointer-events-none" />
-                    <span className="font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] flex-1">
+                    <span className="type-body-2 text-[#2d2040] flex-1">
                       {isChatUnlock ? "Chat unlock" : "1:1 Mentorship"}
                     </span>
-                    <span className="font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] text-right shrink-0">
+                    <span className="type-body-2 text-[#2d2040] text-right shrink-0">
                       {isFreeSession ? "Free" : `₹${mentorFee}`}
                     </span>
                   </div>
@@ -198,22 +198,22 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
                     <div className="bg-white relative px-[16px] py-[12px] flex gap-[12px] items-center">
                       <div aria-hidden className="absolute border-b border-[rgba(157,148,170,0.4)] inset-0 pointer-events-none" />
                       <div className="flex flex-1 gap-[8px] items-center min-w-px">
-                        <span className="font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px]">
+                        <span className="type-body-2 text-[#2d2040]">
                           Platform Fee
                         </span>
                         <Question size={16} color="#6B5F7A" />
                       </div>
-                      <span className="font-['Manrope',sans-serif] font-normal text-[#2d2040] text-[14px] leading-[21px] text-right shrink-0">
+                      <span className="type-body-2 text-[#2d2040] text-right shrink-0">
                         ₹{platformFee}
                       </span>
                     </div>
                   )}
                   {/* Total */}
                   <div className="bg-[#f7f4fa] px-[16px] py-[12px] flex gap-[12px] items-center">
-                    <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] flex-1">
+                    <span className="type-h4 text-[#1a1128] flex-1">
                       Total
                     </span>
-                    <span className="font-['Manrope',sans-serif] font-medium text-[#1a1128] text-[16px] leading-[25px] tracking-[0.16px] text-right shrink-0">
+                    <span className="type-h4 text-[#1a1128] text-right shrink-0">
                       {isFreeSession ? "Free" : `₹${total}${isPaidSession ? "/hr" : ""}`}
                     </span>
                   </div>
@@ -223,7 +223,7 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
 
               {/* Cancellation note — only for sessions */}
               {!isChatUnlock && (
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[12px] leading-[18px] tracking-[0.24px] text-center w-full">
+                <p className="type-caption text-[#433059] text-center w-full">
                   Cancel free up to 24 hours before your session.
                 </p>
               )}
@@ -235,12 +235,12 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
               <div className="flex items-center justify-between px-[12px] py-[16px] gap-[8px]">
                 <div className="flex gap-[4px] items-center">
                   <ShieldCheck size={16} color="#6B5F7A" weight="fill" />
-                  <span className="font-['Manrope',sans-serif] font-normal text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+                  <span className="type-caption text-[#6b5f7a]">
                     Secure &amp; encrypted payment
                   </span>
                 </div>
                 <button>
-                  <span className="font-['Manrope',sans-serif] font-semibold text-[#6b5f7a] text-[14px] leading-[20px] tracking-[0.14px]">
+                  <span className="type-btn-sm text-[#6b5f7a]">
                     Terms &amp; Conditions
                   </span>
                 </button>
@@ -258,7 +258,7 @@ export function BookingReviewPage({ onBack, mentor: mentorProp, bookingType: typ
                 className="w-full min-h-[48px] max-h-[48px] rounded-[8px] flex items-center justify-center gap-[8px]"
                 style={{ background: "linear-gradient(to right, #7d3aea, #5e28b5)" }}
               >
-                <span className="font-['Manrope',sans-serif] font-semibold text-white text-[16px] leading-[20px] tracking-[0.48px]">
+                <span className="type-btn-lg text-white">
                   {ctaLabel}
                 </span>
                 {!isFreeSession && (

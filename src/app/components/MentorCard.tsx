@@ -100,7 +100,7 @@ export const MentorCard = React.memo(function MentorCard({ mentor }: { mentor: M
           <div className="flex flex-1 gap-[2px] items-center min-w-0 whitespace-nowrap">
             {/* Caption Regular — original price, struck-through */}
             <span className="type-caption text-[#6b5f7a] line-through">
-              ₹ {mentor.originalPrice}
+              ₹{mentor.originalPrice}
             </span>
             <div className="flex items-center">
               {/* H5 — discounted price, primary emphasis */}

@@ -875,10 +875,10 @@ function ApplicationStatusModal({
             </div>
           </div>
           <div className="flex flex-col gap-[8px] items-start w-full text-center">
-            <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+            <p className="type-h2 text-[#1a1128] w-full">
               Your application is sent
             </p>
-            <p className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[16px] leading-[25px] tracking-[0.16px] w-full">
+            <p className="type-h4 text-[#433059] w-full">
               We'll notify you of any updates.
             </p>
           </div>
@@ -887,31 +887,31 @@ function ApplicationStatusModal({
         {/* application progress */}
         <div className="bg-[#f7f4fa] rounded-[4px] w-full">
           <div className="flex flex-col gap-[24px] items-center justify-center px-[16px] py-[12px]">
-            <p className="font-['Manrope',sans-serif] font-semibold text-[#433059] text-[18px] leading-[28px] text-center w-full">
+            <p className="type-h3 text-[#433059] text-center w-full">
               Application status
             </p>
             <div className="flex gap-[16px] items-start w-full">
               <div className="flex flex-col gap-[12px] items-center shrink-0 w-[49px]">
                 <div className="size-[12px] rounded-full bg-[#5E28B5]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center w-full">
+                <p className="type-body-2 text-[#433059] text-center w-full">
                   Applied
                 </p>
               </div>
               <div className="flex flex-col gap-[12px] items-center shrink-0">
                 <div className="size-[12px] rounded-full bg-[#6B5F7A]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">
+                <p className="type-body-2 text-[#433059] text-center whitespace-nowrap">
                   In review
                 </p>
               </div>
               <div className="flex flex-col gap-[12px] items-center shrink-0">
                 <div className="size-[12px] rounded-full bg-[#6B5F7A]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">
+                <p className="type-body-2 text-[#433059] text-center whitespace-nowrap">
                   Shortlisted
                 </p>
               </div>
               <div className="flex flex-col gap-[12px] items-center shrink-0">
                 <div className="size-[12px] rounded-full bg-[#6B5F7A]" />
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] text-center whitespace-nowrap">
+                <p className="type-body-2 text-[#433059] text-center whitespace-nowrap">
                   Decision
                 </p>
               </div>
@@ -950,7 +950,7 @@ function NoResultsState() {
           src={imgNotFound}
         />
       </div>
-      <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] text-center w-full">
+      <p className="type-h2 text-[#1a1128] text-center w-full">
         No matches this time
       </p>
     </div>
@@ -1040,7 +1040,7 @@ function FilterSheet({
         return (
           <div className="flex flex-col gap-[20px] px-[16px] pt-[20px] pb-[20px] w-full">
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+              <p className="type-h5 text-[#2d2040]">
                 Internship Stipend
               </p>
               <div className="flex flex-wrap gap-[12px]">
@@ -1055,7 +1055,7 @@ function FilterSheet({
               </div>
             </div>
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+              <p className="type-h5 text-[#2d2040]">
                 Full-time (LPA)
               </p>
               <div className="flex flex-wrap gap-[12px]">
@@ -1077,7 +1077,7 @@ function FilterSheet({
         return (
           <div className="flex flex-col gap-[20px] px-[16px] pt-[20px] pb-[20px] w-full">
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+              <p className="type-h5 text-[#2d2040]">
                 Work Mode
               </p>
               <div className="flex flex-wrap gap-[12px]">
@@ -1092,7 +1092,7 @@ function FilterSheet({
               </div>
             </div>
             <div className="flex flex-col gap-[10px]">
-              <p className="font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[14px] leading-[21px] tracking-[0.14px]">
+              <p className="type-h5 text-[#2d2040]">
                 City
               </p>
               <div className="flex flex-wrap gap-[12px]">
@@ -1177,7 +1177,7 @@ function FilterSheet({
           <div className="bg-[#1a1128] h-[4px] rounded-[24px] w-[32px]" />
         </div>
         <div className="flex items-center px-[16px] pb-[12px] w-full">
-          <p className="flex-1 font-['Manrope',sans-serif] font-semibold text-[#2d2040] text-[18px] leading-[28px] text-center">
+          <p className="flex-1 type-h3 text-[#2d2040] text-center">
             Filter
           </p>
         </div>
@@ -1361,7 +1361,7 @@ function ListingView({
               <>
                 <NoResultsState />
                 <div className="flex flex-col gap-[16px] items-start p-[16px]">
-                  <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                  <p className="type-h2 text-[#1a1128] w-full">
                     Similar jobs
                   </p>
                   <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1381,7 +1381,7 @@ function ListingView({
             ) : (
               // ── Filtered results exist ──
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <p className="type-h2 text-[#1a1128] w-full">
                   Jobs matching your search
                 </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1409,7 +1409,7 @@ function ListingView({
           ) : (
             <>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <p className="type-h2 text-[#1a1128] w-full">
                   Recent jobs
                 </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1434,7 +1434,7 @@ function ListingView({
                 )}
               </div>
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-                <p className="font-['Roboto_Serif',serif] font-semibold not-italic text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <p className="type-h2 text-[#1a1128] w-full">
                   Latest job openings
                 </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1466,7 +1466,7 @@ function ListingView({
             <>
               <NoResultsState />
               <div className="flex flex-col gap-[16px] items-start px-[16px] py-[28px]">
-                <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+                <p className="type-h2 text-[#1a1128] w-full">
                   In review
                 </p>
                 <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1479,7 +1479,7 @@ function ListingView({
           ) : (
             // ── Normal applied list ──
             <div className="flex flex-col gap-[16px] items-start px-[16px] py-[28px]">
-              <p className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] w-full">
+              <p className="type-h2 text-[#1a1128] w-full">
                 In review
               </p>
               <div className="flex flex-col gap-[4px] items-start w-full">
@@ -1526,28 +1526,28 @@ function ReviewCard({
           />
         </div>
         <div className="flex flex-col flex-1 min-w-px">
-          <p className="font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate">
+          <p className="type-h4 text-[#2d2040] truncate">
             {name}
           </p>
           {role && (
-            <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[14px] leading-[21px] truncate">
+            <p className="type-body-2 text-[#433059] truncate">
               {role}
             </p>
           )}
         </div>
       </div>
       <div className="flex gap-[8px] items-center w-full">
-        <p className="flex-1 font-['Manrope',sans-serif] font-medium text-[#2d2040] text-[16px] leading-[25px] tracking-[0.16px] truncate min-w-px">
+        <p className="flex-1 type-h4 text-[#2d2040] truncate min-w-px">
           {title}
         </p>
         <div className="flex gap-[4px] items-center shrink-0">
           <Star size={12} color="#1A1128" weight="fill" />
-          <span className="font-['Manrope',sans-serif] font-medium text-[#433059] text-[12px] leading-[18px] tracking-[0.24px]">
+          <span className="type-caption-1 text-[#433059]">
             {rating}
           </span>
         </div>
       </div>
-      <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
+      <p className="type-body-1 text-[#433059]">
         {expanded ? text : hasMore ? `${preview}…` : text}
       </p>
       {hasMore && (
@@ -1555,7 +1555,7 @@ function ReviewCard({
           onClick={() => setExpanded((v) => !v)}
           className="flex gap-[6px] items-center cursor-pointer"
         >
-          <span className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[12px] leading-[18px] tracking-[0.24px]">
+          <span className="type-caption-1 text-[#6b5f7a]">
             {expanded ? "Read less" : "Read more"}
           </span>
           {expanded ? (
@@ -1714,13 +1714,13 @@ function DetailView({
                 descFull.split("\n\n").map((para, i) => (
                   <p
                     key={i}
-                    className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]"
+                    className="type-body-1 text-[#433059]"
                   >
                     {para}
                   </p>
                 ))
               ) : (
-                <p className="font-['Manrope',sans-serif] font-normal text-[#433059] text-[16px] leading-[24px]">
+                <p className="type-body-1 text-[#433059]">
                   {descPreview}...
                 </p>
               )}
@@ -1814,7 +1814,7 @@ function DetailView({
 
         {/* Similar Jobs */}
         <div className="flex flex-col gap-[16px] items-start px-[16px] py-[20px] border-t border-[#f0ecf7]">
-          <p className="font-['Roboto_Serif',serif] font-semibold text-[#2d2040] text-[20px] leading-[28px] w-full">
+          <p className="type-h2 text-[#2d2040] w-full">
             Similar jobs
           </p>
 

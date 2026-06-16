@@ -93,7 +93,7 @@ export function AuthCallbackPage() {
     <div className="h-[100dvh] flex items-center justify-center bg-[#fffeff]">
       <div className="flex flex-col items-center gap-4">
         <div className="w-8 h-8 rounded-full border-2 border-[#7d3aea] border-t-transparent animate-spin" />
-        <p className="font-['Manrope',sans-serif] font-medium text-[#6b5f7a] text-[14px] leading-[21px]">
+        <p className="type-h5 text-[#6b5f7a]">
           Signing you in…
         </p>
       </div>

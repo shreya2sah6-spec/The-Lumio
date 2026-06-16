@@ -964,7 +964,7 @@ export function MentorProfilePage() {
           {/* Webinar — hidden for last 4 mentor cards (m7–m10) */}
           {pd.showWebinar && (
             <div className="bg-[#fffeff] px-4 py-3 mt-1">
-              <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+              <h3 className="type-h2 text-[#1a1128] mb-4">
                 Webinar
               </h3>
               <div className="rounded-[12px] overflow-hidden mb-3">
@@ -1014,7 +1014,7 @@ export function MentorProfilePage() {
                 {/* About Me — hidden for m3/m5; text-only for m2/m6/m7/m10; image+text for rest */}
                 {pd.aboutMode !== "hidden" && (
                   <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                    <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-2">
+                    <h3 className="type-h2 text-[#1a1128] mb-2">
                       About Me
                     </h3>
                     {pd.aboutMode === "image" && pd.aboutImage ? (
@@ -1041,7 +1041,7 @@ export function MentorProfilePage() {
                 {/* Recent Posts — per-mentor images from dedicated asset folder */}
                 {(MENTOR_RECENT_POSTS[mentor.id] ?? []).length > 0 && (
                   <div className="bg-[#fffeff] py-3 mt-1">
-                    <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                    <h3 className="type-h2 text-[#1a1128] mb-4 px-4">
                       Recent projects
                     </h3>
                     <div className="flex gap-3 overflow-x-auto px-4 scrollbar-hide snap-x snap-mandatory">
@@ -1070,7 +1070,7 @@ export function MentorProfilePage() {
 
                 {/* Experience */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                  <h3 className="type-h2 text-[#1a1128] mb-4">
                     Experience
                   </h3>
                   <div className="space-y-4">
@@ -1098,7 +1098,7 @@ export function MentorProfilePage() {
 
                 {/* Education */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                  <h3 className="type-h2 text-[#1a1128] mb-4">
                     Education
                   </h3>
                   <div className="flex gap-3 items-center">
@@ -1119,7 +1119,7 @@ export function MentorProfilePage() {
 
                 {/* Top Skills */}
                 <div className="bg-[#fffeff] px-4 py-3 mt-1">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4">
+                  <h3 className="type-h2 text-[#1a1128] mb-4">
                     Top Skills
                   </h3>
                   <div className="flex flex-wrap gap-3 mb-5">
@@ -1147,7 +1147,7 @@ export function MentorProfilePage() {
 
                 {/* Similar Mentors */}
                 <div className="bg-[#fffeff] py-3 mt-1 mb-2">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                  <h3 className="type-h2 text-[#1a1128] mb-4 px-4">
                     Similar mentors
                   </h3>
                   <div
@@ -1233,7 +1233,7 @@ export function MentorProfilePage() {
 
                 {/* Similar Mentors */}
                 <div className="flex flex-col gap-[16px] items-start w-full border-t border-[#f0ecf7] pt-[20px]">
-                  <p className="font-['Roboto_Serif',serif] font-semibold text-[#2d2040] text-[20px] leading-[28px] w-full">
+                  <p className="type-h2 text-[#1a1128] w-full">
                     Similar mentors
                   </p>
                   <div
@@ -1320,7 +1320,7 @@ export function MentorProfilePage() {
 
                 {/* Similar Mentors */}
                 <div className="mt-6 -mx-4">
-                  <h3 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[18px] leading-[26px] mb-4 px-4">
+                  <h3 className="type-h2 text-[#1a1128] mb-4 px-4">
                     Similar mentors
                   </h3>
                   <div

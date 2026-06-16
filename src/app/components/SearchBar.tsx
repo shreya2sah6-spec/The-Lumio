@@ -46,8 +46,7 @@ export function SearchBar({
   /* Colour of the decorative placeholder span */
   const spanColor = dimPlaceholder ? "text-[#9d94aa]" : "text-[#6b5f7a]";
 
-  const baseLabelCls =
-    "font-['Manrope',sans-serif] font-normal text-[14px] leading-[21px]";
+  const baseLabelCls = "type-body-2";
 
   return (
     <div className={containerCls}>

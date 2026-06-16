@@ -39,7 +39,7 @@ function SettingsItem({
         weight="regular"
         color={isDestructive ? "#DE3226" : "#1A1128"}
       />
-      <div className="flex-1 font-['Manrope',sans-serif] font-medium text-[16px] leading-[25px] tracking-[0.16px] text-left">
+      <div className="flex-1 type-h4 text-left">
         <p className={isDestructive ? "text-[#de3226]" : "text-[#1a1128]"}>
           {label}
         </p>
@@ -65,7 +65,7 @@ export function SettingsPage() {
         <div className="px-[16px] py-[20px]">
           {/* Your account */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
-            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
+            <h2 className="type-h2 text-[#1a1128] mb-[12px]">
               Your account
             </h2>
             <SettingsItem icon={Lock} label="Login & security" />
@@ -73,7 +73,7 @@ export function SettingsPage() {
 
           {/* Booking */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
-            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
+            <h2 className="type-h2 text-[#1a1128] mb-[12px]">
               Booking
             </h2>
             <SettingsItem icon={UsersThree} label="Mentorship" />
@@ -82,7 +82,7 @@ export function SettingsPage() {
 
           {/* Payments */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
-            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
+            <h2 className="type-h2 text-[#1a1128] mb-[12px]">
               Payments
             </h2>
             <SettingsItem icon={CreditCard} label="Methods & history" />
@@ -90,7 +90,7 @@ export function SettingsPage() {
 
           {/* Profile & visibility */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
-            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
+            <h2 className="type-h2 text-[#1a1128] mb-[12px]">
               Profile & visibility
             </h2>
             <SettingsItem icon={Eye} label="Profile visibility" />
@@ -99,7 +99,7 @@ export function SettingsPage() {
 
           {/* App */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
-            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
+            <h2 className="type-h2 text-[#1a1128] mb-[12px]">
               App
             </h2>
             <SettingsItem icon={BellSimple} label="Notification" />
@@ -109,7 +109,7 @@ export function SettingsPage() {
 
           {/* Support */}
           <div className="flex flex-col gap-0 mb-[20px] pb-[20px]">
-            <h2 className="font-['Roboto_Serif',serif] font-semibold text-[#1a1128] text-[20px] leading-[28px] mb-[12px]">
+            <h2 className="type-h2 text-[#1a1128] mb-[12px]">
               Support
             </h2>
             <SettingsItem icon={Info} label="Help & feedback" />
